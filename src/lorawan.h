@@ -24,5 +24,6 @@ void onEvent (ev_t ev);
 void prepare_packet(void);
 void lorawan_runloop_once(void);
 void lmicsetup(unsigned int packet_interval);
+void process_received_downlink(void);
 
 #endif

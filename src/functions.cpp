@@ -7,8 +7,26 @@ void printHex2(unsigned v) {
   Serial.print(v, HEX);
 }
 
+void swap(uint16_t  *p, uint16_t  *q) {
+  int t;
+
+  t = *p;
+  *p = *q;
+  *q = t;
+}
+
+void sort(uint16_t a[], size_t n) {
+  int i, j, temp;
+
+  for (i = 0; i < n - 1; i++) {
+    for (j = 0; j < n - i - 1; j++) {
+      if (a[j] < a[j + 1])
+        swap(&a[j], &a[j + 1]);
+    }
+  }
+}
+
 uint16_t mean(uint16_t readings_arr[], size_t n, unsigned int sensor_numberOfReadings){
-  std::sort(readings_arr, readings_arr + n, greater<uint16_t>());
   uint16_t readings_sum = 0;
   for (int i=0; i<sensor_numberOfReadings; i++){
     readings_sum = readings_sum + readings_arr[i];
@@ -17,7 +35,6 @@ uint16_t mean(uint16_t readings_arr[], size_t n, unsigned int sensor_numberOfRea
 }
 
 uint16_t median(uint16_t readings_arr[], size_t n, unsigned int sensor_numberOfReadings){
-  std::sort(readings_arr, readings_arr + n, greater<uint16_t>());
   if (sensor_numberOfReadings%2 != 0){
     return readings_arr[(sensor_numberOfReadings + 1) / 2 - 1];
   }
@@ -27,7 +44,6 @@ uint16_t median(uint16_t readings_arr[], size_t n, unsigned int sensor_numberOfR
 }
 
 uint16_t mode(uint16_t readings_arr[], size_t n, unsigned int sensor_numberOfReadings){
-  std::sort(readings_arr, readings_arr + n, greater<uint16_t>());
   int counter = 1;
   int max = 0;
   uint16_t mode_ = readings_arr[0];

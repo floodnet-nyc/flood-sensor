@@ -44,32 +44,45 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sa
   Serial.println("Reading measurements into an array...");
   for(int i=0;i<sensor_numberOfReadings;i++){
     readings_arr[i] = sensor_singleread();
-    Serial.print("Reading "); Serial.print(i+1  + " :");
+    delay(sensor_sampling_rate);
   }
-  Serial.println("");
+  Serial.println("Printing the array...");
+  for(int i=0; i<n; i++){
+    Serial.print(readings_arr[i]);Serial.print(" ");
+  }
+  sort(readings_arr, n);
+  Serial.println("\nPrinting the sorted array...");
+  for(int i=0; i<n; i++){
+    Serial.print(readings_arr[i]);Serial.print(" ");
+  }
+
   switch (sensorMode) {
     case 1:
       // Mean
       distance = mean(readings_arr, n, sensor_numberOfReadings);
-      Serial.print("Mean is: "); Serial.println(distance);
+      Serial.print("\nMean is: "); Serial.println(distance);
       break;
     case 2:
       // Median
       distance = median(readings_arr, n, sensor_numberOfReadings);
-      Serial.print("Median is: "); Serial.println(distance);
+      Serial.print("\nMedian is: "); Serial.println(distance);
       break;
     case 3:
       // Mode
       distance = mode(readings_arr, n, sensor_numberOfReadings);
-      Serial.print("Mode is: "); Serial.println(distance);
+      Serial.print("\nMode is: "); Serial.println(distance);
     deafult:
       // Single Pulse-In single reading
       distance = sensor_singleread();
-      Serial.print("Default single reading is: "); Serial.println(distance);
+      Serial.print("\nDefault single reading is: "); Serial.println(distance);
   }
-  Serial.println("Cleaning measurements array...");
+  Serial.println("\nCleaning measurements array...");
   for (int i=0; i<n; i++) {
     readings_arr[i] = 0;
+  }
+  Serial.println("\nPrinting the cleaned array...");
+  for(int i=0; i<n; i++){
+    Serial.print(readings_arr[i]);Serial.print(" ");
   }
   return distance;
 }

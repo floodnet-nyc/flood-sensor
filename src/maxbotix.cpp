@@ -3,24 +3,24 @@
 #include "sensorcfg.h"
 
 // Maxbotix Ultrasonic variables
+uint16_t readings_arr[20] = {0};
+size_t n = *(&readings_arr + 1) - readings_arr;
 
-uint16_t median_arr[5];
 unsigned int sensorMode;
 unsigned int sensor_sampling_rate;
 unsigned int sensor_numberOfReadings;
 
 void setup_maxbotix(unsigned int mode = 5, unsigned int sampling_rate = 20 , unsigned int numberOfReadings = 5 ) {
-                     // wait for a second
-  Serial.println("Setting up Maxbotix ........ ");
+  Serial.println("Setting up Maxbotix .... ");
   Serial.println("Sensor Settings:");
   sensorMode = mode;
-  Serial.print("  Sensor mode: ");
+  Serial.print("    Sensor mode: ");
   Serial.println(sensorMode);
   sensor_sampling_rate = sampling_rate;
-  Serial.print("  Sensor sampling rate: ");
+  Serial.print("    Sensor sampling rate: ");
   Serial.println(sensor_sampling_rate);
   sensor_numberOfReadings = numberOfReadings;
-  Serial.print("  Sensor no of readings per measurement: ");
+  Serial.print("    Number of readings per measurement: ");
   Serial.println(sensor_numberOfReadings);
   pinMode(triggerPin, OUTPUT);
   pinMode(readPin, INPUT);
@@ -38,26 +38,38 @@ uint16_t sensor_singleread(void) {
 }
 
 
-uint16_t read_sensor_using_modes(unsigned int sensorMode=5, unsigned int sensor_sampling_rate=20, unsigned int sensor_numberOfReadings=5)
+uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sampling_rate=20, unsigned int sensor_numberOfReadings=5)
 {
   uint16_t distance = 0;
-  // Currently single sensor mode: Median of 5 readings
-
-  // Switch Sensor mode needs to be implemented
-
-  for(int i=0; i<5; i++){
-    distance = sensor_singleread();
+  Serial.println("Reading measurements into an array...");
+  for(int i=0;i<sensor_numberOfReadings;i++){
+    readings_arr[i] = sensor_singleread();
     Serial.print("Reading "); Serial.print(i+1  + " :");
-    Serial.print(distance);
-    Serial.println(" mm");
-    median_arr[i] = distance;
-    delay(sensor_sampling_rate);
-    //sleep(sensor_sampling_rate);
   }
-
-  sort(median_arr);
-  int n = (sensor_numberOfReadings + 1) / 2 - 1;
-  // pick the median
-  distance = median_arr[n];
+  Serial.println("");
+  switch (sensorMode) {
+    case 1:
+      // Mean
+      distance = mean(readings_arr, n, sensor_numberOfReadings);
+      Serial.print("Mean is: "); Serial.println(distance);
+      break;
+    case 2:
+      // Median
+      distance = median(readings_arr, n, sensor_numberOfReadings);
+      Serial.print("Median is: "); Serial.println(distance);
+      break;
+    case 3:
+      // Mode
+      distance = mode(readings_arr, n, sensor_numberOfReadings);
+      Serial.print("Mode is: "); Serial.println(distance);
+    deafult:
+      // Single Pulse-In single reading
+      distance = sensor_singleread();
+      Serial.print("Default single reading is: "); Serial.println(distance);
+  }
+  Serial.println("Cleaning measurements array...");
+  for (int i=0; i<n; i++) {
+    readings_arr[i] = 0;
+  }
   return distance;
 }

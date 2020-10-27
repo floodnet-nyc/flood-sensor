@@ -10,6 +10,7 @@ This repository contains the source code for the Floodsense sensor which uses ul
       * [LoRa](#lora)
         * [LoRa Configuration](#lora-configuration)
           * [Duty Cycle](#duty-cycle)
+          *
         * [TTN Payload Decoder](#ttn-payload-decoder)
         * [TTN Credentials](#ttn-credentials)
       * [Ultrasonic Sensor Modes](#ultrasonic-sensor-modes)
@@ -31,8 +32,71 @@ Here below is a list of parameters that can be changed during the run-time of th
 ### LoRa
 This library uses the [Arduino-lmic](https://github.com/mcci-catena/arduino-lmic) library to handle the LoRa communication. The Things Network has a LoRaWAN [compliance](https://www.thethingsnetwork.org/docs/lorawan/duty-cycle.html). This means every radio device must be compliant with the regulated duty cycle limits. To program the node to stay within the limits, an [air-time calculator](https://avbentem.github.io/airtime-calculator/ttn/us915) can be used.
 
-#### LoRa Configuration
-Uplink frequency at the end node is determined by the TX_INTERVAL. This TX_INTERVAL is used as a variable in this library to add the functionality of varying duty cycle.
+#### Uplink Packet Format
+| Error flags  | Battery Level | Ultrasonic reading  |
+|--------------|---------------|---------------------|
+|   1 byte     |    2 bytes    |        2 bytes      |
+
+|     Ultrasonic reading      |
+|-----------------------------|
+|           2 bytes           |
+|    high byte | low byte     |
+
+|       Battery Level       |
+|---------------------------|
+|           2 bytes         |
+|    high byte | low byte   |
+
+**Error Flags(empty flags are for future use):**
+
+|     bit 7    |     bit 6   |     bit 5    |     bit 4    |     bit 3    |     bit 2    |     bit 1    |     bit 0    |
+|   ----       |   ----      |     ----     |     ---      |      ---     |      ---     |       ---    |      ---     |
+|              |             |              |              |              |              |              | SD error flag|
+
+
+#### Downlink Packet Format
+
+|Duty Cycle in seconds | Sensor Mode  |  Sampling Rate| Number of readings per measurement |
+|----------------------|--------------|---------------|  --------------------------------- |
+| 2 bytes              |   1 byte     |    2 bytes     |          1 byte                    |
+
+#### Changing parameters via Downlink
+To change the duty cycle and sensor parameters via downlink the above downlink packet format must be used. For this use case the maximum packet size is 6 bytes and can be varied. The parameters to be changed should be a non-zero entries and the rest can be left as zeroes if no changes are needed. The following sections describe changing duty cycle and sensor configurations with some examples.
+
+##### Changing dutycycle
+Uplink frequency at the end node is determined by the TX_INTERVAL. This TX_INTERVAL is used as a variable in this library to add the functionality of varying duty cycle. Few examples of changing duty cycle by updating `TX_INTERVAL` are mentioned below:
+
+| Downlink Packet format| Explanation|
+|---|---|
+| `00 3C`| duty cycle = 60 seconds and 2 bytes are used for the downlink|
+| `3C` |duty cycle = 60 seconds and lowest payload size |
+| `01 68`| duty cycle = 360 seconds and 2 bytes are used for the downlink|
+|`00 3C 00 00 00 00` | Only duty cycle is changed and rest are unchanged. 6 bytes used for the downlink |
+
+
+##### Changing sensor mode
+The sensor mode can be changed by adding non-zero values to the sensor mode byte in the downlink packet. Any invalid modes entered are discarded. Examples:
+
+| Downlink Packet format| Explanation|
+|---|---|
+| `00 00 01` | changing sensor mode to 1. Consumes 3 bytes: minimal mode change|
+| `00 00 01 00 00 00` |changing sensor mode to 1 and the rest are unchanged. Consumes 6 bytes |
+| `00 00 06 00 00 00` |Discarded and no change since 6 is an invalid mode. Consumes 6 bytes |
+| `01`| Valid packet format but doesn't change sensor mode, instead duty cycle is changed to 1 sec|
+
+##### Changing sampling rate
+The sensor sampling rate can be changed by adding non-zero values to the corresponding bytes in the downlink packet. Examples:
+
+| Downlink Packet format| Explanation|
+|---|---|
+| `00 00 00 00 FA` | changing sensor sampling rate to 250ms. Consumes 5 bytes: minimal sampling rate change|
+| `00 00 00 04 E2 00` |changing sensor sampling rate to 1250ms and the rest are unchanged. Consumes 6 bytes |
+| `04 E2`| Valid packet format but doesn't change sensor sampling rate, instead duty cycle is changed to 1250 sec|
+
+##### Changing dutycycle
+
+
+
 
 #### TTN Payload Decoder
 
@@ -71,7 +135,13 @@ Ultrasonic sensors measure the distance to an object by measuring the time diffe
 The Ultrasonic sensor has an internal averaging methods to avoid small obstacles, irregularities and reporting the distance to the largest acoustic return while ignoring smaller targets. However, some anomalies are observed due to corner reflections and metal surfaces. These anomalies can be avoided using statistical methods such as averaging or calculating median of multiple measurements.
 
 ##### Sensor modes:
-These statistical methods are implemented as `sensorModes`. For example, `sensorMode 5` is a median of 5 measurements.
+These statistical methods are implemented as `sensorModes`. For example, `sensorMode = 2` uses a median of all the readings. The following are the available sensor modes:
+
+|Sensor mode| Statistical method|
+|---|---|
+|  1 | Mean  |
+|  2 | Median  |
+|  3 | Mode  |
 
 ##### Number of Readings:
 The number of readings for these averaging methods can be changed via variable `sensor_numberOfReadings`.
@@ -80,4 +150,4 @@ The number of readings for these averaging methods can be changed via variable `
 Single read from the sensor is as fast as 150 to 250 milliseconds and five of such measurements would be sensed over a period of 0.75 - 1.5 seconds. These measurements can be spread out to average over a larger interval using the variable `sensor_sampling_rate`. Each measurement corresponding to a sensor mode is followed by an interval of `sensor_sampling_rate`.
 
 ### SD Card logging and RTC
-Every lora event, sensor states and measurements are locally logged onto the SD Card using the [SDFat](https://github.com/greiman/SdFat) library. The sensor sets the SD Card error flag high if the local logging is failed. A Real-time Clock is used to create timestamps for these local logs. 
+Every lora event, sensor states and measurements are locally logged onto the SD Card using the [SDFat](https://github.com/greiman/SdFat) library. The sensor sets the SD Card error flag high if the local logging is failed. A Real-time Clock is used to create timestamps for these local logs.

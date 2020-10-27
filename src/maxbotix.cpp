@@ -10,7 +10,7 @@ unsigned int sensorMode;
 unsigned int sensor_sampling_rate;
 unsigned int sensor_numberOfReadings;
 
-void setup_maxbotix(unsigned int mode = 5, unsigned int sampling_rate = 20 , unsigned int numberOfReadings = 5 ) {
+void setup_maxbotix(unsigned int mode=2, unsigned int sampling_rate=250 , unsigned int numberOfReadings=5 ) {
   Serial.println("Setting up Maxbotix .... ");
   Serial.println("Sensor Settings:");
   sensorMode = mode;
@@ -50,37 +50,40 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sa
   for(int i=0; i<n; i++){
     Serial.print(readings_arr[i]);Serial.print(" ");
   }
+  Serial.println("");
   sort(readings_arr, n);
-  Serial.println("\nPrinting the sorted array...");
+  Serial.println("Printing the sorted array...");
   for(int i=0; i<n; i++){
     Serial.print(readings_arr[i]);Serial.print(" ");
   }
+  Serial.println("");
 
   switch (sensorMode) {
     case 1:
       // Mean
       distance = mean(readings_arr, n, sensor_numberOfReadings);
-      Serial.print("\nMean is: "); Serial.println(distance);
+      Serial.print("Mean is: "); Serial.println(distance);
       break;
     case 2:
       // Median
       distance = median(readings_arr, n, sensor_numberOfReadings);
-      Serial.print("\nMedian is: "); Serial.println(distance);
+      Serial.print("Median is: "); Serial.println(distance);
       break;
     case 3:
       // Mode
       distance = mode(readings_arr, n, sensor_numberOfReadings);
-      Serial.print("\nMode is: "); Serial.println(distance);
+      Serial.print("Mode is: "); Serial.println(distance);
     deafult:
       // Single Pulse-In single reading
       distance = sensor_singleread();
-      Serial.print("\nDefault single reading is: "); Serial.println(distance);
+      Serial.print("Default single reading is: "); Serial.println(distance);
   }
-  Serial.println("\nCleaning measurements array...");
+  Serial.println("Cleaning measurements array...");
   for (int i=0; i<n; i++) {
     readings_arr[i] = 0;
   }
-  Serial.println("\nPrinting the cleaned array...");
+  Serial.println("");
+  Serial.println("Printing the cleaned array...");
   for(int i=0; i<n; i++){
     Serial.print(readings_arr[i]);Serial.print(" ");
   }

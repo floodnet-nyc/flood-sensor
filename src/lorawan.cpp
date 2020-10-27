@@ -154,31 +154,31 @@ void onEvent (ev_t ev) {
       writeToSDCard(event_ev);
       break;
       break;
-      case EV_TXCOMPLETE:
-        Serial.println(F("EV_TXCOMPLETE (includes waiting for RX windows)"));
-        Serial.println("");
-        Serial.println("");
-        event_ev = String(event_ev + "EV_TXCOMPLETE (includes waiting for RX windows)");
-        writeToSDCard(event_ev);
-        if (LMIC.txrxFlags & TXRX_ACK)
-          Serial.println(F("Received ack"));
-        event_ev = String("Received ack");
-        writeToSDCard(event_ev);
-        if (LMIC.dataLen) {
-          Serial.print(F("Received "));
-          Serial.print(LMIC.dataLen);
-          Serial.print(" bytes of payload: 0x");
-          for (int i = 0; i < LMIC.dataLen; i++) {
-            if (LMIC.frame[LMIC.dataBeg + i] < 0x10) {
-              Serial.print(F("0"));
-            }
-            Serial.print(LMIC.frame[LMIC.dataBeg + i], HEX);
+    case EV_TXCOMPLETE:
+      Serial.println(F("EV_TXCOMPLETE (includes waiting for RX windows)"));
+      Serial.println("");
+      Serial.println("");
+      event_ev = String(event_ev + "EV_TXCOMPLETE (includes waiting for RX windows)");
+      writeToSDCard(event_ev);
+      if (LMIC.txrxFlags & TXRX_ACK)
+        Serial.println(F("Received ack"));
+      event_ev = String("Received ack");
+      writeToSDCard(event_ev);
+      if (LMIC.dataLen) {
+        Serial.print(F("Received "));
+        Serial.print(LMIC.dataLen);
+        Serial.print(" bytes of payload: 0x");
+        for (int i = 0; i < LMIC.dataLen; i++) {
+          if (LMIC.frame[LMIC.dataBeg + i] < 0x10) {
+            Serial.print(F("0"));
           }
-          Serial.println();
-          process_received_downlink();
+          Serial.print(LMIC.frame[LMIC.dataBeg + i], HEX);
         }
-        TX_COMPLETED = true;
-        break;
+        Serial.println();
+        process_received_downlink();
+      }
+      TX_COMPLETED = true;
+      break;
     case EV_LOST_TSYNC:
       Serial.println(F("EV_LOST_TSYNC"));
       event_ev = String(event_ev + "EV_LOST_TSYNC" );
@@ -239,6 +239,7 @@ void onEvent (ev_t ev) {
       break;
   }
 }
+
 
 void update_TX_INTERVAL(unsigned long dutycycle){
   Serial.print("Current duty cycle is: ");
@@ -401,7 +402,6 @@ void process_received_downlink(void) {
       break;
   }
 }
-
 
 uint16_t distance;
 // Measured Battery Level in mVolts

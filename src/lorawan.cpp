@@ -165,7 +165,7 @@ void onEvent (ev_t ev) {
       event_ev = String("Received ack");
       writeToSDCard(event_ev);
       if (LMIC.dataLen) {
-        Serial.println(F("Received "));
+        Serial.print(F("Received "));
         Serial.print(LMIC.dataLen);
         Serial.print(" bytes of payload: 0x");
         for (int i = 0; i < LMIC.dataLen; i++) {
@@ -241,30 +241,166 @@ void onEvent (ev_t ev) {
 }
 
 
-
-void process_received_downlink(void) {
-
-  String str_downlink = String("Processing received downlink....");
-  writeToSDCard(str_downlink);
-  unsigned long dutycycle = 0;
+void update_TX_INTERVAL(unsigned long dutycycle){
   Serial.print("Current duty cycle is: ");
   Serial.println(TX_INTERVAL);
-  str_downlink = String("Current duty cycle is: ") + String(TX_INTERVAL);
+  String str_downlink = String("Current duty cycle is: ") + String(TX_INTERVAL);
   writeToSDCard(str_downlink);
-  for (int i = 0; i < LMIC.dataLen; i++) {
-    if (LMIC.frame[LMIC.dataBeg + i] < 0x10) {
-      //Serial.print(F("0"));
-    }
-     //Serial.println(LMIC.frame[LMIC.dataBeg + i]);
-     dutycycle =  (LMIC.frame[LMIC.dataBeg + i]) | ( dutycycle << 8*i);
-  }
-  //Serial.println();
   // Changing Duty Cycle
   TX_INTERVAL = dutycycle;
   Serial.print("Updated dutycycle is: ");
   Serial.println(TX_INTERVAL);
   str_downlink = String("Updated dutycycle is: ") + String(TX_INTERVAL);
   writeToSDCard(str_downlink);
+}
+
+void update_sensorMode(unsigned int sensorMode_){
+  Serial.print("Current sensorMode is: ");
+  Serial.println(sensorMode);
+  String str_downlink = String("Current sensorMode is: ") + String(sensorMode);
+  writeToSDCard(str_downlink);
+  // Changing Sensor Mode
+  sensorMode = sensorMode_;
+  Serial.print("Updated sensorMode is: ");
+  Serial.println(sensorMode);
+  str_downlink = String("Updated sensorMode is: ") + String(sensorMode);
+  writeToSDCard(str_downlink);
+}
+
+void update_sampling_rate(unsigned int sampling_rate){
+  Serial.print("Current sensor sampling rate is: ");
+  Serial.println(sensor_sampling_rate);
+  String str_downlink = String("Current sensor sampling rate is: ") + String(sensor_sampling_rate);
+  writeToSDCard(str_downlink);
+  // Changing Sensor Mode
+  sensor_sampling_rate = sampling_rate;
+  Serial.print("Updated sensor sampling rate is: ");
+  Serial.println(sensor_sampling_rate);
+  str_downlink = String("Updated sensor sampling rate is: ") + String(sensor_sampling_rate);
+  writeToSDCard(str_downlink);
+}
+
+void update_no_of_readings(unsigned int numb_readings){
+  Serial.print("Current number of readings per measurement: ");
+  Serial.println(sensor_numberOfReadings);
+  String str_downlink = String("Current number of readings per measurement: ") + String(sensor_numberOfReadings);
+  writeToSDCard(str_downlink);
+  // Changing Sensor Mode
+  sensor_numberOfReadings = numb_readings;
+  Serial.print("Updated number of readings per measurement: ");
+  Serial.println(sensor_numberOfReadings);
+  str_downlink = String("Updated number of readings per measurement: ") + String(sensor_numberOfReadings);
+  writeToSDCard(str_downlink);
+}
+
+
+void process_received_downlink(void) {
+  /* Downlink Packet format:
+  |Number of readings per measurement| Sampling Rate   |Sensor Mode    | Duty Cycle in seconds  |
+  | 1 byte                           |    1 byte       |    2 bytes    |        2 bytes         |
+  */
+  String str_downlink = String("Processing received downlink....");
+  writeToSDCard(str_downlink);
+  unsigned int downlink_payload_size = LMIC.dataLen;
+  unsigned long dutycycle = 0;
+  unsigned int sensorMode_ = 0;
+  unsigned int sampling_rate = 0;
+  unsigned int numb_readings = 0;
+
+  switch(downlink_payload_size){
+
+    case 1: case 2:
+
+      for (int i = 0; i < downlink_payload_size; i++) {
+        dutycycle =  (LMIC.frame[LMIC.dataBeg + i]) | ( dutycycle << 8*i);
+      }
+      if (dutycycle!= 0){
+        update_TX_INTERVAL(dutycycle);
+      } else{
+        Serial.println("Dutycycle is the same.");
+      }
+      break;
+
+    case 3:
+
+      for (int i = 0; i < 2; i++) {
+        dutycycle =  (LMIC.frame[LMIC.dataBeg + i]) | ( dutycycle << 8*i);
+      }
+      if (dutycycle!= 0){
+        update_TX_INTERVAL(dutycycle);
+      } else{
+        Serial.println("Dutycycle is the same.");
+      }
+
+      sensorMode_ =  (LMIC.frame[LMIC.dataBeg + 2]) | ( sensorMode_ );
+      if (sensorMode_!= 0 && sensorMode<=3 ){
+        update_sensorMode(sensorMode_);
+      } else{
+        Serial.println("Sensor Mode is the same.");
+      }
+      break;
+
+    case 5:
+
+      for (int i = 0; i < 2; i++) {
+        dutycycle =  (LMIC.frame[LMIC.dataBeg + i]) | ( dutycycle << 8*i);
+      }
+      if (dutycycle!= 0){
+        update_TX_INTERVAL(dutycycle);
+      } else{
+        Serial.println("Dutycycle is the same.");
+      }
+
+      sensorMode_ =  (LMIC.frame[LMIC.dataBeg + 2]) | ( sensorMode_ );
+      if (sensorMode_!= 0 && sensorMode<=3 ){
+        update_sensorMode(sensorMode_);
+      } else{
+        Serial.println("Sensor Mode is the same.");
+      }
+
+      sampling_rate =  (LMIC.frame[LMIC.dataBeg + 3]) | ( sampling_rate );
+      sampling_rate =  (LMIC.frame[LMIC.dataBeg + 4]) | ( sampling_rate << 8);
+      if (sampling_rate!= 0 ){
+        update_sampling_rate(sampling_rate);
+      } else{
+        Serial.println("Sensor sampling rate is the same.");
+      }
+      break;
+
+    case 6:
+
+      for (int i = 0; i < 2; i++) {
+        dutycycle =  (LMIC.frame[LMIC.dataBeg + i]) | ( dutycycle << 8*i);
+      }
+      if (dutycycle!= 0){
+        update_TX_INTERVAL(dutycycle);
+      } else{
+        Serial.println("Dutycycle is the same.");
+      }
+
+      sensorMode_ =  (LMIC.frame[LMIC.dataBeg + 2]) | ( sensorMode_ );
+      if (sensorMode_!= 0 && sensorMode<=3 ){
+        update_sensorMode(sensorMode_);
+      } else{
+        Serial.println("Sensor Mode is the same.");
+      }
+
+      sampling_rate =  (LMIC.frame[LMIC.dataBeg + 3]) | ( sampling_rate );
+      sampling_rate =  (LMIC.frame[LMIC.dataBeg + 4]) | ( sampling_rate << 8);
+      if (sampling_rate!= 0 ){
+        update_sampling_rate(sampling_rate);
+      } else{
+        Serial.println("Sensor sampling rate is the same.");
+      }
+
+      numb_readings =  (LMIC.frame[LMIC.dataBeg + 5]) | ( numb_readings );
+      if (numb_readings!= 0 && numb_readings<=20){
+        update_no_of_readings(numb_readings);
+      } else{
+        Serial.println("Sensor number of readings per measurement is the same.");
+      }
+      break;
+  }
 }
 
 uint16_t distance;

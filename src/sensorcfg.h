@@ -25,7 +25,7 @@ extern unsigned int TX_INTERVAL;
 */
 extern unsigned int sensorMode;
 
-// Currently sensor sampling rate is minimum = 20 microseconds
+// Time between the measurements
 extern unsigned int sensor_sampling_rate;
 
 // Number of readings for a sensor mode

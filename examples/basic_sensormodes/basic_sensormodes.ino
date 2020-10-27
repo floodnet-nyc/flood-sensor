@@ -7,8 +7,11 @@
  *  DEVEUI, APPEUI and APPKEY are required. Multiple devices can use the
  *  same AppEUI, but each device has its own DevEUI and AppKey.
  *  
- *  Maxbotix sensor mode: This code uses the median of 5 readings as an averaging
- *  method for stable readings.
+ *  Maxbotix sensor mode: The following are available sensor modes
+ *      Sensor mode	  Statistical method
+ *          1	            Mean
+ *          2	            Median
+ *          3	            Mode
  *  
  *  SD Card Logging: For Debugging and local storage, every significant event is
  *  logged onto the SD Card using sdfatlib library
@@ -39,9 +42,9 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Starting");
 
-  setup_maxbotix(5, 20, 5);  // sensor mode 5, 20 microseconds sampling rate, 5 readings per measurement
+  setup_maxbotix(2, 150, 5);  // sensor mode 2(Median), 150ms sampling rate (time between readings), 5 readings per measurement
   setup_featherWing();        // set up SD card and RTC. Sets date and time everytime compiled.
-  lmicsetup(300);             // packet interval 300 seconds
+  lmicsetup(300);             // uplink frequency 300 seconds - controls duty cycle
 }
 
 void loop() {

@@ -154,25 +154,31 @@ void onEvent (ev_t ev) {
       writeToSDCard(event_ev);
       break;
       break;
-    case EV_TXCOMPLETE:
-      Serial.println(F("EV_TXCOMPLETE (includes waiting for RX windows)"));
-      Serial.println("");
-      Serial.println("");
-      event_ev = String(event_ev + "EV_TXCOMPLETE (includes waiting for RX windows)");
-      writeToSDCard(event_ev);
-      if (LMIC.txrxFlags & TXRX_ACK)
-        Serial.println(F("Received ack"));
-      event_ev = String("Received ack");
-      writeToSDCard(event_ev);
-      if (LMIC.dataLen) {
-        Serial.println(F("Received "));
-        Serial.println(LMIC.dataLen);
-        Serial.println(F(" bytes of payload"));
-        event_ev = String("Received ") + String(LMIC.dataLen) + String(" bytes of payload");
+      case EV_TXCOMPLETE:
+        Serial.println(F("EV_TXCOMPLETE (includes waiting for RX windows)"));
+        Serial.println("");
+        Serial.println("");
+        event_ev = String(event_ev + "EV_TXCOMPLETE (includes waiting for RX windows)");
         writeToSDCard(event_ev);
-      }
-      TX_COMPLETED = true;
-      break;
+        if (LMIC.txrxFlags & TXRX_ACK)
+          Serial.println(F("Received ack"));
+        event_ev = String("Received ack");
+        writeToSDCard(event_ev);
+        if (LMIC.dataLen) {
+          Serial.println(F("Received "));
+          Serial.print(LMIC.dataLen);
+          Serial.print(" bytes of payload: 0x");
+          for (int i = 0; i < LMIC.dataLen; i++) {
+            if (LMIC.frame[LMIC.dataBeg + i] < 0x10) {
+              Serial.print(F("0"));
+            }
+            Serial.print(LMIC.frame[LMIC.dataBeg + i], HEX);
+          }
+          Serial.println();
+          process_received_downlink();
+        }
+        TX_COMPLETED = true;
+        break;
     case EV_LOST_TSYNC:
       Serial.println(F("EV_LOST_TSYNC"));
       event_ev = String(event_ev + "EV_LOST_TSYNC" );
@@ -233,6 +239,32 @@ void onEvent (ev_t ev) {
       break;
   }
 }
+
+void process_received_downlink(void) {
+
+  String str_downlink = String("Processing received downlink....");
+  writeToSDCard(str_downlink);
+  unsigned long dutycycle = 0;
+  Serial.print("Current duty cycle is: ");
+  Serial.println(TX_INTERVAL);
+  str_downlink = String("Current duty cycle is: ") + String(TX_INTERVAL);
+  writeToSDCard(str_downlink);
+  for (int i = 0; i < LMIC.dataLen; i++) {
+    if (LMIC.frame[LMIC.dataBeg + i] < 0x10) {
+      //Serial.print(F("0"));
+    }
+     //Serial.println(LMIC.frame[LMIC.dataBeg + i]);
+     dutycycle =  (LMIC.frame[LMIC.dataBeg + i]) | ( dutycycle << 8*i);
+  }
+  //Serial.println();
+  // Changing Duty Cycle
+  TX_INTERVAL = dutycycle;
+  Serial.print("Updated dutycycle is: ");
+  Serial.println(TX_INTERVAL);
+  str_downlink = String("Updated dutycycle is: ") + String(TX_INTERVAL);
+  writeToSDCard(str_downlink);
+}
+
 
 uint16_t distance;
 // Measured Battery Level in mVolts

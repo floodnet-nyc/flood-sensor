@@ -84,5 +84,6 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sa
   for(int i=0; i<n; i++){
     Serial.print(readings_arr[i]);Serial.print(" ");
   }
+  Serial.println("");
   return distance;
 }

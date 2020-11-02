@@ -17,7 +17,8 @@ This repository contains the source code for the Floodsense sensor which uses ul
           * [Changing number of sensor readings per measurement](#changing-number-of-sensor-readings-per-measurement)
         * [TTN Payload Decoder](#ttn-payload-decoder)
         * [TTN Credentials](#ttn-credentials)
-      * [Ultrasonic Sensor Modes](#ultrasonic-sensor-modes)
+      * [Ultrasonic Sensor](#ultrasonic-sensor)
+        * [Ultrasonic Sensor Configuration](#ultrasonic-sensor-configuration)
       * [SD Card logging and RTC](#sd-card-logging-and-rtc)
 
 

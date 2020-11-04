@@ -60,9 +60,6 @@ void writeToSDCard(String StringtobeWritten) {
   char buffchar[StringtobeWritten.length() + 1];
   StringtobeWritten.toCharArray(buffchar, StringtobeWritten.length() + 1);
   digitalWrite(8, HIGH);
-  // delay(400);  // Catch Due reset problem
-  // initialize the SD card at SPI_HALF_SPEED to avoid bus errors with
-  // breadboards.  use SPI_FULL_SPEED for better performance.
   if (!sd.begin(chipSelect, SPI_HALF_SPEED)) {
     // set the SD_ERROR flag high;
     SD_ERROR = 1;
@@ -70,7 +67,6 @@ void writeToSDCard(String StringtobeWritten) {
   }
   else
   {
-    //cout << pstr("Writing to: ") << name;
     ofstream sdout(name, ios::out | ios::app);
     if (!sdout)
     {
@@ -81,7 +77,6 @@ void writeToSDCard(String StringtobeWritten) {
       sdout << buffchar << endl;
       // close the stream
       sdout.close();
-      // cout << endl << "Done" << endl;
       SD_ERROR = 0;
     }
   }

@@ -18,17 +18,17 @@
 // Duty cycle
 extern unsigned int TX_INTERVAL;
 
-/*  Sensor Operation Modes:
-      Mode 1: Single reading
-      Mode 2:
-
+/*    Sensor Operation Modes:
+            Mode 1: Mean
+            Mode 2: Median
+            Mode 3: Mode
 */
 extern unsigned int sensorMode;
 
-// Time between the measurements
+// Time between the readings
 extern unsigned int sensor_sampling_rate;
 
-// Number of readings for a sensor mode
+// Number of readings for a given sensor mode
 extern unsigned int sensor_numberOfReadings;
 
 // ------------------- Error Flags ----------------------

@@ -12,7 +12,7 @@ static osjob_t sendjob;
 unsigned int TX_INTERVAL;
 
 
-unsigned char lora_packet[5];
+unsigned char lora_packet[6];
 bool TX_COMPLETED = false;
 
 

@@ -5,16 +5,16 @@
 #include "lmicpinmappings.h"
 #include "sensorcfg.h"
 #include "maxbotix.h"
+#include <math.h>
 
 static osjob_t sendjob;
 
-
 unsigned int TX_INTERVAL;
 
-
-unsigned char lora_packet[6];
-bool TX_COMPLETED = false;
-
+unsigned char cfg_packet[7];
+unsigned char lora_packet[5];
+bool TX_COMPLETED = false;        // Set to false on start and after sleep; is set to true when an uplink is successful
+bool UPDATE_CONFIG = true;        // Set to true at start and when there is a change in sensor cfg; used to send sensor cfg via uplink
 
 void os_getArtEui (u1_t* buf) {
   memcpy_P(buf, APPEUI, 8);
@@ -59,12 +59,17 @@ void do_send(osjob_t* j) {
     writeToSDCard(do_sendstr1);
   } else {
     // Prepare upstream data transmission at the next possible time.
-    int lmic_tx_retVAL = LMIC_setTxData2(1, lora_packet, sizeof(lora_packet), 0);
+    int lmic_tx_retVAL;
+    if (UPDATE_CONFIG == true){
+      lmic_tx_retVAL = LMIC_setTxData2(1, cfg_packet, sizeof(cfg_packet), 0);
+    } else {
+      lmic_tx_retVAL = LMIC_setTxData2(1, lora_packet, sizeof(lora_packet), 0);
+    }
     String do_sendstr;
     if (lmic_tx_retVAL == 0) {
       Serial.println(F("Packet queued and lmic_tx_retVAL is 0."));
     } else {
-      do_sendstr = String ("Something is wrong ") + String("Error number: ") + String(lmic_tx_retVAL);
+      do_sendstr = String ("Something is wrong: ") + String("Error number: ") + String(lmic_tx_retVAL);
       Serial.println(do_sendstr);
       writeToSDCard(do_sendstr);
     }
@@ -164,6 +169,7 @@ void onEvent (ev_t ev) {
         Serial.println(F("Received ack"));
       event_ev = String("Received ack");
       writeToSDCard(event_ev);
+      UPDATE_CONFIG = false;
       if (LMIC.dataLen) {
         Serial.print(F("Received "));
         Serial.print(LMIC.dataLen);
@@ -177,7 +183,7 @@ void onEvent (ev_t ev) {
         Serial.println();
         process_received_downlink();
       }
-      TX_COMPLETED = true;
+      TX_COMPLETED = true;  
       break;
     case EV_LOST_TSYNC:
       Serial.println(F("EV_LOST_TSYNC"));
@@ -240,7 +246,6 @@ void onEvent (ev_t ev) {
   }
 }
 
-
 void update_TX_INTERVAL(unsigned long dutycycle){
   Serial.print("Current duty cycle is: ");
   Serial.println(TX_INTERVAL);
@@ -293,12 +298,13 @@ void update_no_of_readings(unsigned int numb_readings){
   writeToSDCard(str_downlink);
 }
 
-
 void process_received_downlink(void) {
   /* Downlink Packet format:
   |Number of readings per measurement| Sampling Rate   |Sensor Mode    | Duty Cycle in seconds  |
   | 1 byte                           |    1 byte       |    2 bytes    |        2 bytes         |
   */
+  // set UPDATE_CONFIG to true
+  UPDATE_CONFIG = true;
   String str_downlink = String("Processing received downlink....");
   writeToSDCard(str_downlink);
   unsigned int downlink_payload_size = LMIC.dataLen;
@@ -310,7 +316,6 @@ void process_received_downlink(void) {
   switch(downlink_payload_size){
 
     case 1: case 2:
-
       for (int i = 0; i < downlink_payload_size; i++) {
         dutycycle =  (LMIC.frame[LMIC.dataBeg + i]) | ( dutycycle << 8*i);
       }
@@ -322,7 +327,6 @@ void process_received_downlink(void) {
       break;
 
     case 3:
-
       for (int i = 0; i < 2; i++) {
         dutycycle =  (LMIC.frame[LMIC.dataBeg + i]) | ( dutycycle << 8*i);
       }
@@ -341,7 +345,6 @@ void process_received_downlink(void) {
       break;
 
     case 5:
-
       for (int i = 0; i < 2; i++) {
         dutycycle =  (LMIC.frame[LMIC.dataBeg + i]) | ( dutycycle << 8*i);
       }
@@ -350,14 +353,12 @@ void process_received_downlink(void) {
       } else{
         Serial.println("Dutycycle is the same.");
       }
-
       sensorMode_ =  (LMIC.frame[LMIC.dataBeg + 2]) | ( sensorMode_ );
       if (sensorMode_!= 0 && sensorMode<=3 ){
         update_sensorMode(sensorMode_);
       } else{
         Serial.println("Sensor Mode is the same.");
       }
-
       sampling_rate =  (LMIC.frame[LMIC.dataBeg + 3]) | ( sampling_rate );
       sampling_rate =  (LMIC.frame[LMIC.dataBeg + 4]) | ( sampling_rate << 8);
       if (sampling_rate!= 0 ){
@@ -368,7 +369,6 @@ void process_received_downlink(void) {
       break;
 
     case 6:
-
       for (int i = 0; i < 2; i++) {
         dutycycle =  (LMIC.frame[LMIC.dataBeg + i]) | ( dutycycle << 8*i);
       }
@@ -377,14 +377,12 @@ void process_received_downlink(void) {
       } else{
         Serial.println("Dutycycle is the same.");
       }
-
       sensorMode_ =  (LMIC.frame[LMIC.dataBeg + 2]) | ( sensorMode_ );
       if (sensorMode_!= 0 && sensorMode<=3 ){
         update_sensorMode(sensorMode_);
       } else{
         Serial.println("Sensor Mode is the same.");
       }
-
       sampling_rate =  (LMIC.frame[LMIC.dataBeg + 3]) | ( sampling_rate );
       sampling_rate =  (LMIC.frame[LMIC.dataBeg + 4]) | ( sampling_rate << 8);
       if (sampling_rate!= 0 ){
@@ -392,7 +390,6 @@ void process_received_downlink(void) {
       } else{
         Serial.println("Sensor sampling rate is the same.");
       }
-
       numb_readings =  (LMIC.frame[LMIC.dataBeg + 5]) | ( numb_readings );
       if (numb_readings!= 0 && numb_readings<=20){
         update_no_of_readings(numb_readings);
@@ -407,67 +404,93 @@ uint16_t distance;
 // Measured Battery Level in mVolts
 float measuredvbat;
 uint16_t batlevel;
+unsigned int ERROR_FLAGS;
 
 void prepare_packet(void) {
 
-  /* LoraWAN packet format
-          | Error flags  | Battery Level | Ultrasonic reading  |
-          |   1 byte     |    2 bytes    |        2 bytes      |
-
-          |     Ultrasonic reading      |
-          |           2 bytes           |
-          |    high byte | low byte     |
-
-          |       Battery Level       |
-          |           2 bytes         |
-          |    high byte | low byte   |
-
-          |---------------------------------------------Error Flags  ------------------------------------------------------------|
-          |     bit 7    |     bit 6   |     bit 5    |     bit 4    |     bit 3    |     bit 2    |     bit 1    |     bit 0    |
-          |              |             |              |              |              |              |              | SD error flag|
-  */
-
   byte lowbyte, highbyte, lowbat, highbat;
-
-  // Maxbotix
-  distance = read_sensor_using_modes(sensorMode, sensor_sampling_rate, sensor_numberOfReadings);
-  Serial.print("Distance = ");
-  Serial.print(distance);
-  Serial.println(" mm");
-  String packet_data = String("Distance in mm is: ") + String(distance);
-  writeToSDCard(packet_data);
-
-  // Battery
-  measuredvbat = analogRead(VBATPIN); //Float
-  measuredvbat *= 2;    // we divided by 2, so multiply back
-  measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
-  measuredvbat /= 1024; // convert to voltage
-  Serial.print("VBat: " ); Serial.println(measuredvbat);
-  measuredvbat *= 1000; //make it milli volts to transmit
-  Serial.print("VBat in mVolts: " ); Serial.println(measuredvbat);
-  batlevel = measuredvbat; //Payload
-  packet_data = String("Battery Level in mVolts is: ") + String(batlevel);
-  writeToSDCard(packet_data);
+  String packet_data;
+  // Error
+  ERROR_FLAGS = pow(2,0)* SD_ERROR;
 
   // Formatting payload
-  lowbyte = lowByte(distance);
-  highbyte = highByte(distance);
-  lora_packet[0] = (unsigned char)lowbyte;
-  lora_packet[1] = (unsigned char)highbyte;
-  Serial.print("Distance = ");
-  Serial.print(distance);
-  Serial.println(" mm");
-  lowbat = lowByte(batlevel);
-  highbat = highByte(batlevel);
-  lora_packet[2] = (unsigned char)lowbat; //we're unsigned
-  lora_packet[3] = (unsigned char)highbat;
-  lora_packet[4] = (unsigned char)sensorMode;
-  packet_data = String("Sensor Mode is: ") + String(sensorMode);
-  writeToSDCard(packet_data);
-  lora_packet[5] = (unsigned char)SD_ERROR;
-  packet_data = String("SD Error flag is: ") + String(SD_ERROR);
-  writeToSDCard(packet_data);
+  if (UPDATE_CONFIG == true){
+    // Send Sensor Config via Uplink
+    /*
+    CFG update uplink Format:
+          | Error Flag  | Sensor Mode | Sensor Sampling Rate | Sensor Number of Readings |
+          |    255 (FF) |    1 byte   |      2 bytes         |        1 bytes            |
+    */
+    ERROR_FLAGS = 255;
+    cfg_packet[0] = (unsigned char)ERROR_FLAGS;
+    packet_data = String("CFG Update via Uplink");
+    writeToSDCard(packet_data);
+    byte lowduty = lowByte(TX_INTERVAL);
+    byte highduty = highByte(TX_INTERVAL);
+    cfg_packet[1] = (unsigned char)lowduty;
+    cfg_packet[2] = (unsigned char)highduty;
+    cfg_packet[3] = (unsigned char)sensorMode;
+    lowbyte = lowByte(sensor_sampling_rate);
+    highbyte = highByte(sensor_sampling_rate);
+    cfg_packet[4] = (unsigned char)lowbyte;
+    cfg_packet[5] = (unsigned char)highbyte;
+    cfg_packet[6] = (unsigned char)sensor_numberOfReadings;
+  }
+  else {
+    // Regular Uplink contains: Sensor Error Flags followed by Battery and then Sensor Data
 
+    /* LoraWAN uplink packet format
+            | Error flags  | Battery Level | Ultrasonic reading  |
+            |   1 byte     |    2 bytes    |        2 bytes      |
+
+            |     Ultrasonic reading      |
+            |           2 bytes           |
+            |    high byte | low byte     |
+
+            |       Battery Level       |
+            |           2 bytes         |
+            |    high byte | low byte   |
+
+            |--------------------------------------------- Error Flags  -----------------------------------------------------------------------------------------------------------|
+            |     bit 7                                                    |     bit 6   |     bit 5    |     bit 4    |     bit 3    |     bit 2    |     bit 1    |     bit 0    |
+            |     Used only for CFG update (all other bits are high)       |             |              |              |              |              |              | SD error flag|
+    */
+
+
+
+    // Maxbotix
+    distance = read_sensor_using_modes(sensorMode, sensor_sampling_rate, sensor_numberOfReadings);
+    Serial.print("Distance = ");
+    Serial.print(distance);
+    Serial.println(" mm");
+    packet_data = String("Distance in mm is: ") + String(distance);
+    writeToSDCard(packet_data);
+
+    // Battery
+    measuredvbat = analogRead(VBATPIN); //Float
+    measuredvbat *= 2;    // we divided by 2, so multiply back
+    measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
+    measuredvbat /= 1024; // convert to voltage
+    Serial.print("VBat: " ); Serial.println(measuredvbat);
+    measuredvbat *= 1000; //make it milli volts to transmit
+    Serial.print("VBat in mVolts: " ); Serial.println(measuredvbat);
+    batlevel = measuredvbat; //Payload
+    packet_data = String("Battery Level in mVolts is: ") + String(batlevel);
+    writeToSDCard(packet_data);
+
+    // Payload
+    lowbat = lowByte(batlevel);
+    highbat = highByte(batlevel);
+    lora_packet[0] = (unsigned char)ERROR_FLAGS;
+    packet_data = String("SD Error flag is: ") + String(SD_ERROR);
+    writeToSDCard(packet_data);
+    lora_packet[1] = (unsigned char)lowbat; //we're unsigned
+    lora_packet[2] = (unsigned char)highbat;
+    lowbyte = lowByte(distance);
+    highbyte = highByte(distance);
+    lora_packet[3] = (unsigned char)lowbyte;
+    lora_packet[4] = (unsigned char)highbyte;
+  }
 }
 
 void lorawan_runloop_once() {

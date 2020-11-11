@@ -38,25 +38,21 @@ Here below is a list of parameters that can be changed during the run-time of th
 This library uses the [Arduino-lmic](https://github.com/mcci-catena/arduino-lmic) library to handle the LoRa communication. The Things Network has a LoRaWAN [compliance](https://www.thethingsnetwork.org/docs/lorawan/duty-cycle.html). This means every radio device must be compliant with the regulated duty cycle limits. To program the node to stay within the limits, an [air-time calculator](https://avbentem.github.io/airtime-calculator/ttn/us915) can be used.
 
 ### Uplink Packet Format
+
 | Error flags  | Battery Level | Ultrasonic reading  |
 |--------------|---------------|---------------------|
 |   1 byte     |    2 bytes    |        2 bytes      |
 
-|     Ultrasonic reading      |
-|-----------------------------|
-|           2 bytes           |
-|    high byte | low byte     |
-
-|       Battery Level       |
-|---------------------------|
-|           2 bytes         |
-|    high byte | low byte   |
+**Cfg packet format:**
+| Error flags  | Sensor Mode | Sensor Sampling Rate | Sensor Number of Readings |
+|--------------|---------------|---------------------|---------------------|
+|   1 byte : 255 or 0xFF     |    1 byte   |      2 bytes         |        1 bytes            |
 
 **Error Flags(empty flags are for future use):**
 
 |     bit 7    |     bit 6   |     bit 5    |     bit 4    |     bit 3    |     bit 2    |     bit 1    |     bit 0    |
 |   ----       |   ----      |     ----     |     ---      |      ---     |      ---     |       ---    |      ---     |
-|              |             |              |              |              |              |              | SD error flag|
+|      Used only for CFG update (all other bits are high)         |             |              |              |              |              |              | SD error flag|
 
 
 ### Downlink Packet Format
@@ -117,34 +113,7 @@ Multiple sensor parameters can be changed via downlink and below are such exampl
 **Note:** the above downlink payload formats must be implemented with caution, else there is a danger of sleeping the MCU for unwanted periods of time or indefinitely or even a possible crash!  
 
 ### TTN Payload Decoder
-
-```
-// decoder variable contains battery and distance
-function Decoder(b, port) {
-
-  var decoded = {};
-
-  // distance
-  var distance = b[1]<<8|b[0];
-  decoded.distance = distance;
-
-  // battery
-  var battery = b[3]<<8|b[2];       // battery in centi Volts
-  battery = battery/1000;    // Convert to Volts
-
-  decoded.battery = battery;
-
-  // Sensor mode
-  var mode = b[4];
-  decoded.mode = mode;
-
-  // SD Card Error flag
-  var sdError = b[5];
-  decoded.sdError = sdError;
-
-  return decoded;
-}
-```
+TTN Payload decoder format can be found in the `ttnPayloadDecoder.js` file
 ### TTN Credentials
 The TTN Credentials should be entered into the `ttncredentials.h` file from the TTN console.
 ## Ultrasonic Sensor

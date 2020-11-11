@@ -14,16 +14,20 @@ function Decoder(b, port) {
   if (errorFlag == 255) {
     // Payload is Sensor cfg update
 
+    // Duty cycle
+    var dutyCycle = (b[2]<< 8) | b[1];
+    decoded.dutyCycle = dutyCycle;
+
     // Sensor Mode
-    var sensorMode = b[1];
+    var sensorMode = b[3];
     decoded.sensorMode = sensorMode;
 
     // Sensor Sampling Rate
-    var sensorSamplingRate = (b[3] << 8) | b[2];
+    var sensorSamplingRate = (b[5] << 8) | b[4];
     decoded.sensorSamplingRate = sensorSamplingRate;
 
     // Sensor number of readings per measurement
-    var sensorNumberOfReadings = b[4];
+    var sensorNumberOfReadings = b[6];
     decoded.sensorNumberOfReadings = sensorNumberOfReadings;
 
   } else {

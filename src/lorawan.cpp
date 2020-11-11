@@ -12,7 +12,7 @@ static osjob_t sendjob;
 
 unsigned int TX_INTERVAL;
 
-
+unsigned char cfg_packet[7];
 unsigned char lora_packet[5];
 bool TX_COMPLETED = false;        // Set to false on start and after sleep; is set to true when an uplink is successful
 bool UPDATE_CONFIG = true;        // Set to true at start and when there is a change in sensor cfg; used to send sensor cfg via uplink
@@ -61,12 +61,16 @@ void do_send(osjob_t* j) {
     writeToSDCard(do_sendstr1);
   } else {
     // Prepare upstream data transmission at the next possible time.
-    int lmic_tx_retVAL = LMIC_setTxData2(1, lora_packet, sizeof(lora_packet), 0);
+    if (UPDATE_CONFIG == true){
+      int lmic_tx_retVAL = LMIC_setTxData2(1, cfg_packet, sizeof(cfg_packet), 0);
+    } else {
+      int lmic_tx_retVAL = LMIC_setTxData2(1, lora_packet, sizeof(lora_packet), 0);
+    }
     String do_sendstr;
     if (lmic_tx_retVAL == 0) {
       Serial.println(F("Packet queued and lmic_tx_retVAL is 0."));
     } else {
-      do_sendstr = String ("Something is wrong ") + String("Error number: ") + String(lmic_tx_retVAL);
+      do_sendstr = String ("Something is wrong: ") + String("Error number: ") + String(lmic_tx_retVAL);
       Serial.println(do_sendstr);
       writeToSDCard(do_sendstr);
     }
@@ -458,15 +462,19 @@ void prepare_packet(void) {
           |    255 (FF) |    1 byte   |      2 bytes         |        1 bytes            |
     */
     ERROR_FLAGS = 255;
-    lora_packet[0] = (unsigned char)ERROR_FLAGS;
+    cfg_packet[0] = (unsigned char)ERROR_FLAGS;
     packet_data = String("CFG Update via Uplink");
     writeToSDCard(packet_data);
-    lora_packet[1] = (unsigned char)sensorMode;
+    byte lowduty = lowByte(TX_INTERVAL);
+    byte highduty = highByte(TX_INTERVAL);
+    cfg_packet[1] = (unsigned char)lowbyte;
+    cfg_packet[2] = (unsigned char)highbyte;
+    cfg_packet[3] = (unsigned char)sensorMode;
     lowbyte = lowByte(sensor_sampling_rate);
     highbyte = highByte(sensor_sampling_rate);
-    lora_packet[2] = (unsigned char)lowbyte;
-    lora_packet[3] = (unsigned char)highbyte;
-    lora_packet[4] = (unsigned char)sensor_numberOfReadings;
+    cfg_packet[4] = (unsigned char)lowbyte;
+    cfg_packet[5] = (unsigned char)highbyte;
+    cfg_packet[6] = (unsigned char)sensor_numberOfReadings;
   }
   else {
     // Regular Uplink contains: Sensor Error Flags followed by Battery and then Sensor Data

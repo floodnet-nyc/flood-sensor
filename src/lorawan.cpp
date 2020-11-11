@@ -171,6 +171,7 @@ void onEvent (ev_t ev) {
         Serial.println(F("Received ack"));
       event_ev = String("Received ack");
       writeToSDCard(event_ev);
+      UPDATE_CONFIG = false;
       if (LMIC.dataLen) {
         Serial.print(F("Received "));
         Serial.print(LMIC.dataLen);
@@ -184,8 +185,7 @@ void onEvent (ev_t ev) {
         Serial.println();
         process_received_downlink();
       }
-      TX_COMPLETED = true;
-      UPDATE_CONFIG = false;
+      TX_COMPLETED = true;  
       break;
     case EV_LOST_TSYNC:
       Serial.println(F("EV_LOST_TSYNC"));

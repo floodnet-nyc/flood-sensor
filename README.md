@@ -1,5 +1,5 @@
 # Flood Sense Sensor Library
-This repository contains the source code for the Floodsense sensor which uses ultrasonic sensor technology to detect floods and send the data over LoRa using LoRaWAN protocol.
+This repository contains the source code for the Floodsense sensor which uses ultrasonic sensor technology to detect floods and send the data over LoRa using LoRaWAN protocol. [Here](https://github.com/floodsense/sensor_experiments) is another repo containing sensor experiments, analysis and additional support related to this library.
 
 **Table of Contents:**
 

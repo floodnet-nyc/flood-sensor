@@ -61,10 +61,11 @@ void do_send(osjob_t* j) {
     writeToSDCard(do_sendstr1);
   } else {
     // Prepare upstream data transmission at the next possible time.
+    int lmic_tx_retVAL;
     if (UPDATE_CONFIG == true){
-      int lmic_tx_retVAL = LMIC_setTxData2(1, cfg_packet, sizeof(cfg_packet), 0);
+      lmic_tx_retVAL = LMIC_setTxData2(1, cfg_packet, sizeof(cfg_packet), 0);
     } else {
-      int lmic_tx_retVAL = LMIC_setTxData2(1, lora_packet, sizeof(lora_packet), 0);
+      lmic_tx_retVAL = LMIC_setTxData2(1, lora_packet, sizeof(lora_packet), 0);
     }
     String do_sendstr;
     if (lmic_tx_retVAL == 0) {

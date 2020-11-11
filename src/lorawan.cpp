@@ -9,14 +9,12 @@
 
 static osjob_t sendjob;
 
-
 unsigned int TX_INTERVAL;
 
 unsigned char cfg_packet[7];
 unsigned char lora_packet[5];
 bool TX_COMPLETED = false;        // Set to false on start and after sleep; is set to true when an uplink is successful
 bool UPDATE_CONFIG = true;        // Set to true at start and when there is a change in sensor cfg; used to send sensor cfg via uplink
-
 
 void os_getArtEui (u1_t* buf) {
   memcpy_P(buf, APPEUI, 8);
@@ -248,7 +246,6 @@ void onEvent (ev_t ev) {
   }
 }
 
-
 void update_TX_INTERVAL(unsigned long dutycycle){
   Serial.print("Current duty cycle is: ");
   Serial.println(TX_INTERVAL);
@@ -300,7 +297,6 @@ void update_no_of_readings(unsigned int numb_readings){
   str_downlink = String("Updated number of readings per measurement: ") + String(sensor_numberOfReadings);
   writeToSDCard(str_downlink);
 }
-
 
 void process_received_downlink(void) {
   /* Downlink Packet format:

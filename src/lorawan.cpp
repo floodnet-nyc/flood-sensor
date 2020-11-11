@@ -412,44 +412,7 @@ unsigned int ERROR_FLAGS;
 
 void prepare_packet(void) {
 
-  /* LoraWAN uplink packet format
-          | Error flags  | Battery Level | Ultrasonic reading  |
-          |   1 byte     |    2 bytes    |        2 bytes      |
-
-          |     Ultrasonic reading      |
-          |           2 bytes           |
-          |    high byte | low byte     |
-
-          |       Battery Level       |
-          |           2 bytes         |
-          |    high byte | low byte   |
-
-          |--------------------------------------------- Error Flags  -----------------------------------------------------------------------------------------------------------|
-          |     bit 7                                                    |     bit 6   |     bit 5    |     bit 4    |     bit 3    |     bit 2    |     bit 1    |     bit 0    |
-          |     Used only for CFG update (all other bits are high)       |             |              |              |              |              |              | SD error flag|
-  */
-
   byte lowbyte, highbyte, lowbat, highbat;
-
-  // Maxbotix
-  distance = read_sensor_using_modes(sensorMode, sensor_sampling_rate, sensor_numberOfReadings);
-  Serial.print("Distance = ");
-  Serial.print(distance);
-  Serial.println(" mm");
-  String packet_data = String("Distance in mm is: ") + String(distance);
-  writeToSDCard(packet_data);
-
-  // Battery
-  measuredvbat = analogRead(VBATPIN); //Float
-  measuredvbat *= 2;    // we divided by 2, so multiply back
-  measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
-  measuredvbat /= 1024; // convert to voltage
-  Serial.print("VBat: " ); Serial.println(measuredvbat);
-  measuredvbat *= 1000; //make it milli volts to transmit
-  Serial.print("VBat in mVolts: " ); Serial.println(measuredvbat);
-  batlevel = measuredvbat; //Payload
-  packet_data = String("Battery Level in mVolts is: ") + String(batlevel);
-  writeToSDCard(packet_data);
 
   // Error
   ERROR_FLAGS = pow(2,0)* SD_ERROR;
@@ -468,8 +431,8 @@ void prepare_packet(void) {
     writeToSDCard(packet_data);
     byte lowduty = lowByte(TX_INTERVAL);
     byte highduty = highByte(TX_INTERVAL);
-    cfg_packet[1] = (unsigned char)lowbyte;
-    cfg_packet[2] = (unsigned char)highbyte;
+    cfg_packet[1] = (unsigned char)lowduty;
+    cfg_packet[2] = (unsigned char)highduty;
     cfg_packet[3] = (unsigned char)sensorMode;
     lowbyte = lowByte(sensor_sampling_rate);
     highbyte = highByte(sensor_sampling_rate);
@@ -479,6 +442,47 @@ void prepare_packet(void) {
   }
   else {
     // Regular Uplink contains: Sensor Error Flags followed by Battery and then Sensor Data
+
+    /* LoraWAN uplink packet format
+            | Error flags  | Battery Level | Ultrasonic reading  |
+            |   1 byte     |    2 bytes    |        2 bytes      |
+
+            |     Ultrasonic reading      |
+            |           2 bytes           |
+            |    high byte | low byte     |
+
+            |       Battery Level       |
+            |           2 bytes         |
+            |    high byte | low byte   |
+
+            |--------------------------------------------- Error Flags  -----------------------------------------------------------------------------------------------------------|
+            |     bit 7                                                    |     bit 6   |     bit 5    |     bit 4    |     bit 3    |     bit 2    |     bit 1    |     bit 0    |
+            |     Used only for CFG update (all other bits are high)       |             |              |              |              |              |              | SD error flag|
+    */
+
+
+
+    // Maxbotix
+    distance = read_sensor_using_modes(sensorMode, sensor_sampling_rate, sensor_numberOfReadings);
+    Serial.print("Distance = ");
+    Serial.print(distance);
+    Serial.println(" mm");
+    String packet_data = String("Distance in mm is: ") + String(distance);
+    writeToSDCard(packet_data);
+
+    // Battery
+    measuredvbat = analogRead(VBATPIN); //Float
+    measuredvbat *= 2;    // we divided by 2, so multiply back
+    measuredvbat *= 3.3;  // Multiply by 3.3V, our reference voltage
+    measuredvbat /= 1024; // convert to voltage
+    Serial.print("VBat: " ); Serial.println(measuredvbat);
+    measuredvbat *= 1000; //make it milli volts to transmit
+    Serial.print("VBat in mVolts: " ); Serial.println(measuredvbat);
+    batlevel = measuredvbat; //Payload
+    packet_data = String("Battery Level in mVolts is: ") + String(batlevel);
+    writeToSDCard(packet_data);
+
+    // Payload
     lowbat = lowByte(batlevel);
     highbat = highByte(batlevel);
     lora_packet[0] = (unsigned char)ERROR_FLAGS;

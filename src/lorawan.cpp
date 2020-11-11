@@ -413,7 +413,7 @@ unsigned int ERROR_FLAGS;
 void prepare_packet(void) {
 
   byte lowbyte, highbyte, lowbat, highbat;
-
+  String packet_data;
   // Error
   ERROR_FLAGS = pow(2,0)* SD_ERROR;
 
@@ -467,7 +467,7 @@ void prepare_packet(void) {
     Serial.print("Distance = ");
     Serial.print(distance);
     Serial.println(" mm");
-    String packet_data = String("Distance in mm is: ") + String(distance);
+    packet_data = String("Distance in mm is: ") + String(distance);
     writeToSDCard(packet_data);
 
     // Battery

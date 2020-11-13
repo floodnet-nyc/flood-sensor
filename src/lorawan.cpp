@@ -451,9 +451,9 @@ void prepare_packet(void) {
             |           2 bytes         |
             |    high byte | low byte   |
 
-            |--------------------------------------------- Error Flags  -----------------------------------------------------------------------------------------------------------|
-            |     bit 7                                                    |     bit 6   |     bit 5    |     bit 4    |     bit 3    |     bit 2    |     bit 1    |     bit 0    |
-            |     Used only for CFG update (all other bits are high)       |             |              |              |              |              |              | SD error flag|
+            |------------------------------------------------------------ Error Flags  ----------------------------------------------------------------|
+            |     bit 7                                                |  bit 6   |  bit 5  |  bit 4  |  bit 3  |  bit 2  |  bit 1  |      bit 0       |
+            |     Used only for CFG update (all other bits are high)   |          |         |         |         |         |         |   SD error flag  |
     */
 
 

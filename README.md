@@ -140,4 +140,4 @@ The number of readings for these averaging methods can be changed via variable `
 Single read from the sensor is as fast as 150 to 250 milliseconds and five of such measurements would be sensed over a period of 0.75 - 1.5 seconds. These measurements can be spread out over a larger interval by changing the variable `sensor_sampling_rate`, which enables to use averaging methods with varying rates. Each measurement corresponding to a sensor mode is followed by an interval of `sensor_sampling_rate` milliseconds.
 
 ## SD Card logging and RTC
-Every lora event, sensor states and measurements are locally logged onto the SD Card using the [SDFat](https://github.com/greiman/SdFat) library. The sensor sets the SD Card error flag high if the local logging is failed. A Real-time Clock is used to create timestamps for these local logs.
+Every lora event, sensor states and measurements are locally logged onto the SD Card using the [SDFat](https://github.com/jbeynon/sdfatlib) library. The sensor sets the SD Card error flag high if the local logging is failed. A Real-time Clock is used to create timestamps for these local logs.

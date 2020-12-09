@@ -73,7 +73,7 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sa
       // Mode
       distance = mode(readings_arr, n, sensor_numberOfReadings);
       Serial.print("Mode is: "); Serial.println(distance);
-    deafult:
+    default:
       // Single Pulse-In single reading
       distance = sensor_singleread();
       Serial.print("Default single reading is: "); Serial.println(distance);

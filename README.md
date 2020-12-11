@@ -29,6 +29,25 @@ One of the goals of the Flood Sense project is to develop a flood sensor that ov
 
 ## Using this Library
 
+### Installation
+Method 1:
+1. Find Arduino libraries folder
+2. Clone the library folder into the Arduino>libraries
+
+[Method 2:](https://www.arduino.cc/en/guide/libraries)
+1. In Arduino IDE, go to: Sketch> Include Library> Add .ZIP Library..
+
+  <img src="img/add-library.png" width="640">
+
+2. Select the downloaded ZIP folder of this library from your computer
+
+Other libraries needed:
+1. Arduino-Lmic library: https://github.com/mcci-catena/arduino-lmic
+2. SDFat library: https://github.com/jbeynon/sdfatlib
+3. Adafruit's sleepydog library: https://github.com/adafruit/Adafruit_SleepyDog
+4. Adafruit's RTClib: https://github.com/adafruit/RTClib
+
+
 ### Sensor Config file
 The Sensor Config file, `sensorcfg.h` contains important pin definitions, flags and parameters that can be changed during runtime. However some parameters are fixed for a given architecture and shouldn't be modified during runtime such as Pins, Card and Chip Selects etc.
 
@@ -46,6 +65,7 @@ This library uses the [Arduino-lmic](https://github.com/mcci-catena/arduino-lmic
 |   1 byte     |    2 bytes    |        2 bytes      |
 
 **Cfg packet format:**
+
 | Error flags  | Sensor Mode | Sensor Sampling Rate | Sensor Number of Readings |
 |--------------|---------------|---------------------|---------------------|
 |   1 byte : 255 or 0xFF     |    1 byte   |      2 bytes         |        1 bytes            |

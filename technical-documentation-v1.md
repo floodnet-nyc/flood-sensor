@@ -35,6 +35,8 @@ Of the myriad impacts that are predicted to accompany climate change, flooding i
 
 One of the goals of the Flood Sense project is to develop a flood sensor that overcomes common sensor challenges, as well as the digital infrastructure necessary to log, process, and present the data in combination with other publicly available information, such as rainfall data, 311 flooding complaints, and social media feeds. This document specifies the sensor design, building instructions, initial deployment and schematics for technology transfer of the sensor development for the FloodSense project at 370 Jay Street, 13th Floor.
 
+<img src="img/mountedv2.jpg" width="480" >
+
 ## Hardware
 The hardware section specifies the sensor design, build instructions, explanation of deployment scenarios and essential information regarding the sensor operation.
 
@@ -42,7 +44,7 @@ The hardware section specifies the sensor design, build instructions, explanatio
 The sensor uses a high-end ultrasonic range sensor, the MB7389 from Maxbotix, which provides range detection from 30-500 cm with an accuracy of ±3 mm. The sensor can be pole or wall mounted and is battery powered with solar energy harvesting for extended operation. Connectivity is provided via a LoRaWAN and the sensor will typically upload data every 5 minutes. Further the sensor uses averaging methods to reduce noise. These sensor configurations can be modified in real-time via downlinks using LoRaWAN.
 
 ### Sensor Design
-The sensor is of the dimensions 5.1" x 3.1" x 2.8". Using metal straight brace brackets the sensor can be mounted onto poles, walls and additional mounting hardware depending on the scenario. This iteration of the sensor consists of a low-power microcontroller with integrated LoRaWAN radio, a 2200 mAh battery, a solar controller and 1.2W solar panel, and a Maxbotix industrial grade range sensor (see Figure 2), and has a price point around \$240 for materials. For ease of deployment in diverse locations, the sensor does not rely on existing urban power and connectivity infrastructure. A complete list of BOM with suppliers is mentioned below.
+The sensor is of the dimensions 5.1" x 3.1" x 2.8". Using metal straight brace brackets the sensor can be mounted onto poles, walls and additional mounting hardware depending on the scenario. This iteration of the sensor consists of a low-power microcontroller with integrated LoRaWAN radio, a 2200 mAh battery, a solar controller and 1.2W solar panel, and a Maxbotix industrial grade range sensor (see Figure 2), and has a price point around $240 for materials. For ease of deployment in diverse locations, the sensor does not rely on existing urban power and connectivity infrastructure. A complete list of BOM with suppliers is mentioned below.
 
 
 | Item                                                        | Cost per unit|
@@ -139,7 +141,7 @@ Further, solder the solar panel onto the solar battery charger and stick the sol
 Using an aluminum corner bracket, the solar panel is mounted at an angle for optimal amount of solar radiation.
 
 <img src="img\panel-mounted.jpg" width="480" >
-<br /> <br />
+<br />
 
 Now we are ready for battery plug in!
 
@@ -165,7 +167,7 @@ Download the FloodSense Sensor Library from [here](https://github.com/floodsense
 1. In Arduino IDE, go to: Sketch> Include Library> Add .ZIP Library..
 
   <img src="img/add-library.png" width="640">
-<br /> <br />
+<br />
 2. Select the downloaded ZIP folder of this library from your computer
 
 #### Additional Libraries
@@ -213,8 +215,43 @@ This library uses the [Arduino-lmic](https://github.com/mcci-catena/arduino-lmic
 |----------------------|--------------|---------------|  --------------------------------- |
 | 2 bytes              |   1 byte     |    2 bytes     |          1 byte                    |
 
+##### LoRaWAN Timing
+Scheduling uplinks using LoRaWAN is time critical. The lmic library which manages and handles this LoRaWAN communication has different modes, refer to [lmic-documentation](https://github.com/mcci-catena/arduino-lmic/blob/master/doc/LMIC-v3.3.0.pdf) for more details. All the application code in run is so-called jobs which are excecuted on the main thread by the run-time scheduler function `os_runloop()`. An additional per job control struct, `osjob_t` identifies and stores the context information. **Jobs must not be long running in order for seamless operation**.
+
+The function, `lorawan_runloop_once()` defined in the file `lorawan.cpp` contains the `os_runloop()`.
+```
+void lorawan_runloop_once() {
+  os_runloop_once();
+  if ( !os_queryTimeCriticalJobs(ms2osticksRound((TX_INTERVAL * 1000) - 1000 )) && TX_COMPLETED == true) {
+    TX_COMPLETED = false;
+    // This means the previous TX is complete and also no Critical Jobs pending in LMIC
+    Serial.println("About to go to deep sleep and no critical jobs");
+    gotodeepsleepnow(TX_INTERVAL);
+    Serial.println("Im awake and TX_COMPLETED is set to false");
+    // Prepare a packet in relaxed setiing
+    prepare_packet();
+    os_setCallback(&sendjob, do_send);
+  }
+}
+```
+
+The function, `os_queryTimeCriticalJobs()` checks for any critical jobs before sleep. This function checks for any uncompleted jobs before moving onto other tasks and is necessary for smooth operation since the MCU is single thread. Once that all the critical jobs have been completed, the sensor goes to deep-sleep to save power.
+
+The function, `prepare_packet()` prepares uplink packet that is needed to be transmitted using LoRa.
+
+And once when the packet is ready, in order to send an uplink, a job is scheduled using the `os_setCallback()` function. This function prepares an immediately runnable job and can be called at any time, including from interrupt
+handler contexts.
+
+##### Sleep and Low Power
+
+The function `gotodeepsleepnow(unsigned int TX_INTERVAL)` puts the microcontroller to sleep takes in unsigned integer as an argument, which controls the duty cycle of the sensor.
+
 #### Changing Sensor Configuration via Downlink
-To change the duty cycle and sensor parameters via downlink the above downlink packet format must be used. For this use case the maximum packet size is 6 bytes and can be varied. The parameters to be changed should be a non-zero entries and the rest can be left as zeroes if no changes are needed. The following sections describe changing duty cycle and sensor configurations with some examples.
+To change the duty cycle and sensor parameters via downlink the above downlink packet format must be used.
+
+The function `process_received_downlink()` processes the received downlink via LoRa. The sensor can only receive a downlink in the RX window after a successful uplink.
+
+For this use case the maximum packet size is 6 bytes and can be varied. The parameters to be changed should be a non-zero entries and the rest can be left as zeroes if no changes are needed. The following sections describe changing duty cycle and sensor configurations with some examples.
 
 ##### Changing dutycycle
 Uplink frequency at the end node is determined by the TX_INTERVAL. This TX_INTERVAL is used as a variable in this library to add the functionality of varying duty cycle. Few examples of changing duty cycle by updating `TX_INTERVAL` are mentioned below:

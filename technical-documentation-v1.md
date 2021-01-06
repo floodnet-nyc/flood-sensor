@@ -151,7 +151,7 @@ Now we are ready for battery plug in!
 **Connections:**
 
 
-<img src="img/fritzing-circuit.png" width="1080" >
+<img src="img/fritzingcircuit.png" width="1080" >
 <br />
 
 

@@ -13,19 +13,19 @@
       * [FloodSense Sensor Library](#floodsense-sensor-library)
       * [Additional Libraries](#additional-libraries)
     * [Using FloodSense Library](#using-floodSense-library)
-      * [Sensor Configuration file](#sensor-configuration-file)
-      * [LoRa](#lora)
-      * [Changing Sensor Configuration via Downlink](#changing-sensor-configuration-via-downlink)
-        * [Changing dutycycle](#changing-dutycycle)
-        * [Changing sensor mode](#changing-sensor-mode)
-        * [Changing sampling rate](#changing-sampling-rate)
-        * [Changing number of sensor readings per measurement](#changing-number-of-sensor-readings-per-measurement)
-        * [Changing multiple parameters via single downlink](#changing-multiple-parameters-via-single-downlink)
-      * [The Things Network](#the-things-network)
-        * [The Things Network Payload Decoder](#the-things-network-payload-decoder)
-        * [The Things Network Credentials](#the-things-network-credentials)
-      * [Ultrasonic Sensor modes](#ultrasonic-sensor-modes)
-      * [SD Card logging and RTC](#sd-card-logging-and-rtc)
+    * [Sensor Configuration file](#sensor-configuration-file)
+    * [LoRa](#lora)
+    * [Changing Sensor Configuration via Downlink](#changing-sensor-configuration-via-downlink)
+      * [Changing dutycycle](#changing-dutycycle)
+      * [Changing sensor mode](#changing-sensor-mode)
+      * [Changing sampling rate](#changing-sampling-rate)
+      * [Changing number of sensor readings per measurement](#changing-number-of-sensor-readings-per-measurement)
+      * [Changing multiple parameters via single downlink](#changing-multiple-parameters-via-single-downlink)
+    * [The Things Network](#the-things-network)
+      * [The Things Network Payload Decoder](#the-things-network-payload-decoder)
+      * [The Things Network Credentials](#the-things-network-credentials)
+    * [Ultrasonic Sensor modes](#ultrasonic-sensor-modes)
+    * [SD Card logging and RTC](#sd-card-logging-and-rtc)
 
 
 
@@ -178,6 +178,30 @@ The following libraries are also required to be installed:
 4. Adafruit's RTClib: https://github.com/adafruit/RTClib
 
 ### Using FloodSense Library
+The following is an example from the examples folder, which demonstrates how this library functionality can be used only with few lines of code:
+
+```cpp
+
+#include <Floodsense_sensor.h>  
+
+void setup() {
+  delay(5000);
+  Serial.begin(9600);
+  Serial.println("Starting");
+
+  setup_maxbotix(2, 150, 5);  // sensor mode 2(Median), 150ms sampling rate (time between readings), 5 readings per measurement
+  setup_featherWing();        // set up SD card and RTC. Sets date and time everytime compiled.
+  lmicsetup(300);             // uplink frequency 300 seconds - controls duty cycle
+}
+
+void loop() {
+  lorawan_runloop_once();
+}
+```
+
+The main loop contains a single function `lorawan_runloop_once()` which runs all the time handling LoRa, Low Power Sleep, Sensors and everything else and is further explained in the section [Lmic library and LoRaWAN Timing](#lmic-library-and-lorawan-timing).
+
+The `void setup()` sets up the sensor's serial communication(used for debugging), Ultrasonic sensor(`setup_maxbotix()` function), FeatherWing (`setup_featherWing()` function) and finally lmic library handles the LoRaWAN and is setup using `lmicsetup(usigned int packet_interval)` function.
 
 #### Sensor Configuration file
 The Sensor Config file, `sensorcfg.h` contains important pin definitions, flags and parameters that can be changed during runtime. However some parameters are fixed for a given architecture and shouldn't be modified during runtime such as Pins, Card and Chip Selects etc.
@@ -186,13 +210,13 @@ Here below is a list of parameters that can be changed during the run-time of th
 - Duty Cycle
 - Ultrasonic Sensing Modes
 
-#### LoRa
+### LoRa
 
 This library uses the [Arduino-lmic](https://github.com/mcci-catena/arduino-lmic) library to handle the LoRa communication. The Things Network has a LoRaWAN [compliance](https://www.thethingsnetwork.org/docs/lorawan/duty-cycle.html). This means every radio device must be compliant with the regulated duty cycle limits. To program the node to stay within the limits, an [air-time calculator](https://avbentem.github.io/airtime-calculator/ttn/us915) can be used.
 
 The LoRa communication consists of uplinks and downlinks. This sensor uses uplinks to update the sensor data and also to send sensor configuration packets which is useful to monitor the current cfg of the sensor remotely. The downlinks generated from the back-end which enables to change the sensor cfg remotely.
 
-##### Uplink Packet Format
+#### Uplink Packet Format
 
 | Error flags  | Battery Level | Ultrasonic reading  |
 |--------------|---------------|---------------------|
@@ -211,13 +235,39 @@ The LoRa communication consists of uplinks and downlinks. This sensor uses uplin
 |      Used only for CFG update (all other bits are high)         |             |              |              |              |              |              | SD error flag|
 
 
-##### Downlink Packet Format
+#### Downlink Packet Format
 
 |Duty Cycle in seconds | Sensor Mode  |  Sampling Rate| Number of readings per measurement |
 |----------------------|--------------|---------------|  --------------------------------- |
 | 2 bytes              |   1 byte     |    2 bytes     |          1 byte                    |
 
-##### LoRaWAN Timing
+#### Lmic library and LoRaWAN Timing
+The lmic library can be setup using the `lmicsetup(usigned int packet_interval)` function. The following is the code block for the same function which explains the lmic configuration:
+```cpp
+void lmicsetup( unsigned int packet_interval = 300) {       //Future setup variables
+  Serial.println(F("Setting up LoraWAN..."));
+
+  digitalWrite(13, HIGH);
+  // LMIC function to initialize the run-time environment
+  os_init();    
+  // Reset the MAC state. Session and pending data transfers will be discarded.                      
+  LMIC_reset();                       
+  //Setting a high clock error causes the RX windows to be opened earlier than it otherwise would be. This causes more power to be consumed.
+  // LMIC_setClockError(MAX_CLOCK_ERROR * 1 / 100);    
+  // Disable link check validation (automatically enabled).
+  LMIC_setLinkCheckMode(0);       // Link check mode is enabled by default and is used to periodicall verify network connectivity.  
+  LMIC_setDrTxpow(DR_SF7, 14);    // Data rate spreading factor 7 is selected. Lower the spreading factor faster the transmit. This leads to longer battery life and less gateway utilization.
+  LMIC_selectSubBand(1);          // Saves join time in the US, overridden when working over other regions
+  digitalWrite(13, LOW);
+  Serial.println("Setup Ready!");
+  TX_INTERVAL = packet_interval;    // Controls the duty cycle
+  // An initial start job (sending automatically starts OTAA too)
+  Serial.println("Starting first job in setup");
+  prepare_packet();
+  do_send(&sendjob);
+}
+```
+
 Scheduling uplinks using LoRaWAN is time critical. The lmic library which manages and handles this LoRaWAN communication has different modes, refer to [lmic-documentation](https://github.com/mcci-catena/arduino-lmic/blob/master/doc/LMIC-v3.3.0.pdf) for more details. All the application code in run is so-called jobs which are excecuted on the main thread by the run-time scheduler function `os_runloop()`. An additional per job control struct, `osjob_t` identifies and stores the context information. **Jobs must not be long running in order for seamless operation**.
 
 The function, `lorawan_runloop_once()` defined in the file `lorawan.cpp` contains the `os_runloop()`.
@@ -239,23 +289,29 @@ void lorawan_runloop_once() {
 
 The function, `os_queryTimeCriticalJobs()` checks for any critical jobs before sleep. This function checks for any uncompleted jobs before moving onto other tasks and is necessary for smooth operation since the MCU is single thread. Once that all the critical jobs have been completed, the sensor goes to deep-sleep to save power.
 
+<img src="img/lora-timing.png" width="720">
+<br />
+
 The function, `prepare_packet()` prepares uplink packet that is needed to be transmitted using LoRa.
 
 And once when the packet is ready, in order to send an uplink, a job is scheduled using the `os_setCallback()` function. This function prepares an immediately runnable job and can be called at any time, including from interrupt
 handler contexts.
 
-##### Sleep and Low Power
+#### Sleep and Low Power
 
-The function `gotodeepsleepnow(unsigned int TX_INTERVAL)` puts the microcontroller to sleep takes in unsigned integer as an argument, which controls the duty cycle of the sensor.
+The function `gotodeepsleepnow(unsigned int TX_INTERVAL)` puts the microcontroller to sleep takes in unsigned integer as an argument, which controls the duty cycle of the sensor. The following figure shows the sleep current consumption:
 
-#### Changing Sensor Configuration via Downlink
+<img src="img/low-power-profile.png" width="1080">
+<br />
+
+### Changing Sensor Configuration via Downlink
 To change the duty cycle and sensor parameters via downlink the above downlink packet format must be used.
 
 The function `process_received_downlink()` processes the received downlink via LoRa. The sensor can only receive a downlink in the RX window after a successful uplink.
 
 For this use case the maximum packet size is 6 bytes and can be varied. The parameters to be changed should be a non-zero entries and the rest can be left as zeroes if no changes are needed. The following sections describe changing duty cycle and sensor configurations with some examples.
 
-##### Changing dutycycle
+#### Changing dutycycle
 Uplink frequency at the end node is determined by the TX_INTERVAL. This TX_INTERVAL is used as a variable in this library to add the functionality of varying duty cycle. Few examples of changing duty cycle by updating `TX_INTERVAL` are mentioned below:
 
 | Downlink Packet format| Explanation|
@@ -266,7 +322,7 @@ Uplink frequency at the end node is determined by the TX_INTERVAL. This TX_INTER
 |`00 3C 00 00 00 00` | Only duty cycle is changed and rest are unchanged. 6 bytes used for the downlink |
 
 
-##### Changing sensor mode
+#### Changing sensor mode
 The sensor mode can be changed by adding non-zero values to the sensor mode byte in the downlink packet. Any invalid modes entered are discarded. Examples:
 
 | Downlink Packet format| Explanation|
@@ -276,7 +332,7 @@ The sensor mode can be changed by adding non-zero values to the sensor mode byte
 | `00 00 06 00 00 00` |Discarded and no change since 6 is an invalid mode. Consumes 6 bytes |
 | `01`| Valid packet format but doesn't change sensor mode, instead duty cycle is changed to 1 sec|
 
-##### Changing sampling rate
+#### Changing sampling rate
 The sensor sampling rate can be changed by adding non-zero values to the corresponding bytes in the downlink packet. Examples:
 
 | Downlink Packet format| Explanation|
@@ -285,7 +341,7 @@ The sensor sampling rate can be changed by adding non-zero values to the corresp
 | `00 00 00 04 E2 00` |changing sensor sampling rate to 1250ms and the rest are unchanged. Consumes 6 bytes |
 | `04 E2`| Valid packet format but doesn't change sensor sampling rate, instead duty cycle is changed to 1250 sec|
 
-##### Changing number of sensor readings per measurement
+#### Changing number of sensor readings per measurement
 Similarly, the number of sensor readings per measurement can be changed by adding non-zero values to the corresponding bytes in the downlink packet. A maximum of 20 is allowed. Examples:
 
 | Downlink Packet format| Explanation|
@@ -293,7 +349,7 @@ Similarly, the number of sensor readings per measurement can be changed by addin
 | `00 00 00 00 00 05` | 5 readings per measurement. Consumes 5 bytes: minimal sampling rate change|
 | `00 00 00 00 00 22` | invalid, maximum of 20 readings are allowed and the configuration is unchanged.|
 
-##### Changing multiple parameters via single downlink
+#### Changing multiple parameters via single downlink
 Multiple sensor parameters can be changed via downlink and below are such examples:
 
 | Downlink Packet format| Explanation|
@@ -303,16 +359,16 @@ Multiple sensor parameters can be changed via downlink and below are such exampl
 
 **Note:** the above downlink payload formats must be implemented with caution, else there is a danger of sleeping the MCU for unwanted periods of time or indefinitely or even a possible crash!  
 
-#### The Things Network
-##### The Things Network Payload Decoder
+### The Things Network
+#### The Things Network Payload Decoder
 TTN Payload decoder format can be found in the `ttnPayloadDecoder.js` file
-##### The Things Network Credentials
+#### The Things Network Credentials
 The TTN Credentials should be entered into the `ttncredentials.h` file from the TTN console.
 
-#### Ultrasonic sensor Configuration
+### Ultrasonic sensor Configuration
 The Ultrasonic sensor has an internal averaging methods to avoid small obstacles, irregularities and reporting the distance to the largest acoustic return while ignoring smaller targets. However, some anomalies are observed due to corner reflections and metal surfaces. These anomalies can be avoided using statistical methods such as averaging or calculating median of multiple measurements.
 
-##### Ultrasonic Sensor modes
+#### Ultrasonic Sensor modes
 These statistical methods are implemented as `sensorModes`. For example, `sensorMode = 2` uses a median of all the readings. The following are the available sensor modes:
 
 |Sensor mode| Statistical method|
@@ -321,11 +377,50 @@ These statistical methods are implemented as `sensorModes`. For example, `sensor
 |  2 | Median  |
 |  3 | Mode  |
 
-###### Number of Readings
+The function `read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sampling_rate, unsigned int sensor_numberOfReadings)` reads the ultrasonic sensor using these sensor modes and stores into an `uint_16` array called `readings_arr` of size 20. This means the maximum number of readings that can be read for averaging are 20. Changing this array size can accommodate more readings for averaging.
+
+`maxbotix.h` file contains the ultrasonic sensor pin definitions.
+
+##### Number of Readings
 The number of readings for these averaging methods can be changed via variable `sensor_numberOfReadings`.
 
-###### Sensor Sampling Frequency
+##### Sensor Sampling Frequency
 Single read from the sensor is as fast as 150 to 250 milliseconds and five of such measurements would be sensed over a period of 0.75 - 1.5 seconds. These measurements can be spread out over a larger interval by changing the variable `sensor_sampling_rate`, which enables to use averaging methods with varying rates. Each measurement corresponding to a sensor mode is followed by an interval of `sensor_sampling_rate` milliseconds.
 
-##### SD Card logging and RTC
+#### SD Card logging and RTC
 Every lora event, sensor states and measurements are locally logged onto the SD Card using the [SDFat](https://github.com/jbeynon/sdfatlib) library. The sensor sets the SD Card error flag high if the local logging is failed. A Real-time Clock is used to create timestamps for these local logs.
+
+Below is the function `writeToSDCard(String StringtobeWritten)` that writes to SD Card (found in `featherwing.cpp` file) sets the `SD_ERROR` flag high when write failed. This might need a SD Card replacement or a hard-reset.
+
+```cpp
+void writeToSDCard(String StringtobeWritten) {
+  //add time stamp to every sd card write
+  String timestamp = get_timestamp();
+  StringtobeWritten = timestamp + String(',') +StringtobeWritten ;
+  char buffchar[StringtobeWritten.length() + 1];
+  StringtobeWritten.toCharArray(buffchar, StringtobeWritten.length() + 1);
+  digitalWrite(8, HIGH);
+  if (!sd.begin(chipSelect, SPI_HALF_SPEED)) {
+    // set the SD_ERROR flag high;
+    SD_ERROR = 1;
+    Serial.println("SD Initialization Failed.");
+  }
+  else
+  {
+    ofstream sdout(name, ios::out | ios::app);
+    if (!sdout)
+    {
+      Serial.println("SD Card Open Failed.");
+      SD_ERROR = 1;
+    }
+    else {
+      sdout << buffchar << endl;
+      // close the stream
+      sdout.close();
+      SD_ERROR = 0;
+    }
+  }
+  digitalWrite(8, LOW);
+}
+```
+**Note on using SD Card/FeatherWing with Feather m0 LoRa:** On the feather m0 LoRa board, the Chip Select pin 8 is shared with the Radio module and needs to be pulled LOW to function. So when not in use it can be pulled HIGH to use other SPI devices, in this case FeatherWing and when done must be pulled back to LOW for the Radio module to work since the CS pin (#8) does not have a pullup built in.

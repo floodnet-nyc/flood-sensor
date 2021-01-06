@@ -183,7 +183,7 @@ void onEvent (ev_t ev) {
         Serial.println();
         process_received_downlink();
       }
-      TX_COMPLETED = true;  
+      TX_COMPLETED = true;
       break;
     case EV_LOST_TSYNC:
       Serial.println(F("EV_LOST_TSYNC"));
@@ -300,8 +300,8 @@ void update_no_of_readings(unsigned int numb_readings){
 
 void process_received_downlink(void) {
   /* Downlink Packet format:
-  |Number of readings per measurement| Sampling Rate   |Sensor Mode    | Duty Cycle in seconds  |
-  | 1 byte                           |    1 byte       |    2 bytes    |        2 bytes         |
+  |Duty Cycle in seconds  | Sensor Mode     | Sampling Rate    |  Number of readings per measurement  |
+  | 2 byte                |    1 byte       |    2 bytes       |        1 bytes                       |
   */
   // set UPDATE_CONFIG to true
   UPDATE_CONFIG = true;

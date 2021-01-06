@@ -26,8 +26,12 @@
       * [The Things Network Credentials](#the-things-network-credentials)
     * [Ultrasonic Sensor modes](#ultrasonic-sensor-modes)
     * [SD Card logging and RTC](#sd-card-logging-and-rtc)
-
-
+  * [Appendix](#appendix)
+    * [Solar Influence on Ultrasonic Sensor](#solar-influence-on-ultrasonic-sensor)
+      * [Steps to reduce Solar Influence on Ultrasonic Sensor readings](#steps-to-reduce-solar-influence-on-ultrasonic-sensor-readings)
+    * [Ultrasonic range sensor consistency](#ultrasonic-range-sensor-consistency)
+    * [Adafruit Sleepydog Library Deep-Sleep crash fix](#adafruit-sleepydog-library-deep-sleep-crash-fix)
+    * [FloodSense Library Structure and Scope](#floodsense-library-structure-and-scope)
 
 
 ## Introduction
@@ -431,3 +435,73 @@ void writeToSDCard(String StringtobeWritten) {
 }
 ```
 **Note on using SD Card/FeatherWing with Feather m0 LoRa:** On the feather m0 LoRa board, the Chip Select pin 8 is shared with the Radio module and needs to be pulled LOW to function. So when not in use it can be pulled HIGH to use other SPI devices, in this case FeatherWing and when done must be pulled back to LOW for the Radio module to work since the CS pin (#8) does not have a pullup built in.
+
+
+## Appendix
+
+### Solar Influence on Ultrasonic Sensor
+
+Effect of Temperature on Ultrasonic Sensor readinds: There is a notable drift of the ultrasonic sensor readings over time due to the change in temperature. Even though this particular sensor model has internal temperature compensation, there is still drift in the sensor readings. This can be observed from the fact that when there is direct sunlight during the day the readings are increased because the direct sunlight is raising the temperature of the sensor housing which is erroneously inflating the internal temperature of sensor reading. The internal temperature compensation algorithm is then over compensating for the inflated temperature and returning an increased distance measure.
+
+The following is the ultrasonic sensor readings vs temperature over a period of 24 hours.
+
+<img src="img/UltrasonicvsTemp_aug22nd_.png" width="1080" >
+<br />
+
+#### Steps to reduce Solar Influence on Ultrasonic Sensor readings
+According to one of the [maxbotix's datasheet](https://www.maxbotix.com/documents/HRXL-MaxSonar-WRS_Datasheet.pdf), these below could help mitigate the noise.
+
+  1. Using a Solar Shield for the ultrasonic sensor
+  2. Creating more air-flow
+  3. Using an external temperature compensation to the ultrasonic sensor
+
+Additionally, using an reflective alluminum foil around the sensor cone has helped reduce the sensor noise.
+
+### Ultrasonic range sensor consistency
+
+This following experiment provides the reasoning for using averaging methods (mean, median and mode, multiple readings and sensor sampling rates) for sensor stability in the source code.
+
+The HRXL-MaxSonar-WR uses an internal filter to process range data. However, there are still particular reflections that can cause some anomalous readings in the data returned. We have tested the sensor in laboratory and experimental environments and the occurrence of false readings is likely to happen in 1/100 measurements (taken every five minutes). Therefore the following three data collection modes have been tested to understand and mitigate this with each measurement mode carried out every five minutes:
+  + Mode 1: Single measurement
+  + Mode 2: Three measurements taken consecutively, storing final one (to allow sensor to settle)
+  + Mode 3: Median of five measurements taken consecutively
+
+Figure below shows mode 1 and 2 exhibiting anomalous measurements throughout a longitudinal test period. See the peaks around July 31st around 02:30AM. These are removed when using the median approach of Mode 3. Another two modes were implemented that separated the radio operations from the sensing phases to further reduce the possible effects of power loading on accurate depth sensing. These provide more accurate measures of depth in low power situations.
+
+<img src="img/modes_cm.png" width="820" >
+<br />
+
+### Adafruit Sleepydog Library Deep-Sleep crash fix
+On the latest 1.3.2 version of the Adafruit's Sleepy_dog library, a strange reset of feather m0 LoRa board is observed when sleeping for longer periods of time. This can be fixed by modifying the `WatchdogSAMD.cpp` file and the folowing are additions that start from the line 202 in original file (or from the line `#if (SAMD20 || SAMD21)` ):
+
+```cpp
+// Enable standby sleep mode (deepest sleep) and activate.
+ // Insights from Atmel ASF library.
+-#if (SAMD20 || SAMD21)
++#if (SAMD20_SERIES || SAMD21_SERIES)
+ // Don't fully power down flash when in sleep
+ NVMCTRL->CTRLB.bit.SLEEPPRM = NVMCTRL_CTRLB_SLEEPPRM_DISABLED_Val;
+#endif
+@@ -209,11 +209,19 @@
+   ; // Wait for it to take
+#else
+ SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
++  // Due to a hardware bug on the SAMD21, the SysTick interrupts become
++  // active before the flash has powered up from sleep, causing a hard fault.
++  // To prevent this the SysTick interrupts are disabled before entering sleep mode.
++  SysTick->CTRL &= ~SysTick_CTRL_TICKINT_Msk;  // Disable SysTick interrupts
+#endif
+ __DSB(); // Data sync to ensure outgoing memory accesses complete
+ __WFI(); // Wait for interrupt (places device in sleep mode)
++#if (SAMD20_SERIES || SAMD21_SERIES)
++  SysTick->CTRL |= SysTick_CTRL_TICKINT_Msk;   // Enable SysTick interrupts
++#endif
++  
+ // Code resumes here on wake (WDT early warning interrupt).
+ // Bug: the return value assumes the WDT has run its course;
+ // incorrect if the device woke due to an external interrupt.
+```
+### FloodSense Library Structure and Scope
+This library has modules for each component, i.e. LoRa, Ultrasonic Sensor, FeatherWing etc. This enables to add future modules/functionalities without the need to modify the others. The sensor configuration is stored in the file `sensorcfg.h` which contains the variables that can be changed during run-time and are shared between all the modules.
+
+Including the `floodsense_sensor.h` by using `#include <Floodsense_sensor.h>` setup ups the complete library. This header file has the reference to all the other header files and any further new header files must be linked to this file.

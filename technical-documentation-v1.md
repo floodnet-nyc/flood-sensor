@@ -148,6 +148,13 @@ Now we are ready for battery plug in!
 <img src="img\final-withoutbatt.jpg" width="480" >
 <br />
 
+**Connections:**
+
+
+<img src="img/fritzing-circuit.png" width="1080" >
+<br />
+
+
 ## Software
 
 ### Installation

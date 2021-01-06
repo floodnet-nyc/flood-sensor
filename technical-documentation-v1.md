@@ -190,6 +190,8 @@ Here below is a list of parameters that can be changed during the run-time of th
 
 This library uses the [Arduino-lmic](https://github.com/mcci-catena/arduino-lmic) library to handle the LoRa communication. The Things Network has a LoRaWAN [compliance](https://www.thethingsnetwork.org/docs/lorawan/duty-cycle.html). This means every radio device must be compliant with the regulated duty cycle limits. To program the node to stay within the limits, an [air-time calculator](https://avbentem.github.io/airtime-calculator/ttn/us915) can be used.
 
+The LoRa communication consists of uplinks and downlinks. This sensor uses uplinks to update the sensor data and also to send sensor configuration packets which is useful to monitor the current cfg of the sensor remotely. The downlinks generated from the back-end which enables to change the sensor cfg remotely.
+
 ##### Uplink Packet Format
 
 | Error flags  | Battery Level | Ultrasonic reading  |
@@ -219,7 +221,7 @@ This library uses the [Arduino-lmic](https://github.com/mcci-catena/arduino-lmic
 Scheduling uplinks using LoRaWAN is time critical. The lmic library which manages and handles this LoRaWAN communication has different modes, refer to [lmic-documentation](https://github.com/mcci-catena/arduino-lmic/blob/master/doc/LMIC-v3.3.0.pdf) for more details. All the application code in run is so-called jobs which are excecuted on the main thread by the run-time scheduler function `os_runloop()`. An additional per job control struct, `osjob_t` identifies and stores the context information. **Jobs must not be long running in order for seamless operation**.
 
 The function, `lorawan_runloop_once()` defined in the file `lorawan.cpp` contains the `os_runloop()`.
-```
+```cpp
 void lorawan_runloop_once() {
   os_runloop_once();
   if ( !os_queryTimeCriticalJobs(ms2osticksRound((TX_INTERVAL * 1000) - 1000 )) && TX_COMPLETED == true) {

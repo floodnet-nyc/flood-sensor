@@ -468,7 +468,7 @@ The HRXL-MaxSonar-WR uses an internal filter to process range data. However, the
 
 Figure below shows mode 1 and 2 exhibiting anomalous measurements throughout a longitudinal test period. See the peaks around July 31st around 02:30AM. These are removed when using the median approach of Mode 3. Another two modes were implemented that separated the radio operations from the sensing phases to further reduce the possible effects of power loading on accurate depth sensing. These provide more accurate measures of depth in low power situations.
 
-<img src="img/modes_cm.png" width="820" >
+<img src="img/modes_cm.png" width="720" >
 <br />
 
 ### Adafruit Sleepydog Library Deep-Sleep crash fix

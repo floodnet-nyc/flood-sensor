@@ -165,7 +165,7 @@ Now we are ready for battery plug in!
 All the following three sub-sections are needed to be completed in order to satisfy the requirements to run the software for this sensor. Furthermore, in order to utilize the complete functionalities of the sensor, a back-end support is needed.
 
 #### Necessary Software
-For simplicity, Arduino IDE has been used in the documentation but other IDE's can also be used. Arduino IDE, can be downloaded from [Arduino's website](https://www.arduino.cc/en/software). The Arduino IDE is used for uploading the firmware to the microcontroller.
+For simplicity, Arduino IDE has been used in the documentation but other IDEs can also be used. Arduino IDE, can be downloaded from [Arduino's website](https://www.arduino.cc/en/software). The Arduino IDE is used for uploading the firmware to the microcontroller.
 
 #### FloodSense Sensor Library
 Download the FloodSense Sensor Library from [here](https://github.com/floodsense/floodsense_sensor). This library contains the source code "src" folder, which is the firmware and contains all the necessary files for this sensor to work.

@@ -477,7 +477,7 @@ The following are a few sensor designs that help mitigate this sensor noise:
 
   + This design consists of a larger housing which contains the original sensor setup inside, which acts as a solar shield and the bottom of this bigger housing is open for airflow and ultrasonic sensor ranging. Also additional external temperature compensation sensor has been added to the original design.
 
-  <img src="img/using-larger-housing.jpg" >
+  <img src="img/using-larger-housing.jpg" width="560" >
     <br />
 
   + In this design, a solar shield has been added to the original design.

@@ -139,10 +139,6 @@ Now run the wire back from the solar panel through the smaller hole and use a PG
 
 Further, solder the solar panel onto the solar battery charger and stick the solar battery charger onto the side wall to make space for the battery.
 
-<img src="img\solarboard-ontheside.jpg" width="480" >
-<br />
-
-
 #### Step 6: Final assembly of the sensor
 
 Using an aluminum corner bracket, the solar panel is mounted at an angle for optimal amount of solar radiation.
@@ -160,7 +156,24 @@ Now we are ready for battery plug in!
 <br />
 
 ### Deployment
+This section explains different deployment scenarios and possibilities.
 
+<img src="img/street-mounting.png" width="640" >
+<br />
+
+The sensor's small size, weight, and lack of reliance on existing power sources opens up many opportunities for sensor deployments. Street signposts provide an ideal mounting condition with holed steel U-Bar for variable mount heights.
+
+Through conversations with the NYCDOT Assistant Commissioner of Traffic Control & Engineering, permissions were granted for sensor deployments on traffic signs. The following figure shows the visual documentation sent to NYCDOT, providing the sensor info and mounting conditions. The NYCDOT conditions were that the sensor should be mounted at least 7ft from the ground to reduce the chance of vandalism. Between the creation of this document and the deployment, the mounting hardware changed slightly.
+
+<img src="img/deployment-render.png" width="640" >
+<br />
+
+Furthermore, a longer cable running to the solar panel can enable mounting of the solar panel separately to the sensor and this is shown in the following figure:
+
+<img src="img/deployment-render.png" width="640" >
+<br />
+<img src="img/mounting-seperate-solarboard.jpg" width="480" >
+<br />
 
 ## Software
 

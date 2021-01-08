@@ -170,8 +170,6 @@ Through conversations with the NYCDOT Assistant Commissioner of Traffic Control 
 
 Furthermore, a longer cable running to the solar panel can enable mounting of the solar panel separately to the sensor and this is shown in the following figure:
 
-<img src="img/deployment-render.png" width="640" >
-<br />
 <img src="img/mounting-seperate-solarboard.jpg" width="480" >
 <br />
 

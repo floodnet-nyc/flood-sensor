@@ -490,7 +490,7 @@ The following are a few sensor designs that help mitigate this sensor noise:
 
 The following are the comparisons to the original sensor data. All the graphs have been scaled to same ranges, and each block height representing 20mm or 2cm.
 
-<img src="img/design-data-comparison.jpg" width="1080" >
+<img src="img/design-data-comparison.png" >
 <br />
 
 

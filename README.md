@@ -473,6 +473,27 @@ According to one of the [maxbotix's datasheet](https://www.maxbotix.com/document
 
 Additionally, using an reflective alluminum foil around the sensor cone has helped reduce the sensor noise.
 
+The following are a few sensor designs that help mitigate this sensor noise:
+
+  + This design consists of a larger housing which contains the original sensor setup inside, which acts as a solar shield and the bottom of this bigger housing is open for airflow and ultrasonic sensor ranging. Also additional external temperature compensation sensor has been added to the original design.
+
+  <img src="img/using-larger-housing.jpg" >
+    <br />
+
+  + In this design, a solar shield has been added to the original design.
+  <img src="img/solar-shield-design.jpg" width="560" >
+    <br />
+
+  + In this design, the ultrasonic sensor has been housed completely inside the original housing.
+  <img src="img/ultrasonic-sensor-inside.jpg" width="560" >
+      <br />
+
+The following are the comparisons to the original sensor data. All the graphs have been scaled to same ranges, and each block height representing 20mm or 2cm.
+
+<img src="img/design-data-comparison.jpg" width="1080" >
+<br />
+
+
 ### Ultrasonic range sensor consistency
 
 This following experiment provides the reasoning for using averaging methods (mean, median and mode, multiple readings and sensor sampling rates) for sensor stability in the source code.

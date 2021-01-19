@@ -512,31 +512,39 @@ Figure below shows mode 1 and 2 exhibiting anomalous measurements throughout a l
 On the latest 1.3.2 version of the Adafruit's Sleepy_dog library, a strange reset of feather m0 LoRa board is observed when sleeping for longer periods of time. This can be fixed by modifying the `WatchdogSAMD.cpp` file and the folowing are additions that start from the line 202 in original file (or from the line `#if (SAMD20 || SAMD21)` ):
 
 ```cpp
-// Enable standby sleep mode (deepest sleep) and activate.
- // Insights from Atmel ASF library.
--#if (SAMD20 || SAMD21)
-+#if (SAMD20_SERIES || SAMD21_SERIES)
- // Don't fully power down flash when in sleep
- NVMCTRL->CTRLB.bit.SLEEPPRM = NVMCTRL_CTRLB_SLEEPPRM_DISABLED_Val;
+#if (SAMD20_SERIES || SAMD21_SERIES)
+  // Don't fully power down flash when in sleep
+  NVMCTRL->CTRLB.bit.SLEEPPRM = NVMCTRL_CTRLB_SLEEPPRM_DISABLED_Val;
 #endif
-@@ -209,11 +209,19 @@
-   ; // Wait for it to take
+#if defined(__SAMD51__)
+  PM->SLEEPCFG.bit.SLEEPMODE = 0x4; // Standby sleep mode
+  while (PM->SLEEPCFG.bit.SLEEPMODE != 0x4)
+    ; // Wait for it to take
 #else
- SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-+  // Due to a hardware bug on the SAMD21, the SysTick interrupts become
-+  // active before the flash has powered up from sleep, causing a hard fault.
-+  // To prevent this the SysTick interrupts are disabled before entering sleep mode.
-+  SysTick->CTRL &= ~SysTick_CTRL_TICKINT_Msk;  // Disable SysTick interrupts
+  SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
+  // Due to a hardware bug on the SAMD21, the SysTick interrupts become 
+  // active before the flash has powered up from sleep, causing a hard fault.
+  // To prevent this the SysTick interrupts are disabled before entering sleep mode.
+  SysTick->CTRL &= ~SysTick_CTRL_TICKINT_Msk;  // Disable SysTick interrupts
 #endif
- __DSB(); // Data sync to ensure outgoing memory accesses complete
- __WFI(); // Wait for interrupt (places device in sleep mode)
-+#if (SAMD20_SERIES || SAMD21_SERIES)
-+  SysTick->CTRL |= SysTick_CTRL_TICKINT_Msk;   // Enable SysTick interrupts
-+#endif
-+  
- // Code resumes here on wake (WDT early warning interrupt).
- // Bug: the return value assumes the WDT has run its course;
- // incorrect if the device woke due to an external interrupt.
+
+  __DSB(); // Data sync to ensure outgoing memory accesses complete
+  __WFI(); // Wait for interrupt (places device in sleep mode)
+
+#if (SAMD20_SERIES || SAMD21_SERIES)
+  SysTick->CTRL |= SysTick_CTRL_TICKINT_Msk;   // Enable SysTick interrupts
+#endif
+  
+  // Code resumes here on wake (WDT early warning interrupt).
+  // Bug: the return value assumes the WDT has run its course;
+  // incorrect if the device woke due to an external interrupt.
+  // Without an external RTC there's no way to provide a correct
+  // sleep period in the latter case...but at the very least,
+  // might indicate said condition occurred by returning 0 instead
+  // (assuming we can pin down which interrupt caused the wake).
+
+  return actualPeriodMS;
+}
 ```
 ### FloodSense Library Structure and Scope
 This library has modules for each component, i.e. LoRa, Ultrasonic Sensor, FeatherWing etc. This enables to add future modules/functionalities without the need to modify the others. The sensor configuration is stored in the file `sensorcfg.h` which contains the variables that can be changed during run-time and are shared between all the modules.

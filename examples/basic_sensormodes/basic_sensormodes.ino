@@ -29,8 +29,8 @@
  *  Connections:
  *    VBATPIN A7 -> batterylevel pin
  *    GPIO 10    -> cardSelect
- *    GPIO 11    -> Maxbotix readPin
- *    GPIO 12    -> Maxbotix triggerPin
+ *    GPIO 11    -> Maxbotix readPin (Pin 2: Pulse Width Output)
+ *    GPIO 12    -> Maxbotix triggerPin (Pin 4- Ranging Start/Stop)
  *  
  */
 

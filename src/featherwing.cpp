@@ -2,7 +2,7 @@
 #include "featherwing.h"
 
 // File name
-char name[] = "TSTONE.TXT";
+char name[] = "TSTLOG.TXT";
 int SD_ERROR = 0;
 // file system object
 SdFat sd;

@@ -13,7 +13,8 @@ unsigned int TX_INTERVAL;
 
 unsigned char cfg_packet[7];
 unsigned char lora_packet[5];
-bool TX_COMPLETED = false;        // Set to false on start and after sleep; is set to true when an uplink is successful
+bool TX_COMPLETED = false;
+      // Set to false on start and after sleep; is set to true when an uplink is successful
 bool UPDATE_CONFIG = true;        // Set to true at start and when there is a change in sensor cfg; used to send sensor cfg via uplink
 
 void os_getArtEui (u1_t* buf) {
@@ -442,15 +443,12 @@ void prepare_packet(void) {
     /* LoraWAN uplink packet format
             | Error flags  | Battery Level | Ultrasonic reading  |
             |   1 byte     |    2 bytes    |        2 bytes      |
-
             |     Ultrasonic reading      |
             |           2 bytes           |
             |    high byte | low byte     |
-
             |       Battery Level       |
             |           2 bytes         |
             |    high byte | low byte   |
-
             |------------------------------------------------------------ Error Flags  ----------------------------------------------------------------|
             |     bit 7                                                |  bit 6   |  bit 5  |  bit 4  |  bit 3  |  bit 2  |  bit 1  |      bit 0       |
             |     Used only for CFG update (all other bits are high)   |          |         |         |         |         |         |   SD error flag  |
@@ -495,13 +493,20 @@ void prepare_packet(void) {
 
 void lorawan_runloop_once() {
   os_runloop_once();
-  if ( !os_queryTimeCriticalJobs(ms2osticksRound((TX_INTERVAL * 1000) - 1000 )) && TX_COMPLETED == true) {
+  //&& TX_COMPLETED == true
+  //!(LMIC.opmode & OP_TXRXPEND)
+  if ( !os_queryTimeCriticalJobs(ms2osticksRound(8000) ) && TX_COMPLETED == true   ) {
     TX_COMPLETED = false;
     // This means the previous TX is complete and also no Critical Jobs pending in LMIC
     Serial.println("About to go to deep sleep and no critical jobs");
+    //delay(30000);
     gotodeepsleepnow(TX_INTERVAL);
     Serial.println("Im awake and TX_COMPLETED is set to false");
-    // Prepare a packet in relaxed setiing
+    while(LMIC.opmode & OP_TXRXPEND){
+      os_runloop_once();
+    }
+    
+     //Prepare a packet in relaxed setiing
     prepare_packet();
     os_setCallback(&sendjob, do_send);
   }

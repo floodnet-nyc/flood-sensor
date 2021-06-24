@@ -1,4 +1,4 @@
-This repository is updated for TTN v3 download this library and also remove the old lmic library from arduino libraries and download the latest library from[here](https://github.com/mcci-catena/arduino-lmic)
+This repository is updated for TTN v3 download this library and also remove the old lmic library from arduino libraries and download the latest library from [here](https://github.com/mcci-catena/arduino-lmic)
 # FloodSense Sensor Technical Documentation
 [This repository](https://github.com/floodsense/floodsense_sensor) contains the source code for the Floodsense sensor which uses ultrasonic sensor technology to detect floods and send the data over LoRa using LoRaWAN protocol. [Here](https://github.com/floodsense/sensor_experiments) is the experiments repo containing technical documentation, analysis and additional support related to this library.
 

@@ -59,10 +59,10 @@ This section lists all the components needed to build a sensor. and below is a B
 
 #### Saw
 
-### Build Instructions
+## Build Instructions
+The instructions below are listed in order and shall be followed in the same order to maintain QC pipeline and enable efficient testing and easier debugging.
+## Build Quality
 
-### Build Quality
+## Testing
 
-### Testing
-
-### Debugging 
+## Debugging

@@ -61,6 +61,29 @@ This section lists all the components needed to build a sensor. and below is a B
 
 ## Build Instructions
 The instructions below are listed in order and shall be followed in the same order to maintain QC pipeline and enable efficient testing and easier debugging.
+
+
+1. Components check
+2. Tools check
+3. Setting up the MCU
+4. Downloading latest firmware
+5. Installing firmware on the MCU
+6. Preparing the Maxbotix depth sensor
+7. Drilling a hole in the housing to accommodate Maxbotix depth sensor
+8. Mounting the MCU
+9. Connecting pin io1 to pin 6
+10. Mounting the depth sensor
+11. Connecting depth sensor to the MCU
+12. Reading distance
+13. Solar Panel preparation - Wiring and waterproofing
+14. Drilling a hole to accommodate the Solar Panel's cable
+15. Preparing the Solar Charger board
+16. Connecting Solar board with the Solar Charger board
+17. Connecting the battery to the Solar Charger board
+18. Connecting Solar Charger board with the MCU
+19. Mounting Hardware
+20. Final sensor preparation
+
 ## Build Quality
 
 ## Testing

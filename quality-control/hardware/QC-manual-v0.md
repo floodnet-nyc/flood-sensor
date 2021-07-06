@@ -41,7 +41,41 @@ The instructions below are listed in order and shall be followed in the same ord
 
 1. <em>Components check:</em> All the components needed to build a sensor are listed below.
 
+| Component name                 | Count                |
+|--------------------------------|----------------------|
+| MCU - Adafruit Feather M0 LoRa | 1                    |
+| Maxbotix Ultrasonic sensor     | 1                    |
+| Adafruit SD Feather Wing       | 1                    |
+| 3V Lithium cell battery        | 1                    |
+| SD Card                        | 1                    |
+| Connector board                | 1                    |
+| Solid wire for antenna         | 1 (atleast 4 inches) |
+| Mounting headers and screws    | 4 pairs              |
+| Solar Charger board            | 1                    |
+| Capacitor - 10V rating         | 1                    |
+| Solar Panel                    | 1                    |
+| Lithium ion Battery - 2200mAh  | 1                    |
+| Alarm Cable                    | 1 (atleast 2ft)      |
+| Heat shrinks                   | na                   |
+| loose wires                    | na                   |
+
 2. <em>Tools check:</em> The following are lists of tools categorized into must-haves and nice-to-haves.
+
+| Must-haves               |
+|--------------------------|
+| Solder iron              |   
+| Drill and step drill bit |   
+| Screw driver             |  
+| Pliers                   |   
+
+
+| Nice-to-haves  |
+|----------------|
+| Heat Gun       |
+| Wire strippers |
+| Scissors       |
+| Razor files    |
+| Tweezers       |
 
 **B. MCU preparation**
 

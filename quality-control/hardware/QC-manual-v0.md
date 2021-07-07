@@ -1,9 +1,9 @@
 # Hardware Quality Control Manual
 
 **Table of Contents:**
-* [Introduction](#introduction)
-* [General Laboratory Safety](#general-laboratory-safety)
-* [Components, equipment and other tools](#components,-equipment-and-other-tools)
+  * [Introduction](#introduction)
+  * [General Laboratory Safety](#general-laboratory-safety)
+  * [Components, equipment and other tools](#components,-equipment-and-other-tools)
 
 ## Introduction
 This manual details the sensor quality control at FloodSense. It is meant to be a teaching tool and source of information to build a high quality sensor.
@@ -34,12 +34,13 @@ The following practices shall be followed while building the sensor to ensure a 
 4. Soldering
 5. Wire connection practices
 
-## Sensor Build Instructions with Quality control and Testing
+## Quality Assurance Procedure - with sensor testing and debugging
 The instructions below are listed in order and shall be followed in the same order to maintain QC pipeline and enable efficient testing and easier debugging. These steps when followed are aimed to help inspectors/researchers/community members attain a good build-quality.
 
-**A. Initial steps and preparation**
+### A. Initial steps and preparation
 
-1. <em>Components check:</em> All the components needed to build a sensor are listed below.
+#### 1. Components check
+All the components needed to build a sensor are listed below.
 
 | Component name                 | Count                |
 |--------------------------------|----------------------|
@@ -48,6 +49,7 @@ The instructions below are listed in order and shall be followed in the same ord
 | Adafruit SD Feather Wing       | 1                    |
 | 3V Lithium cell battery        | 1                    |
 | SD Card                        | 1                    |
+| Male Headers Equal Length Long Centered 6.25mm on Both Sides, 15mm in total| 2|
 | Connector board                | 1                    |
 | Solid wire for antenna         | 1 (atleast 4 inches) |
 | Mounting headers and screws    | 4 pairs              |
@@ -59,11 +61,13 @@ The instructions below are listed in order and shall be followed in the same ord
 | Heat shrinks                   | na                   |
 | loose wires                    | na                   |
 
-2. <em>Tools check:</em> The following are lists of tools categorized into must-haves and nice-to-haves.
+#### 2. Tools check
+The following are lists of tools categorized into must-haves and nice-to-haves.
 
 | Must-haves               |
 |--------------------------|
-| Solder iron              |   
+| Solder iron              |
+| Solder               |   
 | Drill and step drill bit |   
 | Screw driver             |  
 | Pliers                   |   
@@ -77,34 +81,81 @@ The instructions below are listed in order and shall be followed in the same ord
 | Razor files    |
 | Tweezers       |
 
-**B. MCU preparation**
+### B. MCU preparation
 
-1. Setting up the MCU
+#### 1. Setting up the MCU
 
-2. Downloading latest firmware
-3. Installing firmware on the MCU
+The microcontroller unit(MCU) is the Adafruit Feather M0 RFM95 LoRa Radio - 900 MHz. Out of the box, the MCU comes with "through holes" or "PTH" or simply referred as pins. The left and right sides of the MCU has 16 pins and 12 pins respectively and cut the long male headers accordingly. Insert these long male headers into a breadboard as shown in the figure.  
 
-**C. Maxbotix depth sensor preparation**
+Now mount the MCU onto these stacking header pins and make sure the board sits comfortably without any gap. When done correctly, the MCU looks perfectly horizontal to the breadboard from the side. Note that the MCU is upside down since the SD Feather Wing goes on top of MCU.
+
+##### 1.1 Soldering MCU
+
+The next step is soldering. This section explains the basics of soldering.
+
+**<em>Caution:</em>** Never touch the tip of the solder iron, or the iron stand!! (often referred to as a cradle)
+
+**<em>Potential Hazard:</em>**
+Leaving the solder iron unattended is a potential hazard: it could burn you or even burn your desk and start a fire. Always dock the solder iron in its stand and turn off after use.
+
+First, plug and turn on the soldering iron to warm up. While the solder is warming up wet the sponge.
+
+Apply a small amount of solder to the tip and then clean the tip using the wet sponge. You should have a shiny clean tip with a layer of molten solder on the tip of your iron.
+
+Solder is a "joint" and to make a good electrical connection make sure that the through holes are clean. Oxidation and dirt can decrease the quality of the joints. Use a little isopropyl alcohol with a tissue/paper towel to clean the board.
+
+Heat the through hole by placing the tip so that it is in contact with both the metal contact and the header pin.
+
+Carefully put the solder on the joint either on the pin or the metal through hole, and it should melt into the through hole making a connection.
+
+**<em>Caution:</em>** Be careful not to apply lot of heat to the board as it can damage the board.
+
+##### 1.2 Soldering SD Feather Wing
+
+The MCU after above steps should look like the following figure, where the pins are longer to accommodate
+
+##### 1.3 Installing SD card and Coin cell battery onto SD Feather Wing
+
+##### 1.4 MCU Antenna
+
+##### 1.5 Mounting the MCU
+
+
+
+
+
+#### 2. Checking for common problems
+The following are some common problems while soldering that makes a connection low quality:
+##### 2.1 Board damage
+##### 2.2 Low quality connection
+##### 2.3 Excess solder
+##### 2.4 Not enough solder
+
+
+
+#### 3. Installing the latest firmware on the MCU
+
+### **C. Maxbotix Ultrasonic Sensor Preparation**
 
 1. Preparing the Maxbotix depth sensor
 
 2. Drilling a hole in the housing to accommodate Maxbotix depth sensor
 
-**D. Solar Charger board preparation**
+### **D. Solar Charger board preparation**
 
 1. Capacitor
 
 2. Wiring
 
-**E. Solar Panel preparation**
+### **E. Solar Panel preparation**
 
 1. Wiring
 
 2. Waterproofing
 3. Drilling a hole to accommodate the Solar Panel's cable
 
-**F. Wiring**
-1. Mounting the MCU
+### **F. Wiring**
+
 
 2. Connecting pin io1 to pin 6
 3. Mounting the depth sensor
@@ -113,11 +164,11 @@ The instructions below are listed in order and shall be followed in the same ord
 6. Connecting the battery to the Solar Charger board
 7. Connecting Solar Charger board with the MCU
 
-**G. Battery**
+### **G. Battery**
 
 
-**H. Final Steps**
+### **H. Final Steps**
 
-**I. Debugging**
+### **I. Debugging**
 
-**J. Mounting**
+### **J. Mounting**

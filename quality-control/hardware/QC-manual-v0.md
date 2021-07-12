@@ -242,6 +242,6 @@ Plug in the battery into the Batt connector on the solar board charger.
 
 ### **H. Final Steps**
 
-### **I. Debugging**
+### **I. Troubleshoots**
 
 ### **J. Mounting**

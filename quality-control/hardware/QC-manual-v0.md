@@ -1,3 +1,6 @@
+1. waht are the checks a builder needs to check while building
+2. QC checks - Functionality(data pushing, working?), accuracy(fine grained -> desired accuracy -> +- half an inch) 
+
 # Hardware Quality Control Manual
 
 **Table of Contents:**

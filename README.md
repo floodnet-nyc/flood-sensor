@@ -199,7 +199,7 @@ Download the FloodSense Sensor Library from [here](https://github.com/floodsense
 #### Additional Libraries
 The following libraries are also required to be installed:
 1. Arduino-Lmic library: https://github.com/mcci-catena/arduino-lmic
-2. SDFat library: https://github.com/jbeynon/sdfatlib
+2. SDFat library: https://github.com/Praneethsvch/SdFat
 3. Adafruit's sleepydog library: https://github.com/adafruit/Adafruit_SleepyDog
 4. Adafruit's RTClib: https://github.com/adafruit/RTClib
 

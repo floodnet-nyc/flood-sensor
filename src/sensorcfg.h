@@ -5,18 +5,14 @@
 
 // ------------------   Pins   -------------------------
 
-#define VBATPIN A7
-#define cardSelect 10
 
 // ----------------   Constants   ----------------------
 
-// SD chip select pin
-#define chipSelect 10
 
 // ----------------   Variables   ----------------------
 
 // Duty cycle
-extern unsigned int TX_INTERVAL;
+extern uint32_t appTxDutyCycle;
 
 /*    Sensor Operation Modes:
             Mode 1: Mean
@@ -32,7 +28,5 @@ extern unsigned int sensor_sampling_rate;
 extern unsigned int sensor_numberOfReadings;
 
 // ------------------- Error Flags ----------------------
-
-extern int SD_ERROR;
 
 #endif

@@ -4,7 +4,6 @@
 #include <Arduino.h>
 #include "functions.h"
 #include "lorawan.h"
-#include "featherwing.h"
 #include "maxbotix.h"
 
 #endif

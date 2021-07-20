@@ -89,7 +89,7 @@ All the solder joints shall be covered with heat shrink so that there is no expo
 
 ##### No melted wires
 
-It is pretty common mistake to over heat the wires while joing two wires using solder. Try not to apply too much heat. Tan them individually before joining. The melted wires can short-circuit and potentially damage the circuitry.
+It is pretty common mistake to over heat the wires while joing two wires using solder. Try not to apply too much heat. Tin them individually before joining. The melted wires can short-circuit and potentially damage the circuitry.
 
 ## References
 

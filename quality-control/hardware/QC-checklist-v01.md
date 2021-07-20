@@ -32,5 +32,6 @@
 |                                    | C. Sensor on correct duty cycle                              |            |                          |
 |                                    | D. Correct distance readings                                 |            |                          |
 |                                    | E. Correct battery level when ***not*** connected via USB    |            |                          |
-| **5. Sensor Mounting**             |                                                              |            |                          |
+| **5. Sensor Accuracy**             | A. Sensor readings accuracy <= 10 mm at 1 meter - Indoor conditions |            |                          |
+|                                    |                                                              |            |                          |
 

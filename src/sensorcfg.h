@@ -15,10 +15,10 @@
 extern uint32_t appTxDutyCycle;
 
 /*    Sensor Operation Modes:
-            Mode 1: Mean
-            Mode 2: Median
-            Mode 3: Mode
-*/
+ Mode 1: Mean
+ Mode 2: Median
+ Mode 3: Mode
+ */
 extern unsigned int sensorMode;
 
 // Time between the readings

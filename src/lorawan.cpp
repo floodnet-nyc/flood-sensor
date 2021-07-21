@@ -4,18 +4,18 @@
 #include "maxbotix.h"
 
 /*
-   set LoraWan_RGB to Active,the RGB active in loraWan
-   RGB red means sending;
-   RGB purple means joined done;
-   RGB blue means RxWindow1;
-   RGB yellow means RxWindow2;
-   RGB green means received done;
+ set LoraWan_RGB to Active,the RGB active in loraWan
+ RGB red means sending;
+ RGB purple means joined done;
+ RGB blue means RxWindow1;
+ RGB yellow means RxWindow2;
+ RGB green means received done;
  */
 
 /* OTAA para*/
-uint8_t devEui[] = { };
-uint8_t appEui[] = { };
-uint8_t appKey[] = { };
+uint8_t devEui[] = {  };
+uint8_t appEui[] = {  };
+uint8_t appKey[] = {  };
 
 /* ABP para*/
 uint8_t nwkSKey[] = { };
@@ -49,48 +49,48 @@ bool isTxConfirmed = LORAWAN_UPLINKMODE;
 /* Application port */
 uint8_t appPort = 2;
 /*!
-   Number of trials to transmit the frame, if the LoRaMAC layer did not
-   receive an acknowledgment. The MAC performs a datarate adaptation,
-   according to the LoRaWAN Specification V1.0.2, chapter 18.4, according
-   to the following table:
-
-   Transmission nb | Data Rate
-   ----------------|-----------
-   1 (first)       | DR
-   2               | DR
-   3               | max(DR-1,0)
-   4               | max(DR-1,0)
-   5               | max(DR-2,0)
-   6               | max(DR-2,0)
-   7               | max(DR-3,0)
-   8               | max(DR-3,0)
-
-   Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
-   the datarate, in case the LoRaMAC layer did not receive an acknowledgment
+ Number of trials to transmit the frame, if the LoRaMAC layer did not
+ receive an acknowledgment. The MAC performs a datarate adaptation,
+ according to the LoRaWAN Specification V1.0.2, chapter 18.4, according
+ to the following table:
+ 
+ Transmission nb | Data Rate
+ ----------------|-----------
+ 1 (first)       | DR
+ 2               | DR
+ 3               | max(DR-1,0)
+ 4               | max(DR-1,0)
+ 5               | max(DR-2,0)
+ 6               | max(DR-2,0)
+ 7               | max(DR-3,0)
+ 8               | max(DR-3,0)
+ 
+ Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
+ the datarate, in case the LoRaMAC layer did not receive an acknowledgment
  */
 uint8_t confirmedNbTrials = 4;
- #define timetillwakeup 10000
+#define timetillwakeup 10000
 static TimerEvent_t sleep;
 static TimerEvent_t wakeUp;
 uint8_t lowpower = 1;
 
 void onSleep()
 {
-        //Serial.printf("Going into lowpower mode, %d ms later wake up.\r\n", timetillwakeup);
-        lowpower = 1;
-        //  Radio.Sleep( );
-        //timetillwakeup ms later wake up;
-        TimerSetValue( &wakeUp, timetillwakeup );
-        TimerStart( &wakeUp );
+    //Serial.printf("Going into lowpower mode, %d ms later wake up.\r\n", timetillwakeup);
+    lowpower = 1;
+    //  Radio.Sleep( );
+    //timetillwakeup ms later wake up;
+    TimerSetValue( &wakeUp, timetillwakeup );
+    TimerStart( &wakeUp );
 }
 
 void onWakeUp()
 {
-        //Serial.printf("\r\nWoke up, %d ms later.\r\n", timetillwakeup);
-        lowpower = 0;
-        //  //timetillsleep ms later into lowpower mode;
-        //  TimerSetValue( &sleep, timetillsleep );
-        //  TimerStart( &sleep );
+    //Serial.printf("\r\nWoke up, %d ms later.\r\n", timetillwakeup);
+    lowpower = 0;
+    //  //timetillsleep ms later into lowpower mode;
+    //  TimerSetValue( &sleep, timetillsleep );
+    //  TimerStart( &sleep );
 }
 
 uint16_t distance;
@@ -99,109 +99,109 @@ uint16_t batlevel;
 /* Prepares the payload of the frame */
 static void prepareTxFrame( uint8_t port )
 {
-        /*appData size is LORAWAN_APP_DATA_MAX_SIZE which is defined in "commissioning.h".
-           appDataSize max value is LORAWAN_APP_DATA_MAX_SIZE.
-           if enabled AT, don't modify LORAWAN_APP_DATA_MAX_SIZE, it may cause system hanging or failure.
-           if disabled AT, LORAWAN_APP_DATA_MAX_SIZE can be modified, the max value is reference to lorawan region and SF.
-           for example, if use REGION_CN470,
-           the max value for different DR can be found in MaxPayloadOfDatarateCN470 refer to DataratesCN470 and BandwidthsCN470 in "RegionCN470.h".
-         */
-        digitalWrite(Vext, LOW);
-        // Maxbotix
-        distance = read_sensor_using_modes(sensorMode, sensor_sampling_rate, sensor_numberOfReadings);
-        Serial.print("Distance = ");
-        Serial.print(distance);
-        Serial.println(" mm");
-
-        // Battery
-        pinMode(VBAT_ADC_CTL,OUTPUT);
-        digitalWrite(VBAT_ADC_CTL,LOW);
-        batlevel=analogRead(ADC)*2;
-        /*
-         * Board, BoardPlus, Capsule, GPS and HalfAA variants
-         * have external 10K VDD pullup resistor
-         * connected to GPIO7 (USER_KEY / VBAT_ADC_CTL) pin
-         */
-        pinMode(VBAT_ADC_CTL, INPUT);
-
-        appDataSize = 5;
-        // First byte is zero to match decoder on backend
-        appData[0] = 0x00;
-
-        appData[1] = lowByte(batlevel);
-        appData[2] = highByte(batlevel);
-        appData[3] = lowByte(distance);
-        appData[4] = highByte(distance);
-        digitalWrite(Vext, HIGH);
-        onSleep();
+    /*appData size is LORAWAN_APP_DATA_MAX_SIZE which is defined in "commissioning.h".
+     appDataSize max value is LORAWAN_APP_DATA_MAX_SIZE.
+     if enabled AT, don't modify LORAWAN_APP_DATA_MAX_SIZE, it may cause system hanging or failure.
+     if disabled AT, LORAWAN_APP_DATA_MAX_SIZE can be modified, the max value is reference to lorawan region and SF.
+     for example, if use REGION_CN470,
+     the max value for different DR can be found in MaxPayloadOfDatarateCN470 refer to DataratesCN470 and BandwidthsCN470 in "RegionCN470.h".
+     */
+    digitalWrite(Vext, LOW);
+    // Maxbotix
+    distance = read_sensor_using_modes(sensorMode, sensor_sampling_rate, sensor_numberOfReadings);
+    Serial.print("Distance = ");
+    Serial.print(distance);
+    Serial.println(" mm");
+    
+    // Battery
+    pinMode(VBAT_ADC_CTL,OUTPUT);
+    digitalWrite(VBAT_ADC_CTL,LOW);
+    batlevel=analogRead(ADC)*2;
+    /*
+     * Board, BoardPlus, Capsule, GPS and HalfAA variants
+     * have external 10K VDD pullup resistor
+     * connected to GPIO7 (USER_KEY / VBAT_ADC_CTL) pin
+     */
+    pinMode(VBAT_ADC_CTL, INPUT);
+    
+    appDataSize = 5;
+    // First byte is zero to match decoder on backend
+    appData[0] = 0x00;
+    
+    appData[1] = lowByte(batlevel);
+    appData[2] = highByte(batlevel);
+    appData[3] = lowByte(distance);
+    appData[4] = highByte(distance);
+    digitalWrite(Vext, HIGH);
+    onSleep();
 }
 
 
 void setup_lorawan(unsigned int packet_interval) {
-        appTxDutyCycle = packet_interval*1000;
-        boardInitMcu();
-        pinMode(Vext, OUTPUT);
-        digitalWrite(Vext, HIGH);
-        Serial.begin(115200);
-  #if (AT_SUPPORT)
-        enableAt();
-  #endif
-        deviceState = DEVICE_STATE_INIT;
-        LoRaWAN.ifskipjoin();
-        Serial.println("Setup done!");
-        TimerInit( &sleep, onSleep );
-        TimerInit( &wakeUp, onWakeUp );
-        delay(500);
-        onSleep();
-
+    appTxDutyCycle = packet_interval*1000;
+    boardInitMcu();
+    pinMode(Vext, OUTPUT);
+    digitalWrite(Vext, HIGH);
+    Serial.begin(115200);
+#if (AT_SUPPORT)
+    enableAt();
+#endif
+    deviceState = DEVICE_STATE_INIT;
+    LoRaWAN.ifskipjoin();
+    Serial.println("Setup done!");
+    TimerInit( &sleep, onSleep );
+    TimerInit( &wakeUp, onWakeUp );
+    delay(500);
+    onSleep();
+    
 }
 
 void lorawan_runloop_once(void)
 {
-        switch ( deviceState )
-        {
+    switch ( deviceState )
+    {
         case DEVICE_STATE_INIT:
         {
 #if (LORAWAN_DEVEUI_AUTO)
-                LoRaWAN.generateDeveuiByChipID();
+            LoRaWAN.generateDeveuiByChipID();
 #endif
 #if (AT_SUPPORT)
-                getDevParam();
+            getDevParam();
 #endif
-                printDevParam();
-                LoRaWAN.init(loraWanClass, loraWanRegion);
-                deviceState = DEVICE_STATE_JOIN;
-                break;
+            printDevParam();
+            LoRaWAN.init(loraWanClass, loraWanRegion);
+            deviceState = DEVICE_STATE_JOIN;
+            break;
         }
         case DEVICE_STATE_JOIN:
         {
-                LoRaWAN.join();
-                break;
+            LoRaWAN.join();
+            break;
         }
         case DEVICE_STATE_SEND:
         {
-                prepareTxFrame( appPort );
-                LoRaWAN.send();
-                deviceState = DEVICE_STATE_CYCLE;
-                break;
+            prepareTxFrame( appPort );
+            LoRaWAN.send();
+            deviceState = DEVICE_STATE_CYCLE;
+            break;
         }
         case DEVICE_STATE_CYCLE:
         {
-                // Schedule next packet transmission
-                txDutyCycleTime = appTxDutyCycle + randr( 0, APP_TX_DUTYCYCLE_RND );
-                LoRaWAN.cycle(txDutyCycleTime);
-                deviceState = DEVICE_STATE_SLEEP;
-                break;
+            // Schedule next packet transmission
+            txDutyCycleTime = appTxDutyCycle + randr( 0, APP_TX_DUTYCYCLE_RND );
+            LoRaWAN.cycle(txDutyCycleTime);
+            deviceState = DEVICE_STATE_SLEEP;
+            break;
         }
         case DEVICE_STATE_SLEEP:
         {
-                LoRaWAN.sleep();
-                break;
+            LoRaWAN.sleep();
+            break;
         }
         default:
         {
-                deviceState = DEVICE_STATE_INIT;
-                break;
+            deviceState = DEVICE_STATE_INIT;
+            break;
         }
-        }
+    }
 }

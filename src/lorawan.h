@@ -9,18 +9,21 @@
 
 
 // This EUI must be in little-endian format
-static u1_t PROGMEM APPEUI[8] = TTN_APPEUI ;
+static const u1_t PROGMEM APPEUI[8] = TTN_APPEUI ;
 // This should also be in little endian format
 static const u1_t PROGMEM DEVEUI[8] = TTN_DEVEUI ;
 // This key should be in big endian format
 static const u1_t PROGMEM APPKEY[16] = TTN_APPKEY ;
-static osjob_t initjob;
-static bool UPDATE_CONFIG = true;
-static unsigned char cfg_packet[7];      // CFG Uplink Packet
-static unsigned char lora_packet[5];     // Regular Uplink Packet     // Set to true at start and when there is a change in sensor cfg; used to send sensor cfg via uplink
-void execRuntimeJobs(void);
- void setupLMIC();
-void prepare_lora_packet(void);
-void prepare_cfg_packet(void);
-bool sendUplink(unsigned char txPacket[]);
+
+void os_getArtEui (u1_t* buf);
+void os_getDevEui (u1_t* buf);
+void os_getDevKey (u1_t* buf);
+
+void do_send(osjob_t* j);
+void onEvent (ev_t ev);
+void prepare_packet(void);
+void lorawan_runloop_once(void);
+void lmicsetup(unsigned int packet_interval);
+void process_received_downlink(void);
+
 #endif

@@ -14,6 +14,8 @@ unsigned int sensor_sampling_rate;
 unsigned int sensor_numberOfReadings;
 
 void setup_maxbotix(unsigned int mode=2, unsigned int sampling_rate=250 , unsigned int numberOfReadings=15) {
+    pinMode(6, OUTPUT);
+    digitalWrite(6, HIGH);
     Serial.println("Setting up Maxbotix .... ");
     pinMode(triggerPin, OUTPUT);
     digitalWrite(triggerPin, LOW);
@@ -84,7 +86,7 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sa
         Serial.print(readings_arr[i]);Serial.print(" ");
     }
     Serial.println("");
-    
+
     switch (sensorMode) {
         case 1:
             // Mean
@@ -103,7 +105,7 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sa
             distance = sensor_singleread();
             break;
     }
-    
+
     Serial.println("Cleaning measurements array...");
     for (int i=0; i<n; i++) {
         readings_arr[i] = 0;
@@ -115,5 +117,5 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sa
     }
     Serial.println("");
     return distance;
-    
+
 }

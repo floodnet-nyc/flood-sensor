@@ -106,7 +106,7 @@ static void prepareTxFrame( uint8_t port )
      for example, if use REGION_CN470,
      the max value for different DR can be found in MaxPayloadOfDatarateCN470 refer to DataratesCN470 and BandwidthsCN470 in "RegionCN470.h".
      */
-    digitalWrite(Vext, LOW);
+    digitalWrite(6, LOW);
     // Maxbotix
     distance = read_sensor_using_modes(sensorMode, sensor_sampling_rate, sensor_numberOfReadings);
     Serial.print("Distance = ");
@@ -132,7 +132,7 @@ static void prepareTxFrame( uint8_t port )
     appData[2] = highByte(batlevel);
     appData[3] = lowByte(distance);
     appData[4] = highByte(distance);
-    digitalWrite(Vext, HIGH);
+    digitalWrite(6, HIGH);
     onSleep();
 }
 

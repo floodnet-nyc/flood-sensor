@@ -47,13 +47,13 @@ bool keepNet = LORAWAN_NET_RESERVE;
 bool isTxConfirmed = LORAWAN_UPLINKMODE;
 
 /* Application port */
-uint8_t appPort = 2;
+uint8_t appPort = 1;
 /*!
  Number of trials to transmit the frame, if the LoRaMAC layer did not
  receive an acknowledgment. The MAC performs a datarate adaptation,
  according to the LoRaWAN Specification V1.0.2, chapter 18.4, according
  to the following table:
- 
+
  Transmission nb | Data Rate
  ----------------|-----------
  1 (first)       | DR
@@ -64,7 +64,7 @@ uint8_t appPort = 2;
  6               | max(DR-2,0)
  7               | max(DR-3,0)
  8               | max(DR-3,0)
- 
+
  Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
  the datarate, in case the LoRaMAC layer did not receive an acknowledgment
  */
@@ -76,7 +76,7 @@ uint8_t lowpower = 1;
 
 void onSleep()
 {
-    //Serial.printf("Going into lowpower mode, %d ms later wake up.\r\n", timetillwakeup);
+    Serial.printf("Going into lowpower mode, %d s later wake up.\r\n", timetillwakeup/1000);
     lowpower = 1;
     //  Radio.Sleep( );
     //timetillwakeup ms later wake up;
@@ -86,7 +86,7 @@ void onSleep()
 
 void onWakeUp()
 {
-    //Serial.printf("\r\nWoke up, %d ms later.\r\n", timetillwakeup);
+    Serial.printf("\r\nWoke up, %d s later.\r\n", timetillwakeup/1000);
     lowpower = 0;
     //  //timetillsleep ms later into lowpower mode;
     //  TimerSetValue( &sleep, timetillsleep );
@@ -112,7 +112,7 @@ static void prepareTxFrame( uint8_t port )
     Serial.print("Distance = ");
     Serial.print(distance);
     Serial.println(" mm");
-    
+
     // Battery
     pinMode(VBAT_ADC_CTL,OUTPUT);
     digitalWrite(VBAT_ADC_CTL,LOW);
@@ -123,11 +123,11 @@ static void prepareTxFrame( uint8_t port )
      * connected to GPIO7 (USER_KEY / VBAT_ADC_CTL) pin
      */
     pinMode(VBAT_ADC_CTL, INPUT);
-    
+
     appDataSize = 5;
     // First byte is zero to match decoder on backend
     appData[0] = 0x00;
-    
+
     appData[1] = lowByte(batlevel);
     appData[2] = highByte(batlevel);
     appData[3] = lowByte(distance);
@@ -153,7 +153,7 @@ void setup_lorawan(unsigned int packet_interval) {
     TimerInit( &wakeUp, onWakeUp );
     delay(500);
     onSleep();
-    
+
 }
 
 void lorawan_runloop_once(void)
@@ -188,7 +188,7 @@ void lorawan_runloop_once(void)
         case DEVICE_STATE_CYCLE:
         {
             // Schedule next packet transmission
-            txDutyCycleTime = appTxDutyCycle + randr( 0, APP_TX_DUTYCYCLE_RND );
+            txDutyCycleTime = appTxDutyCycle + randr( 0, APP_TX_DUTYCYCLE_RND ); // default value of APP_TX_DUTYCYCLE_RND is 1000
             LoRaWAN.cycle(txDutyCycleTime);
             deviceState = DEVICE_STATE_SLEEP;
             break;

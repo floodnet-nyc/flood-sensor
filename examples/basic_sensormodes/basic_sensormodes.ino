@@ -42,7 +42,7 @@ void setup() {
   Serial.begin(9600);
   Serial.println("Starting");
 
-  setup_maxbotix(2, 150, 5);  // sensor mode 2(Median), 150ms sampling rate (time between readings), 5 readings per measurement
+  setup_maxbotix(2, 150, 7);  // sensor mode 2(Median), 150ms sampling rate (time between readings), 7 readings per measurement
   setup_lorawan(10);             // uplink frequency 10 seconds - controls duty cycle
 }
 

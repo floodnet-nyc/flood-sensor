@@ -10,7 +10,7 @@ unsigned int sensorMode;
 unsigned int sensor_sampling_rate;
 unsigned int sensor_numberOfReadings;
 
-void setup_maxbotix(unsigned int mode=2, unsigned int sampling_rate=250 , unsigned int numberOfReadings=15) {
+void setup_maxbotix(unsigned int mode=2, unsigned int sampling_rate=250 , unsigned int numberOfReadings=7) {
     Serial.println("Setting up Maxbotix .... ");
     digitalWrite(Vext, HIGH);   //power line: now off
     pinMode(triggerPin, OUTPUT);
@@ -61,7 +61,7 @@ uint16_t sensor_singleread(void) {
 }
 
 
-uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sampling_rate=20, unsigned int sensor_numberOfReadings=5)
+uint16_t read_sensor_using_modes(unsigned int sensorMode=2, unsigned int sensor_sampling_rate=250, unsigned int sensor_numberOfReadings=7)
 {
     uint16_t distance = 0;
     Serial.println("Reading sensor using modes, entering measurements into an array...");

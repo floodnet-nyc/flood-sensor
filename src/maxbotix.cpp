@@ -1,9 +1,6 @@
 #include "maxbotix.h"
 #include "functions.h"
 #include "sensorcfg.h"
-#include "softSerial.h"
-
-softSerial softwareSerial(GPIO1 /*TX pin*/, GPIO2 /*RX pin*/);
 
 // Maxbotix Ultrasonic variables
 uint16_t readings_arr[30] = {0};
@@ -15,9 +12,10 @@ unsigned int sensor_numberOfReadings;
 
 void setup_maxbotix(unsigned int mode=2, unsigned int sampling_rate=250 , unsigned int numberOfReadings=15) {
     Serial.println("Setting up Maxbotix .... ");
+    digitalWrite(Vext, HIGH);   //power line: now off
     pinMode(triggerPin, OUTPUT);
-    digitalWrite(triggerPin, LOW);
-    softwareSerial.begin(9600);
+    digitalWrite(triggerPin, LOW);  //trigger line: now off
+    Serial1.begin(9600);
     Serial.println("Sensor Settings:");
     sensorMode = mode;
     Serial.print("    Sensor mode: ");
@@ -35,19 +33,19 @@ uint16_t sensor_singleread(void) {
     char serialbuffer[4];
     int index = 0;
     char rc;
-    softwareSerial.flush();
+    Serial1.flush();
     boolean newData = false;
     while (newData == false) {
-        if (softwareSerial.available())
+        if (Serial1.available())
         {
-            char rc = softwareSerial.read();
+            char rc = Serial1.read();
             if (rc == 'R')
             {
                 while (index < 3)
                 {
-                    if (softwareSerial.available())
+                    if (Serial1.available())
                     {
-                        serialbuffer[index] = softwareSerial.read();
+                        serialbuffer[index] = Serial1.read();
                         index++;
                     }
                 }
@@ -67,12 +65,19 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sa
 {
     uint16_t distance = 0;
     Serial.println("Reading sensor using modes, entering measurements into an array...");
+    Serial.println("VEXT Low: Sensor Powered up");
+    digitalWrite(Vext, LOW);
     digitalWrite(triggerPin, HIGH);
+    Serial.println("Trigger Pin High: Sensor reading...");
     for(int i=0;i<sensor_numberOfReadings;i++){
         readings_arr[i] = sensor_singleread();
         delay(sensor_sampling_rate);
     }
     digitalWrite(triggerPin, LOW);
+    Serial.println("Trigger Pin Low: Sensor stopped.");
+    Serial.println("VEXT High: Sensor turned off");
+    digitalWrite(Vext, HIGH);
+    
     Serial.println("Printing the array...");
     for(int i=0; i<n; i++){
         Serial.print(readings_arr[i]);Serial.print(" ");

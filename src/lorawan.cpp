@@ -106,27 +106,16 @@ static void prepareTxFrame( uint8_t port )
      for example, if use REGION_CN470,
      the max value for different DR can be found in MaxPayloadOfDatarateCN470 refer to DataratesCN470 and BandwidthsCN470 in "RegionCN470.h".
      */
-    // Maxbotix
+    // Maxbotix reading
     distance = read_sensor_using_modes(sensorMode, sensor_sampling_rate, sensor_numberOfReadings);
     Serial.print("Distance = ");
     Serial.print(distance);
     Serial.println(" mm");
-    
     // Battery
-    pinMode(VBAT_ADC_CTL,OUTPUT);
-    digitalWrite(VBAT_ADC_CTL,LOW);
-    batlevel=analogRead(ADC)*2;
-    /*
-     * Board, BoardPlus, Capsule, GPS and HalfAA variants
-     * have external 10K VDD pullup resistor
-     * connected to GPIO7 (USER_KEY / VBAT_ADC_CTL) pin
-     */
-    pinMode(VBAT_ADC_CTL, INPUT);
-    
+    batlevel=getBatteryVoltage();
+    // Payload
     appDataSize = 5;
-    // First byte is zero to match decoder on backend
-    appData[0] = 0x00;
-    
+    appData[0] = 0x00;  // First byte is zero to match decoder on backend
     appData[1] = lowByte(batlevel);
     appData[2] = highByte(batlevel);
     appData[3] = lowByte(distance);

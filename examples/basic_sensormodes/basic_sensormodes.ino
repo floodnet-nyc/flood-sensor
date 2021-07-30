@@ -44,7 +44,7 @@ void setup() {
 
   setup_maxbotix(2, 150, 5);  // sensor mode 2(Median), 150ms sampling rate (time between readings), 5 readings per measurement
   setup_featherWing();        // set up SD card and RTC. Sets date and time everytime compiled.
-  lmicsetup(300);             // uplink frequency 300 seconds - controls duty cycle
+  lmicsetup(30);             // uplink frequency 300 seconds - controls duty cycle
 }
 
 void loop() {

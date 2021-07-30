@@ -15,6 +15,9 @@
 
 // ----------------   Variables   ----------------------
 
+// ----------------   FeatherWing   ----------------------
+// #define LOGGER //Uncomment if FeatherWing is connected
+
 // Duty cycle
 extern unsigned int TX_INTERVAL;
 

@@ -14,7 +14,6 @@ unsigned int sensor_numberOfReadings;
 void setup_maxbotix(unsigned int mode=2, unsigned int sampling_rate=250 , unsigned int numberOfReadings=5) {
   String setup_mb;
   Serial.println("Setting up Maxbotix .... ");
-  writeToSDCard(String("Setting up Maxbotix .... "));
   pinMode(triggerPin, OUTPUT);
   digitalWrite(triggerPin, LOW);
   Serial1.begin(9600);
@@ -54,34 +53,24 @@ uint16_t sensor_singleread(void) {
 
 uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sampling_rate=20, unsigned int sensor_numberOfReadings=5)
 {
-  String readings_array_string = "";
   uint16_t distance = 0;
   sensor_singleread();  // Ignore First read; First read in serial mode is incorrect
   Serial.println("Reading sensor using modes, entering measurements into an array...");
-  writeToSDCard("Reading sensor using modes, entering measurements into an array...");
   for(int i=0;i<sensor_numberOfReadings;i++){
     readings_arr[i] = sensor_singleread();
     delay(sensor_sampling_rate);
   }
   Serial.println("Printing the array...");
-  writeToSDCard("Printing the array...");
   for(int i=0; i<n; i++){
     Serial.print(readings_arr[i]);Serial.print(" ");
-    readings_array_string = String(readings_array_string + readings_arr[i] + " ");
   }
   Serial.println("");
-  writeToSDCard(readings_array_string);
-  readings_array_string = ""; //Cleaning readings array string
   sort(readings_arr, n);
   Serial.println("Printing the sorted array...");
-  writeToSDCard("Printing the sorted array...");
   for(int i=0; i<n; i++){
     Serial.print(readings_arr[i]);Serial.print(" ");
-    readings_array_string = String(readings_array_string + readings_arr[i] + " ");
   }
   Serial.println("");
-  writeToSDCard(readings_array_string);
-  readings_array_string = ""; //Cleaning readings array string
 
   switch (sensorMode) {
     case 1:
@@ -102,20 +91,15 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sa
       break;
   }
   Serial.println("Cleaning measurements array...");
-  writeToSDCard(String("Cleaning measurements array..."));
   for (int i=0; i<n; i++) {
     readings_arr[i] = 0;
   }
   Serial.println("");
   Serial.println("Printing the cleaned array...");
-  writeToSDCard(String("Printing the cleaned array..."));
   for(int i=0; i<n; i++){
     Serial.print(readings_arr[i]);Serial.print(" ");
-    readings_array_string = String(readings_array_string + readings_arr[i] + " ");
   }
   Serial.println("");
-  writeToSDCard(readings_array_string);
-  readings_array_string = ""; //Cleaning readings array string
 
   return distance;
 }

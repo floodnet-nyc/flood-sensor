@@ -56,8 +56,6 @@ void do_send(osjob_t* j) {
   // Check if there is not a current TX/RX job running
   if (LMIC.opmode & OP_TXRXPEND) {
     Serial.println(F("OP_TXRXPEND, not sending"));
-    String do_sendstr1 = "OP_TXRXPEND, not sending";
-    writeToSDCard(do_sendstr1);
   } else {
     // Prepare upstream data transmission at the next possible time.
     int lmic_tx_retVAL;
@@ -66,13 +64,10 @@ void do_send(osjob_t* j) {
     } else {
       lmic_tx_retVAL = LMIC_setTxData2(1, lora_packet, sizeof(lora_packet), 0);
     }
-    String do_sendstr;
     if (lmic_tx_retVAL == 0) {
       Serial.println(F("Packet queued and lmic_tx_retVAL is 0."));
     } else {
-      do_sendstr = String ("Something is wrong: ") + String("Error number: ") + String(lmic_tx_retVAL);
-      Serial.println(do_sendstr);
-      writeToSDCard(do_sendstr);
+      Serial.print ("Something is wrong. Error number: ") + Serial.println(lmic_tx_retVAL);
     }
   }
   // Next TX is scheduled after TX_COMPLETE event.
@@ -86,31 +81,25 @@ void onEvent (ev_t ev) {
     case EV_SCAN_TIMEOUT:
       Serial.println(F("EV_SCAN_TIMEOUT"));
       event_ev = String(event_ev + "EV_SCAN_TIMEOUT");
-      writeToSDCard(event_ev);
       break;
     case EV_BEACON_FOUND:
       Serial.println(F("EV_BEACON_FOUND"));
       event_ev = String(event_ev + "EV_BEACON_FOUND");
-      writeToSDCard(event_ev);
       break;
     case EV_BEACON_MISSED:
       Serial.println(F("EV_BEACON_MISSED"));
       event_ev = String(event_ev + "EV_BEACON_MISSED");
-      writeToSDCard(event_ev);
     case EV_BEACON_TRACKED:
       Serial.println(F("EV_BEACON_TRACKED"));
       event_ev = String(event_ev + "EV_BEACON_TRACKED" );
-      writeToSDCard(event_ev);
       break;
     case EV_JOINING:
       Serial.println(F("EV_JOINING"));
       event_ev = String(event_ev + "EV_JOINING");
-      writeToSDCard(event_ev);
       break;
     case EV_JOINED:
       Serial.println(F("EV_JOINED"));
       event_ev = String(event_ev + "EV_JOINED" );
-      writeToSDCard(event_ev);
       {
         u4_t netid = 0;
         devaddr_t devaddr = 0;
@@ -152,12 +141,10 @@ void onEvent (ev_t ev) {
     case EV_JOIN_FAILED:
       Serial.println(F("EV_JOIN_FAILED"));
       event_ev = String(event_ev + "EV_JOIN_FAILED");
-      writeToSDCard(event_ev);
       break;
     case EV_REJOIN_FAILED:
       Serial.println(F("EV_REJOIN_FAILED"));
       event_ev = String(event_ev + "EV_REJOIN_FAILED" );
-      writeToSDCard(event_ev);
       break;
       break;
     case EV_TXCOMPLETE:
@@ -165,11 +152,9 @@ void onEvent (ev_t ev) {
       Serial.println("");
       Serial.println("");
       event_ev = String(event_ev + "EV_TXCOMPLETE (includes waiting for RX windows)");
-      writeToSDCard(event_ev);
       if (LMIC.txrxFlags & TXRX_ACK)
         Serial.println(F("Received ack"));
       event_ev = String("Received ack");
-      writeToSDCard(event_ev);
       UPDATE_CONFIG = false;
       if (LMIC.dataLen) {
         Serial.print(F("Received "));
@@ -189,28 +174,23 @@ void onEvent (ev_t ev) {
     case EV_LOST_TSYNC:
       Serial.println(F("EV_LOST_TSYNC"));
       event_ev = String(event_ev + "EV_LOST_TSYNC" );
-      writeToSDCard(event_ev);
       break;
     case EV_RESET:
       Serial.println(F("EV_RESET"));
       event_ev = String(event_ev + "EV_RESET");
-      writeToSDCard(event_ev);
       break;
     case EV_RXCOMPLETE:
       // data received in ping slot
       Serial.println(F("EV_RXCOMPLETE"));
       event_ev = String(event_ev + "EV_RXCOMPLETE");
-      writeToSDCard(event_ev);
       break;
     case EV_LINK_DEAD:
       Serial.println(F("EV_LINK_DEAD"));
       event_ev = String(event_ev + "EV_LINK_DEAD");
-      writeToSDCard(event_ev);
       break;
     case EV_LINK_ALIVE:
       Serial.println(F("EV_LINK_ALIVE"));
       event_ev = String(event_ev + "EV_LINK_ALIVE");
-      writeToSDCard(event_ev);
       break;
     /*
       || This event is defined but not used in the code. No
@@ -223,12 +203,10 @@ void onEvent (ev_t ev) {
     case EV_TXSTART:
       Serial.println(F("EV_TXSTART"));
       event_ev = String(event_ev + "EV_TXSTART");
-      writeToSDCard(event_ev);
       break;
     case EV_TXCANCELED:
       Serial.println(F("EV_TXCANCELED"));
       event_ev = String(event_ev + "EV_TXCANCELED");
-      writeToSDCard(event_ev);
       break;
     case EV_RXSTART:
       /* do not print anything -- it wrecks timing */
@@ -236,67 +214,84 @@ void onEvent (ev_t ev) {
     case EV_JOIN_TXCOMPLETE:
       Serial.println(F("EV_JOIN_TXCOMPLETE: no JoinAccept"));
       event_ev = String(event_ev + "EV_JOIN_TXCOMPLETE: no JoinAccept" );
-      writeToSDCard(event_ev);
       break;
     default:
       Serial.print(F("Unknown event: "));
       event_ev = String(event_ev + "Unknown event");
       Serial.println((unsigned) ev);
-      writeToSDCard(event_ev);
       break;
   }
+  #ifdef LOGGER
+  writeToSDCard(event_ev);
+  #endif
 }
 
 void update_TX_INTERVAL(unsigned long dutycycle){
   Serial.print("Current duty cycle is: ");
   Serial.println(TX_INTERVAL);
   String str_downlink = String("Current duty cycle is: ") + String(TX_INTERVAL);
+  #ifdef LOGGER
   writeToSDCard(str_downlink);
+  #endif
   // Changing Duty Cycle
   TX_INTERVAL = dutycycle;
   Serial.print("Updated dutycycle is: ");
   Serial.println(TX_INTERVAL);
   str_downlink = String("Updated dutycycle is: ") + String(TX_INTERVAL);
+  #ifdef LOGGER
   writeToSDCard(str_downlink);
+  #endif
 }
 
 void update_sensorMode(unsigned int sensorMode_){
   Serial.print("Current sensorMode is: ");
   Serial.println(sensorMode);
   String str_downlink = String("Current sensorMode is: ") + String(sensorMode);
+  #ifdef LOGGER
   writeToSDCard(str_downlink);
+  #endif
   // Changing Sensor Mode
   sensorMode = sensorMode_;
   Serial.print("Updated sensorMode is: ");
   Serial.println(sensorMode);
   str_downlink = String("Updated sensorMode is: ") + String(sensorMode);
+  #ifdef LOGGER
   writeToSDCard(str_downlink);
+  #endif
 }
 
 void update_sampling_rate(unsigned int sampling_rate){
   Serial.print("Current sensor sampling rate is: ");
   Serial.println(sensor_sampling_rate);
   String str_downlink = String("Current sensor sampling rate is: ") + String(sensor_sampling_rate);
+  #ifdef LOGGER
   writeToSDCard(str_downlink);
+  #endif
   // Changing Sensor Mode
   sensor_sampling_rate = sampling_rate;
   Serial.print("Updated sensor sampling rate is: ");
   Serial.println(sensor_sampling_rate);
   str_downlink = String("Updated sensor sampling rate is: ") + String(sensor_sampling_rate);
+  #ifdef LOGGER
   writeToSDCard(str_downlink);
+  #endif
 }
 
 void update_no_of_readings(unsigned int numb_readings){
   Serial.print("Current number of readings per measurement: ");
   Serial.println(sensor_numberOfReadings);
   String str_downlink = String("Current number of readings per measurement: ") + String(sensor_numberOfReadings);
+  #ifdef LOGGER
   writeToSDCard(str_downlink);
+  #endif
   // Changing Sensor Mode
   sensor_numberOfReadings = numb_readings;
   Serial.print("Updated number of readings per measurement: ");
   Serial.println(sensor_numberOfReadings);
   str_downlink = String("Updated number of readings per measurement: ") + String(sensor_numberOfReadings);
+  #ifdef LOGGER
   writeToSDCard(str_downlink);
+  #endif
 }
 
 void process_received_downlink(void) {
@@ -307,7 +302,9 @@ void process_received_downlink(void) {
   // set UPDATE_CONFIG to true
   UPDATE_CONFIG = true;
   String str_downlink = String("Processing received downlink....");
+  #ifdef LOGGER
   writeToSDCard(str_downlink);
+  #endif
   unsigned int downlink_payload_size = LMIC.dataLen;
   unsigned long dutycycle = 0;
   unsigned int sensorMode_ = 0;
@@ -424,8 +421,6 @@ void prepare_packet(void) {
     */
     ERROR_FLAGS = 255;
     cfg_packet[0] = (unsigned char)ERROR_FLAGS;
-    packet_data = String("CFG Update via Uplink");
-    writeToSDCard(packet_data);
     byte lowduty = lowByte(TX_INTERVAL);
     byte highduty = highByte(TX_INTERVAL);
     cfg_packet[1] = (unsigned char)lowduty;
@@ -462,7 +457,9 @@ void prepare_packet(void) {
     Serial.print(distance);
     Serial.println(" mm");
     packet_data = String("Distance in mm is: ") + String(distance);
+    #ifdef LOGGER
     writeToSDCard(packet_data);
+    #endif
 
     // Battery
     measuredvbat = analogRead(VBATPIN); //Float
@@ -474,14 +471,18 @@ void prepare_packet(void) {
     Serial.print("VBat in mVolts: " ); Serial.println(measuredvbat);
     batlevel = measuredvbat; //Payload
     packet_data = String("Battery Level in mVolts is: ") + String(batlevel);
+    #ifdef LOGGER
     writeToSDCard(packet_data);
+    #endif
 
     // Payload
     lowbat = lowByte(batlevel);
     highbat = highByte(batlevel);
     lora_packet[0] = (unsigned char)ERROR_FLAGS;
     packet_data = String("SD Error flag is: ") + String(SD_ERROR);
+    #ifdef LOGGER
     writeToSDCard(packet_data);
+    #endif
     lora_packet[1] = (unsigned char)lowbat; //we're unsigned
     lora_packet[2] = (unsigned char)highbat;
     lowbyte = lowByte(distance);
@@ -505,7 +506,7 @@ void lorawan_runloop_once() {
     while(LMIC.opmode & OP_TXRXPEND){
       os_runloop_once();
     }
-    
+
      //Prepare a packet in relaxed setiing
     prepare_packet();
     os_setCallback(&sendjob, do_send);

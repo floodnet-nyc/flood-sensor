@@ -28,14 +28,17 @@ void setup_maxbotix(unsigned int mode=2, unsigned int sampling_rate=250 , unsign
     Serial.println(sensor_numberOfReadings);
 }
 
+unsigned long maxTimeOut;
+
 uint16_t sensor_singleread(void) {
     int distance =0;
     char serialbuffer[4];
     int index = 0;
     char rc;
     Serial1.flush();
+    maxTimeOut = millis();
     boolean newData = false;
-    while (newData == false) {
+    while (newData == false && (millis()-maxTimeOut<1000)) {
         if (Serial1.available())
         {
             char rc = Serial1.read();
@@ -77,7 +80,7 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode=2, unsigned int sensor_
     Serial.println("Trigger Pin Low: Sensor stopped.");
     Serial.println("VEXT High: Sensor turned off");
     digitalWrite(Vext, HIGH);
-    
+
     Serial.println("Printing the array...");
     for(int i=0; i<n; i++){
         Serial.print(readings_arr[i]);Serial.print(" ");
@@ -89,7 +92,7 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode=2, unsigned int sensor_
         Serial.print(readings_arr[i]);Serial.print(" ");
     }
     Serial.println("");
-    
+
     switch (sensorMode) {
         case 1:
             // Mean
@@ -108,7 +111,7 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode=2, unsigned int sensor_
             distance = sensor_singleread();
             break;
     }
-    
+
     Serial.println("Cleaning measurements array...");
     for (int i=0; i<n; i++) {
         readings_arr[i] = 0;
@@ -120,5 +123,5 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode=2, unsigned int sensor_
     }
     Serial.println("");
     return distance;
-    
+
 }

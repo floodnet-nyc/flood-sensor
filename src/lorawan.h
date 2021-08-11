@@ -3,9 +3,6 @@
 
 #pragma once
 
-#include <lmic.h>
-#include <hal/hal.h>
-#include <SPI.h>
 #include <Arduino.h>
 #include "LoRaWan_APP.h"
 #include "ttncredentials.h"

@@ -1,6 +1,5 @@
-This repository is updated for TTN v3 download this library and also remove the old lmic library from arduino libraries and download the latest library from [here](https://github.com/mcci-catena/arduino-lmic)
-# FloodSense Sensor Technical Documentation
-[This repository](https://github.com/floodsense/floodsense_sensor) contains the source code for the Floodsense sensor which uses ultrasonic sensor technology to detect floods and send the data over LoRa using LoRaWAN protocol. [Here](https://github.com/floodsense/sensor_experiments) is the experiments repo containing technical documentation, analysis and additional support related to this library.
+# FloodSense Sensor Library
+[This](https://github.com/floodsense/floodsense_sensor) repository contains the source code for the FloodSense sensor which captures real-time street-level flood information and sends the flood data over LoRa using LoRaWAN protocol. [Here](https://github.com/floodsense/sensor_experiments) is a link to the sensor experiments repo containing experimental results, analysis and additional source code and support related to this library.
 
 **Table of Contents:**
 
@@ -523,7 +522,7 @@ On the latest 1.3.2 version of the Adafruit's Sleepy_dog library, a strange rese
     ; // Wait for it to take
 #else
   SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-  // Due to a hardware bug on the SAMD21, the SysTick interrupts become 
+  // Due to a hardware bug on the SAMD21, the SysTick interrupts become
   // active before the flash has powered up from sleep, causing a hard fault.
   // To prevent this the SysTick interrupts are disabled before entering sleep mode.
   SysTick->CTRL &= ~SysTick_CTRL_TICKINT_Msk;  // Disable SysTick interrupts
@@ -535,7 +534,7 @@ On the latest 1.3.2 version of the Adafruit's Sleepy_dog library, a strange rese
 #if (SAMD20_SERIES || SAMD21_SERIES)
   SysTick->CTRL |= SysTick_CTRL_TICKINT_Msk;   // Enable SysTick interrupts
 #endif
-  
+
   // Code resumes here on wake (WDT early warning interrupt).
   // Bug: the return value assumes the WDT has run its course;
   // incorrect if the device woke due to an external interrupt.

@@ -340,7 +340,10 @@ static void prepareTxFrame( uint8_t port )
                 Serial.println(" mm");
 
                 // Battery
-                batLevel = getBatteryVoltage();
+                batLevel = getBatteryVoltage(); /*  get the BatteryVoltage in mV. */
+                Serial.print("Battery Level = ");
+                Serial.print(batLevel);
+                Serial.println(" V");
 
                 // Payload
                 lowbat = lowByte(batLevel);
@@ -517,11 +520,13 @@ void lorawan_runloop_once(void)
         }
         case DEVICE_STATE_SLEEP:
         {
+                //Serial.println(F("About to sleep..."));
                 LoRaWAN.sleep();
                 break;
         }
         case DEVICE_STATE_JOIN_FAILED:
         {
+                Serial.println(F("Join failed, entering join failed debug..."));
                 joinFailureDebug();
                 break;
         }

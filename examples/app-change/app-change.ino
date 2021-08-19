@@ -14,6 +14,17 @@
    RGB green means received done;
 */
 
+// Enter your keys here
+
+// This EUI must be in big-endian format
+#define TTN_APPEUI {  }
+
+// This should also be in big endian format
+#define TTN_DEVEUI  {  }
+
+// This key should be in big endian format
+#define TTN_APPKEY {  }
+
 /* Watchdog timer */
 bool autoFeed = false;
 
@@ -23,17 +34,25 @@ const int init_Address = 9;
 const int newAppAddress = 12;    // 12 to 19
 const int newAppKeyAddress = 21;  //21 to 37
 const int newDevEUIAddress = 40;
+const int defaultAppEUIAddress = 50; // 50 to 57
+const int defaultAppKeyAddress = 58; // 58 to 73
+const int defaultDevEUIAddress = 75; // 75 to 82
 char useOrigApp = 'y';
 
 /* OTAA para*/
-uint8_t devEui[] = {  };
-uint8_t appEui[] = {  };
-uint8_t appKey[] = {  };
+/* OTAA para*/
+uint8_t devEui[] = TTN_DEVEUI;
+uint8_t appEui[] = TTN_APPEUI;
+uint8_t appKey[] = TTN_APPKEY;
+//uint8_t devEui[] = { 0x70, 0xB3, 0xD5, 0x7E, 0xD0, 0x04, 0x3C, 0xE6 };
+//uint8_t appEui[] = { 0x12, 0x14, 0x25, 0x41, 0x23, 0x12, 0x31, 0x23 };
+//uint8_t appKey[] = { 0x10, 0x4D, 0xA1, 0x0A, 0x20, 0x1F, 0xE2, 0x1A, 0x24, 0xB6, 0x91, 0xF9, 0xD1, 0xBA, 0x98, 0xFE };
 
 /* ABP para*/
-uint8_t nwkSKey[] = {  };
-uint8_t appSKey[] = {  };
-uint32_t devAddr =  ( uint32_t )0x00000000;
+/* ABP para*/
+uint8_t nwkSKey[] = { };
+uint8_t appSKey[] = { };
+uint32_t devAddr =  ( uint32_t )0x0000;
 
 /*LoraWan channelsmask, default channels 0-7*/
 uint16_t userChannelsMask[6] = { 0xFF00, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 };
@@ -136,13 +155,25 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
       if (mcpsIndication->BufferSize == 33) // 33: 0x41, AppEUI, AppKey, DevEUI
       {
         // Modify AppEUI
-        ModifyAppEUI(mcpsIndication);
-        // Load keys
-        EEPROM.begin(512);
-        LoadNewAppEUI();
-        EEPROM.end();
-        Serial.println("Keys loaded...Start OTAA again...");
-        deviceState = DEVICE_STATE_JOIN;
+        ModifyKeys(mcpsIndication);
+        // Reset
+        innerWdtEnable(false);
+        delay(5000); //Wait until the MCU resets
+        //        // Load keys
+        //        EEPROM.begin(512);
+        //        LoadNewKeys();  // load keys
+        //        EEPROM.end();
+        //        Serial.println("Keys loaded...Start OTAA again...");
+        //        // take care of keys
+        //#if(LORAWAN_DEVEUI_AUTO)
+        //        LoRaWAN.generateDeveuiByChipID();
+        //#endif
+        //#if(AT_SUPPORT)
+        //        Serial.println("Getting device parameters...");
+        //        getDevParam();
+        //#endif
+        //        printDevParam();
+        //        deviceState = DEVICE_STATE_JOIN;
       } else {
         Serial.println("Invalid AppEUI and AppKey size!");
       }
@@ -153,7 +184,7 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
   }
 }
 
-void ModifyAppEUI(McpsIndication_t *mcpsIndication) {
+void ModifyKeys(McpsIndication_t *mcpsIndication) {
   EEPROM.begin(512);
   for (int i = 0; i < 8; ++i)
   {
@@ -163,25 +194,25 @@ void ModifyAppEUI(McpsIndication_t *mcpsIndication) {
   {
     EEPROM.write(newAppKeyAddress + i, byte(mcpsIndication->Buffer[i + 9])); //big-endian
   }
+  for (int i = 0; i < 8; ++i)
+  {
+    EEPROM.write(newDevEUIAddress + i, byte(mcpsIndication->Buffer[i + 25])); //big-endian
+  }
   useOrigApp = 'n'; // Use new AppEUI on restart
-  EEPROM.write(selectionAddress, byte(useOrigApp)); // Save the choice to Flash Memory
+  EEPROM.write(selectionAddress, byte('n')); // Save the choice to Flash Memory
   // restart
   EEPROM.end();
   delay(500);
 }
 
-void LoadNewAppEUI(void) {
+void LoadNewKeys(void) {
   bool foundNewAppEUI;
-  for (int i = 0; i < 8; ++i)
-  {
-    if (int(EEPROM.read(newAppAddress)) != 0) {
-      // break out of the loop if atleast one non-zero byte is found
-      foundNewAppEUI = true;
-      break;
-    } else {
-      // all zeroes is default key
-      foundNewAppEUI = false;
-    }
+  if (int(EEPROM.read(newAppAddress)) != 0) {
+    // check if first byte is a zero
+    foundNewAppEUI = true;
+  } else {
+    // all zeroes is default key
+    foundNewAppEUI = false;
   }
   if (foundNewAppEUI) {
     // load new keys
@@ -189,14 +220,16 @@ void LoadNewAppEUI(void) {
     for (int i = 0; i < 8; ++i)
     {
       appEui[i] = (uint8_t) EEPROM.read(newAppAddress + i); //big-endian
+      Serial.print(appEui[i]); Serial.print("  ");
     }
     Serial.println("");
     Serial.println("New AppEUI loaded.");
-    
+
     Serial.print("New AppKey found.");
     for (int i = 0; i < 16; ++i)
     {
       appKey[i] = (uint8_t) EEPROM.read(newAppKeyAddress + i); //big-endian
+      Serial.print(appKey[i]); Serial.print("  ");
     }
     Serial.println("");
     Serial.println("New AppKey loaded.");
@@ -205,6 +238,7 @@ void LoadNewAppEUI(void) {
     for (int i = 0; i < 8; ++i)
     {
       devEui[i] = (uint8_t) EEPROM.read(newDevEUIAddress + i); //big-endian
+      Serial.print(devEui[i]); Serial.print("  ");
     }
     Serial.println("");
     Serial.println("New DevEUI loaded.");
@@ -216,14 +250,109 @@ void LoadNewAppEUI(void) {
   }
 }
 
+void InitStoreKeys(void) {
+  Serial.println("First time setup, Storing the original AppEUI...");
+  // set useOrigApp to 'y'
+  useOrigApp = 'y';
+  EEPROM.write(selectionAddress, byte('y'));
+  EEPROM.write(init_Address, byte('y'));
+  // Save the default APPEUI in the Flash Memory
+  for (int i = 0; i < 8; ++i)
+  {
+    EEPROM.write(defaultAppEUIAddress + i, byte(appEui[i])); //big-endian
+  }
+  for (int i = 0; i < 8; ++i)
+  {
+    EEPROM.write(defaultDevEUIAddress + i, byte(devEui[i])); //big-endian
+  }
+  for (int i = 0; i < 16; ++i)
+  {
+    EEPROM.write(defaultAppKeyAddress + i, byte(appKey[i])); //big-endian
+  }
+  Serial.println("Default Keys saved in the Flash Memory.");
+}
+
+TimerEvent_t joinTimeOut; // TTN join timeout counter
+
+void startJoiningTTN(void) {
+  // start the timer
+  Serial.println("Join TimeOut TimerEvent_t started.");
+  TimerInit(&joinTimeOut, joinTimedOutEvent);
+  TimerSetValue(&joinTimeOut, 30000); // 30 seconds
+  TimerStart(&joinTimeOut);
+  LoRaWAN.join();
+}
+
+void joinFailureDebug(void) {
+  Serial.println("Running Join Failure debug");
+  EEPROM.begin(512);
+  EEPROM.write(selectionAddress, byte('y'));
+  Serial.println("Join Failed, loading defualt keys..");
+  for (int i = 0; i < 8; i++) {
+    EEPROM.write(newAppAddress, byte(0));
+  }
+  EEPROM.end();
+}
+
+void joinTimedOutEvent(void) {
+  joinFailureDebug();
+  //  reset the MCU
+  Serial.println("Join TimedOut, resetting the MCU will join default TTN Application..");
+  innerWdtEnable(false);
+  delay(5000); //Wait until the MCU resets
+}
+
+void ifJoinedTTN(void) {
+  //stop the Timer if it is running
+  if (joinTimeOut.IsRunning) {
+    TimerStop(&joinTimeOut);
+    Serial.println("joinTimeOut Timer is stopped");
+  }
+}
+
 void setup() {
   delay(3000);
   Serial.begin(115200);
+  Serial.println(F("Checking keys..."));
+  EEPROM.begin(512);
+  // Check init_ for 'y' or 'n'
+  char init_ = char(EEPROM.read(init_Address));
+  useOrigApp = char(EEPROM.read(selectionAddress));
+  if ( init_ == 'y') {
+    // already initialized and has a new key
+    if (useOrigApp == 'n' || useOrigApp == 'N') {
+      // Load new AppEUI
+      Serial.println("Already initialized and have new keys.");
+      LoadNewKeys();
+    } else {
+      Serial.println("Using default Keys...");
+      // check if any of them are zeroes and load from Flash if needed
+      for (int i = 0; i < 8; ++i)
+      {
+        devEui[i] = (uint8_t) EEPROM.read(defaultDevEUIAddress + i); //big-endian
+      }
+
+      for (int i = 0; i < 8; ++i)
+      {
+        appEui[i] = (uint8_t) EEPROM.read(defaultAppEUIAddress + i); //big-endian
+      }
+
+      for (int i = 0; i < 16; ++i)
+      {
+        appKey[i] = (uint8_t) EEPROM.read(defaultAppKeyAddress + i); //big-endian
+      }
+
+    }
+  } else {
+    // First time setup, store default keys
+    InitStoreKeys();
+  }
+  EEPROM.end();
 #if(AT_SUPPORT)
   enableAt();
 #endif
   deviceState = DEVICE_STATE_INIT;
-  LoRaWAN.ifskipjoin();
+  LoRaWAN.ifskipjoin(); // downlinks fail if this is not called!
 }
 
 void loop()
@@ -232,22 +361,14 @@ void loop()
   {
     case DEVICE_STATE_INIT:
       {
+        Serial.println("Device state: DEVICE_STATE_INIT");
 #if(LORAWAN_DEVEUI_AUTO)
         LoRaWAN.generateDeveuiByChipID();
 #endif
 #if(AT_SUPPORT)
+        Serial.println("Getting device parameters...");
         getDevParam();
 #endif
-        Serial.println(F("Checking keys..."));
-        EEPROM.begin(512);
-        useOrigApp = char(EEPROM.read(selectionAddress));
-        if (useOrigApp == 'n' || useOrigApp == 'N') {
-          // Load new AppEUI
-          LoadNewAppEUI();
-        } else {
-          Serial.println("Using default Keys...");
-        }
-        EEPROM.end();
         printDevParam();
         LoRaWAN.init(loraWanClass, loraWanRegion);
         deviceState = DEVICE_STATE_JOIN;
@@ -255,11 +376,14 @@ void loop()
       }
     case DEVICE_STATE_JOIN:
       {
-        LoRaWAN.join();
+        Serial.println("Device state: DEVICE_STATE_JOIN");
+        startJoiningTTN(); // Contains LoRaWAN.join() with joinTimeOut Event
         break;
       }
     case DEVICE_STATE_SEND:
       {
+        Serial.println("Device state: DEVICE_STATE_SEND");
+        ifJoinedTTN(); // Runs only once on the first packet TX
         prepareTxFrame( appPort );
         LoRaWAN.send();
         deviceState = DEVICE_STATE_CYCLE;
@@ -267,6 +391,7 @@ void loop()
       }
     case DEVICE_STATE_CYCLE:
       {
+        Serial.println("Device state: DEVICE_STATE_CYCLE");
         // Schedule next packet transmission
         txDutyCycleTime = appTxDutyCycle + randr( 0, APP_TX_DUTYCYCLE_RND );
         LoRaWAN.cycle(txDutyCycleTime);
@@ -275,6 +400,7 @@ void loop()
       }
     case DEVICE_STATE_SLEEP:
       {
+        //Serial.println("Device state: DEVICE_STATE_SLEEP");
         LoRaWAN.sleep();
         break;
       }

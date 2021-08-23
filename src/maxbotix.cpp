@@ -12,6 +12,7 @@ unsigned int sensor_numberOfReadings;
 
 void setup_maxbotix(unsigned int mode=2, unsigned int sampling_rate=250 , unsigned int numberOfReadings=7) {
   Serial.println("Setting up Maxbotix .... ");
+  pinMode(Vext, OUTPUT);
   digitalWrite(Vext, HIGH);   //power line: now off
   pinMode(triggerPin, OUTPUT);
   digitalWrite(triggerPin, LOW);  //trigger line: now off

@@ -39,7 +39,7 @@
 
 void setup() {
   delay(3000);
-  Serial.begin(9600);
+  Serial.begin(115200);
   Serial.println("Starting");
 
   setup_maxbotix(2, 150, 7);  // sensor mode 2(Median), 150ms sampling rate (time between readings), 7 readings per measurement

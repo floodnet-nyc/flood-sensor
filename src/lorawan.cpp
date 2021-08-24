@@ -300,8 +300,8 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
         switch (mcpsIndication->Buffer[0]) {
         case 0x4D:
                 /* Change sensor Mode*/
-                //ModifySensorSettings(mcpsIndication);
-                //UPDATE_CONFIG == true;
+                ModifySensorSettings(mcpsIndication);
+                UPDATE_CONFIG == true;
                 Serial.println("Modify Sensor Settings");
                 break;
         case 0x41:

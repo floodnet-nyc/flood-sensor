@@ -193,14 +193,15 @@ void ModifyKeys(McpsIndication_t *mcpsIndication) {
         {
                 EEPROM.write(newAppAddress + i, byte(mcpsIndication->Buffer[i + 1])); //big-endian
         }
-        for (int i = 0; i < 16; ++i)
-        {
-                EEPROM.write(newAppKeyAddress + i, byte(mcpsIndication->Buffer[i + 9])); //big-endian
-        }
         for (int i = 0; i < 8; ++i)
         {
-                EEPROM.write(newDevEUIAddress + i, byte(mcpsIndication->Buffer[i + 25])); //big-endian
+                EEPROM.write(newDevEUIAddress + i, byte(mcpsIndication->Buffer[i + 9])); //big-endian
         }
+        for (int i = 0; i < 16; ++i)
+        {
+                EEPROM.write(newAppKeyAddress + i, byte(mcpsIndication->Buffer[i + 17])); //big-endian
+        }
+        
         useOrigApp = 'n'; // Use new AppEUI on restart
         EEPROM.write(selectionAddress, byte('n')); // Save the choice to Flash Memory
         // restart
@@ -223,7 +224,7 @@ void LoadNewKeys(void) {
                 for (int i = 0; i < 8; ++i)
                 {
                         appEui[i] = (uint8_t) EEPROM.read(newAppAddress + i); //big-endian
-                        Serial.print(appEui[i]); Serial.print("  ");
+                        Serial.print(appEui[i], HEX); Serial.print("  ");
                 }
                 Serial.println("");
                 Serial.println("New AppEUI loaded.");
@@ -232,7 +233,7 @@ void LoadNewKeys(void) {
                 for (int i = 0; i < 16; ++i)
                 {
                         appKey[i] = (uint8_t) EEPROM.read(newAppKeyAddress + i); //big-endian
-                        Serial.print(appKey[i]); Serial.print("  ");
+                        Serial.print(appKey[i], HEX); Serial.print("  ");
                 }
                 Serial.println("");
                 Serial.println("New AppKey loaded.");
@@ -241,7 +242,7 @@ void LoadNewKeys(void) {
                 for (int i = 0; i < 8; ++i)
                 {
                         devEui[i] = (uint8_t) EEPROM.read(newDevEUIAddress + i); //big-endian
-                        Serial.print(devEui[i]); Serial.print("  ");
+                        Serial.print(devEui[i], HEX); Serial.print("  ");
                 }
                 Serial.println("");
                 Serial.println("New DevEUI loaded.");
@@ -290,22 +291,24 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
         turnOffRGB();
 #endif
         // process received downlink
-        /*
-           Downlink Packet format:
-         |   oper     | Duty Cycle in seconds  | Sensor Mode | Sampling Rate  |  Number of readings per measurement  |
-         |  1 byte    |       2 bytes          |    1 byte   |    2 bytes     |        1 byte                        |
-         */
-        // set UPDATE_CONFIG to true
-        //UPDATE_CONFIG = true;
+        
         switch (mcpsIndication->Buffer[0]) {
         case 0x4D:
-                /* Change sensor Mode*/
+                /* Sensor Mode Change
+                   Packet format:
+                  |   oper     | Duty Cycle in seconds  | Sensor Mode | Sampling Rate  |  Number of readings per measurement  |
+                  |   0x4D     |       2 bytes          |    1 byte   |    2 bytes     |        1 byte                        |
+                 */
                 ModifySensorSettings(mcpsIndication);
                 UPDATE_CONFIG == true;
                 Serial.println("Modify Sensor Settings");
                 break;
         case 0x41:
-                /* Change APPEUI*/
+                /* Sensor APP Change
+                   Packet format:
+                  |   oper     |   AppEUI(big-endian)   |   DevEUI(big-endian)  |   AppKEY(big-endian)    |
+                  |   0x41     |         8 bytes        |          8 bytes      |         16 bytes        |
+                 */
                 Serial.println("Change APPEUI");
                 if (mcpsIndication->BufferSize == 33) // 33: 0x41, AppEUI, AppKey, DevEUI
                 {
@@ -337,7 +340,7 @@ static void prepareTxFrame( uint8_t port )
            for example, if use REGION_CN470,
            the max value for different DR can be found in MaxPayloadOfDatarateCN470 refer to DataratesCN470 and BandwidthsCN470 in "RegionCN470.h".
          */
-
+        Serial.println("Preparing TX frame...");
         byte lowbyte, highbyte, lowbat, highbat;
         // Error
         ERROR_FLAGS = 0x00;
@@ -377,8 +380,8 @@ static void prepareTxFrame( uint8_t port )
                  |           2 bytes         |
                  |    high byte | low byte   |
                  |------------------------------------------------------------ Error Flags  ----------------------------------------------------------------|
-                 |     bit 7                                                |  bit 6   |  bit 5  |  bit 4  |  bit 3  |  bit 2  |  bit 1  |      bit 0       |
-                 |     Used only for CFG update (all other bits are high)   |          |         |         |         |         |         |   SD error flag  |
+                 |     bit 7                       |  bit 6   |  bit 5  |  bit 4  |  bit 3  |  bit 2  |  bit 1  |      bit 0       |
+                 |     Used only for CFG update    |          |         |         |         |         |         |   SD error flag  |
                  */
 
                 // Regular Uplink Packet size
@@ -498,7 +501,6 @@ void lorawan_runloop_once(void)
         {
         case DEVICE_STATE_INIT:
         {
-                Serial.println("Device state: DEVICE_STATE_INIT");
 #if (LORAWAN_DEVEUI_AUTO)
                 LoRaWAN.generateDeveuiByChipID();
 #endif
@@ -508,18 +510,17 @@ void lorawan_runloop_once(void)
 #endif
                 printDevParam();
                 LoRaWAN.init(loraWanClass, loraWanRegion);
+                UPDATE_CONFIG = true;
                 deviceState = DEVICE_STATE_JOIN;
                 break;
         }
         case DEVICE_STATE_JOIN:
         {
-                Serial.println("Device state: DEVICE_STATE_JOIN");
                 startJoiningTTN(); // Contains LoRaWAN.join() with joinTimeOut Event
                 break;
         }
         case DEVICE_STATE_SEND:
         {
-                Serial.println("Device state: DEVICE_STATE_SEND");
                 ifJoinedTTN(); // Runs only once on the first packet TX
                 prepareTxFrame( appPort );
                 LoRaWAN.send();
@@ -528,7 +529,6 @@ void lorawan_runloop_once(void)
         }
         case DEVICE_STATE_CYCLE:
         {
-                Serial.println("Device state: DEVICE_STATE_CYCLE");
                 // Schedule next packet transmission
                 txDutyCycleTime = appTxDutyCycle + randr( 0, APP_TX_DUTYCYCLE_RND );
                 LoRaWAN.cycle(txDutyCycleTime);
@@ -537,7 +537,6 @@ void lorawan_runloop_once(void)
         }
         case DEVICE_STATE_SLEEP:
         {
-                //Serial.println("Device state: DEVICE_STATE_SLEEP");
                 LoRaWAN.sleep();
                 break;
         }
@@ -548,3 +547,4 @@ void lorawan_runloop_once(void)
         }
         }
 }
+

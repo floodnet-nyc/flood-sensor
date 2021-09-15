@@ -201,7 +201,7 @@ void ModifyKeys(McpsIndication_t *mcpsIndication) {
         {
                 EEPROM.write(newAppKeyAddress + i, byte(mcpsIndication->Buffer[i + 17])); //big-endian
         }
-        
+
         useOrigApp = 'n'; // Use new AppEUI on restart
         EEPROM.write(selectionAddress, byte('n')); // Save the choice to Flash Memory
         // restart
@@ -276,6 +276,23 @@ void InitStoreKeys(void) {
         Serial.println("Default Keys saved in the Flash Memory.");
 }
 
+void process_operation(McpsIndication_t *mcpsIndication){
+        if ((char(mcpsIndication->Buffer[1]) == 's') && (char(mcpsIndication->Buffer[2]) == 't') && (char(mcpsIndication->Buffer[3]) == 'a') && (char(mcpsIndication->Buffer[4]) == 'r') && (char(mcpsIndication->Buffer[5]) == 't')) {
+                Serial.println("Start sensing, uplinks are Ultrasonic measurements.");
+                UPDATE_CONFIG = false;
+        } else if ((char(mcpsIndication->Buffer[1]) == 's') && (char(mcpsIndication->Buffer[2]) == 't') && (char(mcpsIndication->Buffer[3]) == 'o') && (char(mcpsIndication->Buffer[4]) == 'p')) {
+                Serial.println("Stop sensing, uplinks are sensor CFG packets.");
+                UPDATE_CONFIG = true;
+        } else if ((char(mcpsIndication->Buffer[1]) == 'r') && (char(mcpsIndication->Buffer[2]) == 'e') && (char(mcpsIndication->Buffer[3]) == 's') && (char(mcpsIndication->Buffer[4]) == 'e') && (char(mcpsIndication->Buffer[5]) == 't')) {
+                Serial.println("Reset Sensor.");
+                // Reset
+                innerWdtEnable(false);
+                delay(5000); //Wait until the MCU resets
+        } else {
+                Serial.println("Invalid Operation");
+        }
+}
+
 void downLinkDataHandle(McpsIndication_t *mcpsIndication)
 {
         Serial.printf("+REV DATA:%s,RXSIZE %d,PORT %d\r\n", mcpsIndication->RxSlot ? "RXWIN2" : "RXWIN1", mcpsIndication->BufferSize, mcpsIndication->Port);
@@ -291,7 +308,7 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
         turnOffRGB();
 #endif
         // process received downlink
-        
+
         switch (mcpsIndication->Buffer[0]) {
         case 0x4D:
                 /* Sensor Mode Change
@@ -321,6 +338,15 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
                         Serial.println("Invalid AppEUI and AppKey size!");
                 }
                 break;
+        case 0x4F:
+                /*
+                  Sensor Operation control: Start or Stop
+                      Start: measurement uplinks
+                      Stop: cfg packet uplinks
+                */
+                Serial.print("Sensor Operation Control  --->  ");
+                process_operation(mcpsIndication);
+                break;
         default:
                 Serial.println("Invalid downlink format!");
                 break;
@@ -342,7 +368,8 @@ static void prepareTxFrame( uint8_t port )
          */
         Serial.println("Preparing TX frame...");
         byte lowbyte, highbyte, lowbat, highbat;
-        // Error
+
+        // Error flags
         ERROR_FLAGS = 0x00;
 
         // Formatting payload
@@ -410,7 +437,6 @@ static void prepareTxFrame( uint8_t port )
                 appData[3] = (unsigned char)lowbyte;
                 appData[4] = (unsigned char)highbyte;
         }
-        UPDATE_CONFIG = false;
 }
 
 TimerEvent_t joinTimeOut; // TTN join timeout counter
@@ -547,4 +573,3 @@ void lorawan_runloop_once(void)
         }
         }
 }
-

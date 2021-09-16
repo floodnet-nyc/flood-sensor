@@ -1,5 +1,5 @@
 # FloodSense Sensor Library
-[This](https://github.com/floodsense/floodsense_sensor) repository contains the source code for the FloodSense sensor which captures real-time street-level flood information and sends the flood data over LoRa using LoRaWAN protocol. [Here](https://github.com/floodsense/sensor_experiments) is a link to the sensor experiments repo containing experimental results, analysis and additional source code and support related to this library.
+[This](https://github.com/floodsense/floodsense_sensor) repository contains source code for FloodSense sensor which captures real-time street-level flood information - including presence, frequency, and depth, then transmits this data wirelessly using LoRaWAN protocol. [Here](https://github.com/floodsense/sensor_experiments) is a link to the sensor experiments repo containing experimental results, analysis and additional source code and support related to this library.
 
 **Table of Contents:**
 

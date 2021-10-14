@@ -98,14 +98,14 @@ uint8_t lowpower = 1;
 
 void ModifyDutyCycle(McpsIndication_t *mcpsIndication){
         unsigned long dutycycle = 0;
-        for (int i = 1; i < 3; i++) {
-                dutycycle =  (mcpsIndication->Buffer[i]) | ( dutycycle << 8*i);
+        for (int i = 1; i < mcpsIndication->BufferSize; i++) {
+                dutycycle =  (mcpsIndication->Buffer[i]) | ( dutycycle << 8*(i-1));
         }
         if (dutycycle!= 0) {
                 Serial.print("Current duty cycle is: ");
                 Serial.println(appTxDutyCycle);
                 // Changing Duty Cycle
-                appTxDutyCycle = dutycycle;
+                appTxDutyCycle = dutycycle * 1000;
                 Serial.print("Updated dutycycle is: ");
                 Serial.println(appTxDutyCycle);
         } else{
@@ -162,9 +162,11 @@ void ModifyNumberOfSamples(McpsIndication_t *mcpsIndication){
 void ModifySensorSettings(McpsIndication_t *mcpsIndication){
 
         switch(mcpsIndication->BufferSize) {
+        case 2:
+                ModifyDutyCycle(mcpsIndication);
+                break;
         case 3:
                 ModifyDutyCycle(mcpsIndication);
-                ModifySensorMode(mcpsIndication);
                 break;
         case 4:
                 ModifyDutyCycle(mcpsIndication);

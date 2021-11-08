@@ -1,6 +1,7 @@
-This repository is updated for TTN v3 download this library and also remove the old lmic library from arduino libraries and download the latest library from [here](https://github.com/mcci-catena/arduino-lmic)
 # FloodSense Sensor Technical Documentation
 [This repository](https://github.com/floodsense/floodsense_sensor) contains the source code for the Floodsense sensor which uses ultrasonic sensor technology to detect floods and send the data over LoRa using LoRaWAN protocol. [Here](https://github.com/floodsense/sensor_experiments) is the experiments repo containing technical documentation, analysis and additional support related to this library.
+
+<u>Note while using this library with CubeCell boards:</u> *For every firmware upload, clear the EEPROM by running the EEPROM example to delete the old keys. EEPROM is unaffected by firmware change and shall be cleared manually every time.*
 
 **Table of Contents:**
 
@@ -482,11 +483,11 @@ The following are a few sensor designs that help mitigate this sensor noise:
     <br />
 
   + In this design, a solar shield has been added to the original design.
-  <img src="img/solar-shield-design.jpg" width="560" >
+    <img src="img/solar-shield-design.jpg" width="560" >
     <br />
 
   + In this design, the ultrasonic sensor has been housed completely inside the original housing.
-  <img src="img/ultrasonic-sensor-inside.jpg" width="560" >
+    <img src="img/ultrasonic-sensor-inside.jpg" width="560" >
       <br />
 
 The following are the comparisons to the original sensor data. All the graphs have been scaled to same ranges, and each block height representing 20mm or 2cm.

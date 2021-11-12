@@ -30,23 +30,40 @@ void setup_maxbotix(unsigned int mode=2, unsigned int sampling_rate=250 , unsign
 }
 
 uint16_t sensor_singleread(void) {
-  uint16_t distance=0;
-  char buffer_RTT[6] = {};
+  int distance = 0;
+  char serialbuffer[4];
+  int index = 0;
+  char rc;
+  Serial1.flush();
   digitalWrite(triggerPin, HIGH);
-  delayMicroseconds(20);            //Pin 4 (Trigger Pin) on Maxbotix ned to be pulled High for a minimum of 20 microseconds.
+  delayMicroseconds(20); 
   digitalWrite(triggerPin, LOW);
   delay(150);
-  if (Serial1.available() > 0) {
-    do {
-      if (Serial1.read() == 'R') {
-        for (int i = 0; i < 5; i++) {
-          buffer_RTT[i] = Serial1.read();
+  boolean newData = false;
+  while (newData == false) {
+    if (Serial1.available()>0)
+    {
+      char rc = Serial1.read();
+      if (rc == 'R')
+      {
+        while (index < 3)
+        {
+          if (Serial1.available())
+          {
+            serialbuffer[index] = Serial1.read();
+            index++;
+          }
         }
       }
-    } while (buffer_RTT == NULL);
-    distance = (buffer_RTT[0] - '0') * 1000 + (buffer_RTT[1] - '0') * 100 + (buffer_RTT[2] - '0') * 10 + (buffer_RTT[3] - '0');
-    Serial.print("distance: "); Serial.print(distance); Serial.println(" mm");
+      distance = (serialbuffer[0] - '0') * 1000 + (serialbuffer[1] - '0') * 100 + (serialbuffer[2] - '0') * 10 + (serialbuffer[3] - '0');
+      if (distance>0){
+        newData = true;
+      } 
+    }
   }
+  if (newData) {
+    Serial.print("distance: "); Serial.print(distance); Serial.println(" mm"); 
+  } 
   return distance;
 }
 
@@ -56,9 +73,10 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sa
   uint16_t distance = 0;
   digitalWrite(Vext, LOW);
   sensor_singleread();
-  delay(sensor_sampling_rate);
-  for (int i = 0; i < sensor_numberOfReadings; i++) {
-    readings_arr[i] = sensor_singleread();
+  for (int i = 0; i < sensor_numberOfReadings + 1; i++) {
+    if (i>0){ //1st reading is R from "Maxbotix Corp"
+      readings_arr[i] = sensor_singleread();
+    }
     delay(sensor_sampling_rate);
   }
   digitalWrite(Vext, HIGH);

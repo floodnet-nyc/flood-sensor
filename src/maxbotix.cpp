@@ -30,33 +30,21 @@ void setup_maxbotix(unsigned int mode=2, unsigned int sampling_rate=250 , unsign
 }
 
 uint16_t sensor_singleread(void) {
-  int distance = 0;
-  char serialbuffer[4];
-  int index = 0;
-  char rc;
-  Serial1.flush();
+  uint16_t distance=0;
+  char buffer_RTT[6] = {};
+  digitalWrite(triggerPin, HIGH);
+  delayMicroseconds(20);            //Pin 4 (Trigger Pin) on Maxbotix ned to be pulled High for a minimum of 20 microseconds.
+  digitalWrite(triggerPin, LOW);
   delay(150);
-  boolean newData = false;
-  while (newData == false) {
-    if (Serial1.available())
-    {
-      char rc = Serial1.read();
-      if (rc == 'R')
-      {
-        while (index < 3)
-        {
-          if (Serial1.available())
-          {
-            serialbuffer[index] = Serial1.read();
-            index++;
-          }
+  if (Serial1.available() > 0) {
+    do {
+      if (Serial1.read() == 'R') {
+        for (int i = 0; i < 5; i++) {
+          buffer_RTT[i] = Serial1.read();
         }
       }
-      newData = true;
-    }
-  }
-  if (newData) {
-    distance = (serialbuffer[0] - '0') * 1000 + (serialbuffer[1] - '0') * 100 + (serialbuffer[2] - '0') * 10 + (serialbuffer[3] - '0');
+    } while (buffer_RTT == NULL);
+    distance = (buffer_RTT[0] - '0') * 1000 + (buffer_RTT[1] - '0') * 100 + (buffer_RTT[2] - '0') * 10 + (buffer_RTT[3] - '0');
     Serial.print("distance: "); Serial.print(distance); Serial.println(" mm");
   }
   return distance;
@@ -67,14 +55,12 @@ uint16_t read_sensor_using_modes(unsigned int sensorMode, unsigned int sensor_sa
 {
   uint16_t distance = 0;
   digitalWrite(Vext, LOW);
-  digitalWrite(triggerPin, HIGH);
   sensor_singleread();
   delay(sensor_sampling_rate);
   for (int i = 0; i < sensor_numberOfReadings; i++) {
     readings_arr[i] = sensor_singleread();
     delay(sensor_sampling_rate);
   }
-  digitalWrite(triggerPin, LOW);
   digitalWrite(Vext, HIGH);
   sort(readings_arr, n);
   switch (sensorMode) {

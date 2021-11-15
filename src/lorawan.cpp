@@ -615,7 +615,7 @@ void lorawan_runloop_once(void)
                 ifJoinedTTN(); // Runs only once on the first packet TX
                 prepareTxFrame(appPort);
                 // if CFG, sleep less time
-                if (SEND_CFG_AS_UPLINK == 255){
+                if (SEND_CFG_AS_UPLINK){
                         appTxDutyCycle = 10 * 1000; 
                 } else {
                         appTxDutyCycle = TX_INTERVAL * 1000;

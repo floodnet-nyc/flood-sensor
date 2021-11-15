@@ -38,7 +38,7 @@ const int MAJOR_VERSION = 4; // incompatible changes
 const int MINOR_VERSION = 0; // add functionality in a backwards compatible manner
 const int PATH_VERSION = 0; // backwards compatible bug fixes
 
-uint16_t SENSOR_STATE = 0x78;  // Default sensor state is 'stop' -> Uplinks are CFG packets
+uint8_t SENSOR_STATE = 0x78;  // Default sensor state is 'stop' -> Uplinks are CFG packets
 
 unsigned int ERROR_FLAGS;
 
@@ -66,6 +66,7 @@ DeviceClass_t loraWanClass = LORAWAN_CLASS;
 
 /*the application data transmission duty cycle.  value in [ms].*/
 uint32_t appTxDutyCycle = 60000;
+uint16_t TX_INTERVAL = 60;
 
 /*OTAA or ABP*/
 bool overTheAirActivation = LORAWAN_NETMODE;
@@ -267,7 +268,7 @@ void LoadNewKeys(void) {
         }
 }
 
-uint16_t get_current_sensor_state(void){
+uint8_t get_current_sensor_state(void){
         return SENSOR_STATE;
 }
 
@@ -411,11 +412,11 @@ static void prepareTxFrame( uint8_t port )
                 appDataSize = 11;
                 ERROR_FLAGS = 255;
                 appData[0] = (unsigned char)ERROR_FLAGS;
-                uint16_t TX_INTERVAL = appTxDutyCycle/1000;
+                uint16_t tx_interval_bytes = appTxDutyCycle/1000;
                 
                 // sensor_sleep
-                byte lowduty = lowByte(TX_INTERVAL);
-                byte highduty = highByte(TX_INTERVAL);
+                byte lowduty = lowByte(tx_interval_bytes);
+                byte highduty = highByte(tx_interval_bytes);
                 appData[1] = (unsigned char)lowduty;
                 appData[2] = (unsigned char)highduty;
 
@@ -541,6 +542,7 @@ void startJoiningTTN(void) {
 void setup_lorawan(unsigned int packet_interval) {
         Serial.println(F("Setting up dutycycle..."));
         appTxDutyCycle = packet_interval * 1000;
+        TX_INTERVAL = packet_interval;
         Serial.print(F("Dutycycle set to "));Serial.print(appTxDutyCycle/1000);Serial.println(F(" seconds"));
         Serial.println(F("Checking keys..."));
         EEPROM.begin(512);
@@ -621,19 +623,28 @@ void lorawan_runloop_once(void)
                 // Schedule next packet transmission
                 txDutyCycleTime = appTxDutyCycle + randr( 0, APP_TX_DUTYCYCLE_RND );
                 LoRaWAN.cycle(txDutyCycleTime);
-                deviceState = DEVICE_STATE_SLEEP;
-                break;
-        }
-        case DEVICE_STATE_SLEEP:
-        {
+                // check if state is reset
                 if (SENSOR_STATE == 0x72){
                         // Reset
                         innerWdtEnable(false);
                         delay(5000); //Wait until the MCU resets       
                 }
+                // if CFG, sleep less time
+                if (ERROR_FLAGS == 255){
+                        appTxDutyCycle = 10 * 1000; 
+                } else {
+                        appTxDutyCycle = TX_INTERVAL * 1000;
+                }
+                Serial.print("Going to sleep, next uplink in "); Serial.print(appTxDutyCycle/1000);Serial.println(" s.");
+                deviceState = DEVICE_STATE_SLEEP;
+                break;
+        }
+        case DEVICE_STATE_SLEEP:
+        {
                 LoRaWAN.sleep();
                 break;
         }
+
         default:
         {
                 deviceState = DEVICE_STATE_INIT;

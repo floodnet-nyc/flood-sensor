@@ -117,8 +117,7 @@ void ModifyDutyCycle(McpsIndication_t *mcpsIndication){
                 Serial.print("Current duty cycle is: ");
                 Serial.println(appTxDutyCycle);
                 // Changing Duty Cycle
-                appTxDutyCycle = dutycycle * 1000;
-                TX_INTERVAL = appTxDutyCycle;
+                TX_INTERVAL = dutycycle;
                 Serial.print("Updated dutycycle is: ");
                 Serial.println(appTxDutyCycle);
         } else{
@@ -413,7 +412,7 @@ static void prepareTxFrame( uint8_t port )
                 appDataSize = 11;
                 ERROR_FLAGS = 255;
                 appData[0] = (unsigned char)ERROR_FLAGS;
-                uint16_t tx_interval_bytes = appTxDutyCycle/1000;
+                uint16_t tx_interval_bytes = TX_INTERVAL;
                 
                 // sensor_sleep
                 byte lowduty = lowByte(tx_interval_bytes);

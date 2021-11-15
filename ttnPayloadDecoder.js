@@ -11,24 +11,61 @@ function Decoder(b, port) {
   255 or FF is a CFG update
   */
   var errorFlag = b[0];
+
   if (errorFlag == 255) {
     // Payload is Sensor cfg update
+    /*
+      CFG update uplink Format:
+      | Error Flag  |   sensor_sleep   |    sensor_agg     |   sensor_meas_delta     | sensor_reading_count   |    sensor_state   |    fw_ver       |
+      |    255 (FF) |     2 bytes      |      1 byte       |          2 bytes        |          1 byte        |        1 byte     |    6 bytes      |
+                 
+      Sensor State:
+      |  Start  |   Stop  |  Reset  |
+      |   's'   |   'x'   |   'r'   |
+
+    */
 
     // Duty cycle
-    var dutyCycle = (b[2]<< 8) | b[1];
-    decoded.dutyCycle = dutyCycle;
+    var sensor_sleep = (b[2]<< 8) | b[1];
+    decoded.sensor_sleep = sensor_sleep;
 
     // Sensor Mode
-    var sensorMode = b[3];
-    decoded.sensorMode = sensorMode;
+    var sensor_agg = b[3];
+    decoded.sensor_agg = sensor_agg;
 
     // Sensor Sampling Rate
-    var sensorSamplingRate = (b[5] << 8) | b[4];
-    decoded.sensorSamplingRate = sensorSamplingRate;
+    var sensor_meas_delta = (b[5] << 8) | b[4];
+    decoded.sensor_meas_delta = sensor_meas_delta;
 
     // Sensor number of readings per measurement
-    var sensorNumberOfReadings = b[6];
-    decoded.sensorNumberOfReadings = sensorNumberOfReadings;
+    var sensor_reading_count = b[6];
+    decoded.sensor_reading_count = sensor_reading_count;
+
+    // Sensor State
+    let sensor_state = String.fromCharCode(b[7]);
+    var sensor_state_string = null;
+    switch (sensor_state){
+      case 's':
+        sensor_state_string = "Sensing";
+        break;
+      case 'x':
+        sensor_state_string = "CFG Update";
+        break;
+      case 'r':
+        sensor_state_string = "Reset";
+        break;
+    } 
+    decoded.sensor_state = sensor_state_string;
+
+    // Firmware Version
+    let major = b[8].toString();
+    let minor = b[9].toString();
+    let patch = b[10].toString();
+    let v = "v";
+    let dot = ".";
+    let fw_ver = v.concat(major,dot,minor,dot,patch);
+    decoded.fw_ver = fw_ver;
+
     
   } else {
       // Regular Payload

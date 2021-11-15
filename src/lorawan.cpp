@@ -16,8 +16,10 @@
    RGB green means received done;
  */
 
-/* Watchdog timer */
-bool autoFeed = false;
+
+bool autoFeed = false;      // Watchdog timer 
+bool SEND_CFG_AS_UPLINK = true;        // Set to true at start and when there is a change in sensor cfg; used to send sensor cfg via uplink
+bool CFG_CHANGE_DETECTED = false;    // detect if there is a sensor state change
 
 /* EEPROM params */
 const int selectionAddress = 8; // Single char (y/n) in ASCII
@@ -28,9 +30,18 @@ const int newDevEUIAddress = 40;
 const int defaultAppEUIAddress = 50; // 50 to 57
 const int defaultAppKeyAddress = 58; // 58 to 73
 const int defaultDevEUIAddress = 75; // 75 to 82
+/*
+  Semantic Versioning 2.0.0 Format:
+        MAJOR_VERSION.MINOR_VERSION.PATCH_VERSION
+*/
+const int MAJOR_VERSION = 4; // incompatible changes
+const int MINOR_VERSION = 0; // add functionality in a backwards compatible manner
+const int PATH_VERSION = 0; // backwards compatible bug fixes
 
-bool UPDATE_CONFIG = true;        // Set to true at start and when there is a change in sensor cfg; used to send sensor cfg via uplink
+uint16_t SENSOR_STATE = 0x78;  // Default sensor state is 'stop' -> Uplinks are CFG packets
+
 unsigned int ERROR_FLAGS;
+
 char useOrigApp = 'y';
 char init_ = 'n'; //Set to non zero value after saving default keys on the first boot
 
@@ -256,6 +267,10 @@ void LoadNewKeys(void) {
         }
 }
 
+uint16_t get_current_sensor_state(void){
+        return SENSOR_STATE;
+}
+
 void InitStoreKeys(void) {
         Serial.println("First time setup, Storing the original AppEUI...");
         // set useOrigApp to 'y'
@@ -281,15 +296,16 @@ void InitStoreKeys(void) {
 void process_operation(McpsIndication_t *mcpsIndication){
         if ((char(mcpsIndication->Buffer[1]) == 's') && (char(mcpsIndication->Buffer[2]) == 't') && (char(mcpsIndication->Buffer[3]) == 'a') && (char(mcpsIndication->Buffer[4]) == 'r') && (char(mcpsIndication->Buffer[5]) == 't')) {
                 Serial.println("Start sensing, uplinks are Ultrasonic measurements.");
-                UPDATE_CONFIG = false;
+                SEND_CFG_AS_UPLINK = false;
+                SENSOR_STATE = 0x73;
         } else if ((char(mcpsIndication->Buffer[1]) == 's') && (char(mcpsIndication->Buffer[2]) == 't') && (char(mcpsIndication->Buffer[3]) == 'o') && (char(mcpsIndication->Buffer[4]) == 'p')) {
                 Serial.println("Stop sensing, uplinks are sensor CFG packets.");
-                UPDATE_CONFIG = true;
+                SEND_CFG_AS_UPLINK = true;
+                SENSOR_STATE = 0x78;
         } else if ((char(mcpsIndication->Buffer[1]) == 'r') && (char(mcpsIndication->Buffer[2]) == 'e') && (char(mcpsIndication->Buffer[3]) == 's') && (char(mcpsIndication->Buffer[4]) == 'e') && (char(mcpsIndication->Buffer[5]) == 't')) {
                 Serial.println("Reset Sensor.");
-                // Reset
-                innerWdtEnable(false);
-                delay(5000); //Wait until the MCU resets
+                SENSOR_STATE = 0x72;
+                // resets after updating it's CFG
         } else {
                 Serial.println("Invalid Operation");
         }
@@ -318,8 +334,8 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
                   |   oper     | Duty Cycle in seconds  | Sensor Mode | Sampling Rate  |  Number of readings per measurement  |
                   |   0x4D     |       2 bytes          |    1 byte   |    2 bytes     |        1 byte                        |
                  */
+                CFG_CHANGE_DETECTED = true;
                 ModifySensorSettings(mcpsIndication);
-                UPDATE_CONFIG == true;
                 Serial.println("Modify Sensor Settings");
                 break;
         case 0x41:
@@ -331,21 +347,24 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
                 Serial.println("Change APPEUI");
                 if (mcpsIndication->BufferSize == 33) // 33: 0x41, AppEUI, AppKey, DevEUI
                 {
+                        CFG_CHANGE_DETECTED = true;
                         // Modify AppEUI
                         ModifyKeys(mcpsIndication);
                         // Reset
                         innerWdtEnable(false);
                         delay(5000); //Wait until the MCU resets
                 } else {
-                        Serial.println("Invalid AppEUI and AppKey size!");
+                        Serial.println("Invalid Keys!");
                 }
                 break;
         case 0x4F:
                 /*
-                  Sensor Operation control: Start or Stop
+                  Sensor Operation control: Start/ Stop/ Reset
                       Start: measurement uplinks
                       Stop: cfg packet uplinks
+                      Reset: reset using watchdog timer
                 */
+                CFG_CHANGE_DETECTED = true;
                 Serial.print("Sensor Operation Control  --->  ");
                 process_operation(mcpsIndication);
                 break;
@@ -357,6 +376,8 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
 
 uint16_t distance;
 uint16_t batLevel;
+
+
 
 /* Prepares the payload of the frame */
 static void prepareTxFrame( uint8_t port )
@@ -374,41 +395,76 @@ static void prepareTxFrame( uint8_t port )
         // Error flags
         ERROR_FLAGS = 0x00;
 
-        // Formatting payload
-        if (UPDATE_CONFIG == true) {
-                // Send Sensor Config via Uplink
+
+        /* If sensor state is changed, update the server (OR) If uplinks are CFGs, update the server with current cfg*/
+        if (CFG_CHANGE_DETECTED == true || SEND_CFG_AS_UPLINK == true){
                 /*
                    CFG update uplink Format:
-                 | Error Flag  | Sensor Mode | Sensor Sampling Rate | Sensor Number of Readings |
-                 |    255 (FF) |    1 byte   |      2 bytes         |        1 bytes            |
+                 | Error Flag  |   sensor_sleep   |    sensor_agg     |   sensor_meas_delta     | sensor_reading_count   |    sensor_state   |    fw_ver       |
+                 |    255 (FF) |     2 bytes      |      1 byte       |          2 bytes        |          1 byte        |        1 byte     |    6 bytes      |
+                 
+                  Sensor State:
+                  |  Start  |   Stop  |  Reset  |
+                  |   's'   |   'x'   |   'r'   |
+
                  */
-                appDataSize = 7;
+                appDataSize = 11;
                 ERROR_FLAGS = 255;
                 appData[0] = (unsigned char)ERROR_FLAGS;
                 uint16_t TX_INTERVAL = appTxDutyCycle/1000;
+                
+                // sensor_sleep
                 byte lowduty = lowByte(TX_INTERVAL);
                 byte highduty = highByte(TX_INTERVAL);
                 appData[1] = (unsigned char)lowduty;
                 appData[2] = (unsigned char)highduty;
+
+                // sensor_agg
                 appData[3] = (unsigned char)sensorMode;
+
+                // sensor_meas_delta
                 lowbyte = lowByte(sensor_sampling_rate);
                 highbyte = highByte(sensor_sampling_rate);
                 appData[4] = (unsigned char)lowbyte;
                 appData[5] = (unsigned char)highbyte;
+
+                // sensor_reading_count
                 appData[6] = (unsigned char)sensor_numberOfReadings;
+
+                // sensor_state
+                appData[7] = (unsigned char)get_current_sensor_state();
+
+                // firmware version
+                // Major
+                appData[8] = (unsigned char)MAJOR_VERSION;
+                // Minor 
+                appData[9] = (unsigned char)MINOR_VERSION;
+                // Patch
+                appData[10] = (unsigned char)PATH_VERSION;
+                
+                // Update only once
+                if (CFG_CHANGE_DETECTED == true){
+                        CFG_CHANGE_DETECTED = false;
+                }
+
         } else {
+
                 // Regular Uplink contains: Sensor Error Flags followed by Battery and then Sensor Data
 
-                /* LoraWAN uplink packet format
+                /* 
+                 |-------LoraWAN uplink packet format-----------------|
                  | Error flags  | Battery Level | Ultrasonic reading  |
                  |   1 byte     |    2 bytes    |        2 bytes      |
-                 |     Ultrasonic reading      |
+
+                 |-----Ultrasonic reading------|
                  |           2 bytes           |
                  |    high byte | low byte     |
-                 |       Battery Level       |
+                 
+                 |-------Battery Level-------|
                  |           2 bytes         |
                  |    high byte | low byte   |
-                 |------------------------------------------------------------ Error Flags  ----------------------------------------------------------------|
+                 
+                 |----------------------------------------------Error Flags  ------------------------------------------------------|
                  |     bit 7                       |  bit 6   |  bit 5  |  bit 4  |  bit 3  |  bit 2  |  bit 1  |      bit 0       |
                  |     Used only for CFG update    |          |         |         |         |         |         |   SD error flag  |
                  */
@@ -438,7 +494,9 @@ static void prepareTxFrame( uint8_t port )
                 highbyte = highByte(distance);
                 appData[3] = (unsigned char)lowbyte;
                 appData[4] = (unsigned char)highbyte;
+                
         }
+
 }
 
 TimerEvent_t joinTimeOut; // TTN join timeout counter
@@ -481,6 +539,9 @@ void startJoiningTTN(void) {
 
 
 void setup_lorawan(unsigned int packet_interval) {
+        Serial.println(F("Setting up dutycycle..."));
+        appTxDutyCycle = packet_interval * 1000;
+        Serial.print(F("Dutycycle set to "));Serial.print(appTxDutyCycle/1000);Serial.println(F(" seconds"));
         Serial.println(F("Checking keys..."));
         EEPROM.begin(512);
         // Check init_ for 'y' or 'n'
@@ -538,7 +599,7 @@ void lorawan_runloop_once(void)
 #endif
                 printDevParam();
                 LoRaWAN.init(loraWanClass, loraWanRegion);
-                UPDATE_CONFIG = true;
+                SEND_CFG_AS_UPLINK = true;
                 deviceState = DEVICE_STATE_JOIN;
                 break;
         }
@@ -550,7 +611,7 @@ void lorawan_runloop_once(void)
         case DEVICE_STATE_SEND:
         {
                 ifJoinedTTN(); // Runs only once on the first packet TX
-                prepareTxFrame( appPort );
+                prepareTxFrame(appPort);
                 LoRaWAN.send();
                 deviceState = DEVICE_STATE_CYCLE;
                 break;
@@ -565,6 +626,11 @@ void lorawan_runloop_once(void)
         }
         case DEVICE_STATE_SLEEP:
         {
+                if (SENSOR_STATE == 0x72){
+                        // Reset
+                        innerWdtEnable(false);
+                        delay(5000); //Wait until the MCU resets       
+                }
                 LoRaWAN.sleep();
                 break;
         }

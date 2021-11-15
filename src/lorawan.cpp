@@ -65,7 +65,7 @@ LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 DeviceClass_t loraWanClass = LORAWAN_CLASS;
 
 /*the application data transmission duty cycle.  value in [ms].*/
-uint32_t appTxDutyCycle = 60000;
+uint32_t appTxDutyCycle = 10000;
 uint16_t TX_INTERVAL = 60;
 
 /*OTAA or ABP*/
@@ -118,6 +118,7 @@ void ModifyDutyCycle(McpsIndication_t *mcpsIndication){
                 Serial.println(appTxDutyCycle);
                 // Changing Duty Cycle
                 appTxDutyCycle = dutycycle * 1000;
+                TX_INTERVAL = appTxDutyCycle;
                 Serial.print("Updated dutycycle is: ");
                 Serial.println(appTxDutyCycle);
         } else{
@@ -541,9 +542,8 @@ void startJoiningTTN(void) {
 
 void setup_lorawan(unsigned int packet_interval) {
         Serial.println(F("Setting up dutycycle..."));
-        appTxDutyCycle = packet_interval * 1000;
         TX_INTERVAL = packet_interval;
-        Serial.print(F("Dutycycle set to "));Serial.print(appTxDutyCycle/1000);Serial.println(F(" seconds"));
+        Serial.print(F("Dutycycle set to "));Serial.print(TX_INTERVAL);Serial.println(F(" seconds"));
         Serial.println(F("Checking keys..."));
         EEPROM.begin(512);
         // Check init_ for 'y' or 'n'
@@ -614,6 +614,12 @@ void lorawan_runloop_once(void)
         {
                 ifJoinedTTN(); // Runs only once on the first packet TX
                 prepareTxFrame(appPort);
+                // if CFG, sleep less time
+                if (SEND_CFG_AS_UPLINK == 255){
+                        appTxDutyCycle = 10 * 1000; 
+                } else {
+                        appTxDutyCycle = TX_INTERVAL * 1000;
+                }
                 LoRaWAN.send();
                 deviceState = DEVICE_STATE_CYCLE;
                 break;
@@ -628,12 +634,6 @@ void lorawan_runloop_once(void)
                         // Reset
                         innerWdtEnable(false);
                         delay(5000); //Wait until the MCU resets       
-                }
-                // if CFG, sleep less time
-                if (ERROR_FLAGS == 255){
-                        appTxDutyCycle = 10 * 1000; 
-                } else {
-                        appTxDutyCycle = TX_INTERVAL * 1000;
                 }
                 Serial.print("Going to sleep, next uplink in "); Serial.print(appTxDutyCycle/1000);Serial.println(" s.");
                 deviceState = DEVICE_STATE_SLEEP;

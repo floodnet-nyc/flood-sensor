@@ -19,9 +19,7 @@ One of the goals of the [FloodSense](https://www.floodnet.nyc/) project is to de
 
 Step by step build instructions are documented with images on the [documentation](https://floodsense.github.io//quality-management/sensor-assembly-qap/) website.
 
-## Software
-
-### Installation
+## Installation
 All the following three sub-sections are needed to be completed in order to satisfy the requirements to run the software for this sensor. Furthermore, in order to utilize the complete functionalities of the sensor, a back-end support is needed.
 
 #### Necessary Software
@@ -45,7 +43,10 @@ Download the FloodSense Sensor Library from [here](https://github.com/floodsense
 
 This repo is built to run on CubeCell's example library. To install the CubeCell's library, follow the instructions on their repo [here](https://github.com/HelTecAutomation/CubeCell-Arduino/tree/master/InstallGuide)
 
-### Using FloodSense Library
+## Using FloodSense Library
+
+The default sensor state after reset is `stop`, in which the sensor sends its current configuration via uplink every 10 seconds. To start sensing, change the sensor state to `start` by sending a command via downlink. When sensing, the duty cycle is `packet_interval`, default is 60 seconds.
+
 The following is an example from the examples folder, which demonstrates how this library functionality can be used only with few lines of code:
 
 ```cpp
@@ -58,7 +59,7 @@ void setup() {
   Serial.println("Starting");
 
   setup_maxbotix(2, 150, 7);  // sensor mode 2(Median), 150ms sampling rate (time between readings), 7 readings per measurement
-  setup_lorawan(60);             // uplink frequency 60 seconds - controls duty cycle
+  setup_lorawan(packet_interval = 60);             // uplink frequency 60 seconds - controls duty cycle during sensor operation
 }
 
 void loop() {

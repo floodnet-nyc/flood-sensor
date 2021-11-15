@@ -65,8 +65,8 @@ LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 DeviceClass_t loraWanClass = LORAWAN_CLASS;
 
 /*the application data transmission duty cycle.  value in [ms].*/
-uint32_t appTxDutyCycle = 10000;
-uint16_t TX_INTERVAL = 60;
+uint16_t TX_INTERVAL;    // sensor data update frequency
+uint32_t appTxDutyCycle = 10*1000;  // current state, default is CFG update rate
 
 /*OTAA or ABP*/
 bool overTheAirActivation = LORAWAN_NETMODE;
@@ -113,13 +113,13 @@ void ModifyDutyCycle(McpsIndication_t *mcpsIndication){
         for (int i = 1; i < mcpsIndication->BufferSize; i++) {
                 dutycycle =  (mcpsIndication->Buffer[i]) | ( dutycycle << 8*(i-1));
         }
-        if (dutycycle!= 0) {
+        if (dutycycle!= 0 && dutycycle < 1000) {
                 Serial.print("Current duty cycle is: ");
-                Serial.println(appTxDutyCycle);
+                Serial.println(TX_INTERVAL);
                 // Changing Duty Cycle
                 TX_INTERVAL = dutycycle;
                 Serial.print("Updated dutycycle is: ");
-                Serial.println(appTxDutyCycle);
+                Serial.println(TX_INTERVAL);
         } else{
                 Serial.println("Dutycycle is the same.");
         }
@@ -412,11 +412,10 @@ static void prepareTxFrame( uint8_t port )
                 appDataSize = 11;
                 ERROR_FLAGS = 255;
                 appData[0] = (unsigned char)ERROR_FLAGS;
-                uint16_t tx_interval_bytes = TX_INTERVAL;
                 
                 // sensor_sleep
-                byte lowduty = lowByte(tx_interval_bytes);
-                byte highduty = highByte(tx_interval_bytes);
+                byte lowduty = lowByte(TX_INTERVAL);
+                byte highduty = highByte(TX_INTERVAL);
                 appData[1] = (unsigned char)lowduty;
                 appData[2] = (unsigned char)highduty;
 
@@ -600,7 +599,6 @@ void lorawan_runloop_once(void)
 #endif
                 printDevParam();
                 LoRaWAN.init(loraWanClass, loraWanRegion);
-                SEND_CFG_AS_UPLINK = true;
                 deviceState = DEVICE_STATE_JOIN;
                 break;
         }
@@ -611,14 +609,14 @@ void lorawan_runloop_once(void)
         }
         case DEVICE_STATE_SEND:
         {
-                ifJoinedTTN(); // Runs only once on the first packet TX
-                prepareTxFrame(appPort);
-                // if CFG, sleep less time
-                if (SEND_CFG_AS_UPLINK){
+                if (SENSOR_STATE == 0x78){
                         appTxDutyCycle = 10 * 1000; 
                 } else {
                         appTxDutyCycle = TX_INTERVAL * 1000;
                 }
+                ifJoinedTTN(); // Runs only once on the first packet TX
+                prepareTxFrame(appPort);
+                // if CFG, sleep less time
                 LoRaWAN.send();
                 deviceState = DEVICE_STATE_CYCLE;
                 break;
@@ -634,7 +632,7 @@ void lorawan_runloop_once(void)
                         innerWdtEnable(false);
                         delay(5000); //Wait until the MCU resets       
                 }
-                Serial.print("Going to sleep, next uplink in "); Serial.print(appTxDutyCycle/1000);Serial.println(" s.");
+                Serial.print("Going to sleep, next uplink in "); Serial.print(TX_INTERVAL);Serial.println(" s.");
                 deviceState = DEVICE_STATE_SLEEP;
                 break;
         }

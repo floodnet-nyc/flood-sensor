@@ -42,20 +42,15 @@ function Decoder(b, port) {
     decoded.sensor_reading_count = sensor_reading_count;
 
     // Sensor State
-    let sensor_state = String.fromCharCode(b[7]);
-    var sensor_state_string = null;
-    switch (sensor_state){
-      case 's':
-        sensor_state_string = "Sensing";
-        break;
-      case 'x':
-        sensor_state_string = "CFG Update";
-        break;
-      case 'r':
-        sensor_state_string = "Reset";
-        break;
-    } 
-    decoded.sensor_state = sensor_state_string;
+    var sensor_state = b[7].toString();
+    if (sensor_state == "115"){
+      sensor_state = "Sensing";
+    } else if (sensor_state == "120"){
+      sensor_state = "CFG Update";
+    } else if (sensor_state == "114"){
+      sensor_state = "Reset";
+    }
+    decoded.sensor_state = sensor_state;
 
     // Firmware Version
     let major = b[8].toString();

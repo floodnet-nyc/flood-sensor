@@ -36,7 +36,7 @@ const int defaultDevEUIAddress = 75; // 75 to 82
 */
 const int MAJOR_VERSION = 4; // incompatible changes
 const int MINOR_VERSION = 0; // add functionality in a backwards compatible manner
-const int PATH_VERSION = 0; // backwards compatible bug fixes
+const int PATH_VERSION = 1; // backwards compatible bug fixes
 
 uint8_t SENSOR_STATE = 0x78;  // Default sensor state is 'stop' -> Uplinks are CFG packets
 

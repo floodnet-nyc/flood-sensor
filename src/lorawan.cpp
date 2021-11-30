@@ -1,7 +1,9 @@
 #include "lorawan.h"
-#include "maxbotix.h"
-#include "sensorcfg.h"
 #include <EEPROM.h>
+#include "functions.h"
+#include "maxbotix.h"
+#include "rg15.h"
+#include "ttncredentials.h"
 #include "sensorcfg.h"
 #ifdef __asr650x__
 #include "innerWdt.h"
@@ -16,6 +18,7 @@
    RGB green means received done;
  */
 
+uint16_t TX_INTERVAL;
 
 bool autoFeed = false;      // Watchdog timer 
 bool SEND_CFG_AS_UPLINK = true;        // Set to true at start and when there is a change in sensor cfg; used to send sensor cfg via uplink
@@ -38,12 +41,14 @@ const int MAJOR_VERSION = 4; // incompatible changes
 const int MINOR_VERSION = 0; // add functionality in a backwards compatible manner
 const int PATH_VERSION = 1; // backwards compatible bug fixes
 
-uint8_t SENSOR_STATE = 0x78;  // Default sensor state is 'stop' -> Uplinks are CFG packets
+uint8_t SENSOR_STATE = 0x78;  // local variable - Default sensor state is 'stop' -> Uplinks are CFG packets
 
 unsigned int ERROR_FLAGS;
 
 char useOrigApp = 'y';
 char init_ = 'n'; //Set to non zero value after saving default keys on the first boot
+
+uint16_t resetCounterRG15; 
 
 /* OTAA para*/
 uint8_t devEui[] = TTN_DEVEUI;
@@ -65,8 +70,7 @@ LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
 DeviceClass_t loraWanClass = LORAWAN_CLASS;
 
 /*the application data transmission duty cycle.  value in [ms].*/
-uint16_t TX_INTERVAL;    // sensor data update frequency
-uint32_t appTxDutyCycle = 10*1000;  // current state, default is CFG update rate
+uint32_t appTxDutyCycle = 10*1000;  // appTxDutyCycle is current duty-cycle, default is CFG update rate
 
 /*OTAA or ABP*/
 bool overTheAirActivation = LORAWAN_NETMODE;
@@ -130,11 +134,11 @@ void ModifySensorMode(McpsIndication_t *mcpsIndication){
         sensorMode_ =  (mcpsIndication->Buffer[3]) | ( sensorMode_ );
         if (sensorMode_ > 0 && sensorMode_ <= 3 ) {
                 Serial.print("Current sensorMode is: ");
-                Serial.println(sensorMode);
+                Serial.println(SENSOR_MODE);
                 // Changing Sensor Mode
-                sensorMode = sensorMode_;
+                SENSOR_MODE = sensorMode_;
                 Serial.print("Updated sensorMode is: ");
-                Serial.println(sensorMode);
+                Serial.println(SENSOR_MODE);
         } else{
                 Serial.println("Sensor Mode is the same.");
         }
@@ -146,11 +150,11 @@ void ModifySamplingRate(McpsIndication_t *mcpsIndication){
         sampling_rate =  (mcpsIndication->Buffer[5]) | ( sampling_rate << 8);
         if (sampling_rate!= 0 ) {
                 Serial.print("Current sensor sampling rate is: ");
-                Serial.println(sensor_sampling_rate);
+                Serial.println(SENSOR_SAMPLING_RATE);
                 // Changing Sensor Mode
-                sensor_sampling_rate = sampling_rate;
+                SENSOR_SAMPLING_RATE = sampling_rate;
                 Serial.print("Updated sensor sampling rate is: ");
-                Serial.println(sensor_sampling_rate);
+                Serial.println(SENSOR_SAMPLING_RATE);
         } else{
                 Serial.println("Sensor sampling rate is the same.");
         }
@@ -161,11 +165,11 @@ void ModifyNumberOfSamples(McpsIndication_t *mcpsIndication){
         numb_readings =  (mcpsIndication->Buffer[6]) | ( numb_readings );
         if (numb_readings!= 0 && numb_readings<20) {
                 Serial.print("Current number of readings per measurement: ");
-                Serial.println(sensor_numberOfReadings);
+                Serial.println(SENSOR_NUMBER_OF_READINGS);
                 // Changing Sensor Mode
-                sensor_numberOfReadings = numb_readings;
+                SENSOR_NUMBER_OF_READINGS = numb_readings;
                 Serial.print("Updated number of readings per measurement: ");
-                Serial.println(sensor_numberOfReadings);
+                Serial.println(SENSOR_NUMBER_OF_READINGS);
         } else{
                 Serial.println("Sensor number of readings per measurement is the same.");
         }
@@ -180,21 +184,23 @@ void ModifySensorSettings(McpsIndication_t *mcpsIndication){
         case 3:
                 ModifyDutyCycle(mcpsIndication);
                 break;
-        case 4:
-                ModifyDutyCycle(mcpsIndication);
-                ModifySensorMode(mcpsIndication);
-                break;
-        case 6:
-                ModifyDutyCycle(mcpsIndication);
-                ModifySensorMode(mcpsIndication);
-                ModifySamplingRate(mcpsIndication);
-                break;
-        case 7:
-                ModifyDutyCycle(mcpsIndication);
-                ModifySensorMode(mcpsIndication);
-                ModifySamplingRate(mcpsIndication);
-                ModifyNumberOfSamples(mcpsIndication);
-                break;
+        #ifndef USE_RG15
+                case 4:
+                        ModifyDutyCycle(mcpsIndication);
+                        ModifySensorMode(mcpsIndication);
+                        break;
+                case 6:
+                        ModifyDutyCycle(mcpsIndication);
+                        ModifySensorMode(mcpsIndication);
+                        ModifySamplingRate(mcpsIndication);
+                        break;
+                case 7:
+                        ModifyDutyCycle(mcpsIndication);
+                        ModifySensorMode(mcpsIndication);
+                        ModifySamplingRate(mcpsIndication);
+                        ModifyNumberOfSamples(mcpsIndication);
+                        break;
+        #endif
         default:
                 Serial.println("Invalid Sensor settings received.");
                 break;
@@ -296,7 +302,7 @@ void InitStoreKeys(void) {
 
 void process_operation(McpsIndication_t *mcpsIndication){
         if ((char(mcpsIndication->Buffer[1]) == 's') && (char(mcpsIndication->Buffer[2]) == 't') && (char(mcpsIndication->Buffer[3]) == 'a') && (char(mcpsIndication->Buffer[4]) == 'r') && (char(mcpsIndication->Buffer[5]) == 't')) {
-                Serial.println("Start sensing, uplinks are Ultrasonic measurements.");
+                Serial.println("Start sensing, uplinks are sensor measurements.");
                 SEND_CFG_AS_UPLINK = false;
                 SENSOR_STATE = 0x73;
         } else if ((char(mcpsIndication->Buffer[1]) == 's') && (char(mcpsIndication->Buffer[2]) == 't') && (char(mcpsIndication->Buffer[3]) == 'o') && (char(mcpsIndication->Buffer[4]) == 'p')) {
@@ -377,12 +383,11 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
 
 uint16_t distance;
 uint16_t batLevel;
-
+String polledString;
 
 
 /* Prepares the payload of the frame */
-static void prepareTxFrame( uint8_t port )
-{
+static void prepareTxFrame( uint8_t port ) {
         /*appData size is LORAWAN_APP_DATA_MAX_SIZE which is defined in "commissioning.h".
            appDataSize max value is LORAWAN_APP_DATA_MAX_SIZE.
            if enabled AT, don't modify LORAWAN_APP_DATA_MAX_SIZE, it may cause system hanging or failure.
@@ -391,12 +396,11 @@ static void prepareTxFrame( uint8_t port )
            the max value for different DR can be found in MaxPayloadOfDatarateCN470 refer to DataratesCN470 and BandwidthsCN470 in "RegionCN470.h".
          */
         Serial.println("Preparing TX frame...");
-        byte lowbyte, highbyte, lowbat, highbat;
 
+        
+        byte lowbyte, highbyte, lowbat, highbat;
         // Error flags
         ERROR_FLAGS = 0x00;
-
-
         /* If sensor state is changed, update the server (OR) If uplinks are CFGs, update the server with current cfg*/
         if (CFG_CHANGE_DETECTED == true || SEND_CFG_AS_UPLINK == true){
                 /*
@@ -420,16 +424,16 @@ static void prepareTxFrame( uint8_t port )
                 appData[2] = (unsigned char)highduty;
 
                 // sensor_agg
-                appData[3] = (unsigned char)sensorMode;
+                appData[3] = (unsigned char)SENSOR_MODE;
 
                 // sensor_meas_delta
-                lowbyte = lowByte(sensor_sampling_rate);
-                highbyte = highByte(sensor_sampling_rate);
+                lowbyte = lowByte(SENSOR_SAMPLING_RATE);
+                highbyte = highByte(SENSOR_SAMPLING_RATE);
                 appData[4] = (unsigned char)lowbyte;
                 appData[5] = (unsigned char)highbyte;
 
                 // sensor_reading_count
-                appData[6] = (unsigned char)sensor_numberOfReadings;
+                appData[6] = (unsigned char)SENSOR_NUMBER_OF_READINGS;
 
                 // sensor_state
                 appData[7] = (unsigned char)get_current_sensor_state();
@@ -449,54 +453,80 @@ static void prepareTxFrame( uint8_t port )
 
         } else {
 
-                // Regular Uplink contains: Sensor Error Flags followed by Battery and then Sensor Data
+                #ifdef USE_MAXBOTIX
+                        // Regular Uplink contains: Sensor Error Flags followed by Battery and then Sensor Data
+                        /* 
+                         |-------LoraWAN uplink packet format-----------------|
+                         | Error flags  | Battery Level | Ultrasonic reading  |
+                         |   1 byte     |    2 bytes    |        2 bytes      |
 
-                /* 
-                 |-------LoraWAN uplink packet format-----------------|
-                 | Error flags  | Battery Level | Ultrasonic reading  |
-                 |   1 byte     |    2 bytes    |        2 bytes      |
+                         |-----Ultrasonic reading------|
+                         |           2 bytes           |
+                         |    high byte | low byte     |
+                         
+                         |-------Battery Level-------|
+                         |           2 bytes         |
+                         |    high byte | low byte   |
+                         
+                         |----------------------------------------------Error Flags  ------------------------------------------------------|
+                         |     bit 7                       |  bit 6   |  bit 5  |  bit 4  |  bit 3  |  bit 2  |  bit 1  |      bit 0       |
+                         |     Used only for CFG update    |          |         |         |         |         |         |   SD error flag  |
+                         */
 
-                 |-----Ultrasonic reading------|
-                 |           2 bytes           |
-                 |    high byte | low byte     |
-                 
-                 |-------Battery Level-------|
-                 |           2 bytes         |
-                 |    high byte | low byte   |
-                 
-                 |----------------------------------------------Error Flags  ------------------------------------------------------|
-                 |     bit 7                       |  bit 6   |  bit 5  |  bit 4  |  bit 3  |  bit 2  |  bit 1  |      bit 0       |
-                 |     Used only for CFG update    |          |         |         |         |         |         |   SD error flag  |
-                 */
+                        // Regular Uplink Packet size
+                        appDataSize = 5;
+                        // Maxbotix
+                        distance = read_sensor_using_modes(SENSOR_MODE, SENSOR_SAMPLING_RATE, SENSOR_NUMBER_OF_READINGS);
+                        Serial.print("Distance = ");
+                        Serial.print(distance);
+                        Serial.println(" mm");
+                        // Battery
+                        batLevel = getBatteryVoltage(); /*  get the BatteryVoltage in mV. */
+                        Serial.print("Battery Level = ");
+                        Serial.print(batLevel);
+                        Serial.println(" V");
+                        // Payload
+                        lowbat = lowByte(batLevel);
+                        highbat = highByte(batLevel);
+                        appData[0] = (unsigned char)ERROR_FLAGS;
+                        appData[1] = (unsigned char)lowbat; //we're unsigned
+                        appData[2] = (unsigned char)highbat;
+                        lowbyte = lowByte(distance);
+                        highbyte = highByte(distance);
+                        appData[3] = (unsigned char)lowbyte;
+                        appData[4] = (unsigned char)highbyte;
+                #endif
 
-                // Regular Uplink Packet size
-                appDataSize = 5;
-
-                // Maxbotix
-                distance = read_sensor_using_modes(sensorMode, sensor_sampling_rate, sensor_numberOfReadings);
-                Serial.print("Distance = ");
-                Serial.print(distance);
-                Serial.println(" mm");
-
-                // Battery
-                batLevel = getBatteryVoltage(); /*  get the BatteryVoltage in mV. */
-                Serial.print("Battery Level = ");
-                Serial.print(batLevel);
-                Serial.println(" V");
-
-                // Payload
-                lowbat = lowByte(batLevel);
-                highbat = highByte(batLevel);
-                appData[0] = (unsigned char)ERROR_FLAGS;
-                appData[1] = (unsigned char)lowbat; //we're unsigned
-                appData[2] = (unsigned char)highbat;
-                lowbyte = lowByte(distance);
-                highbyte = highByte(distance);
-                appData[3] = (unsigned char)lowbyte;
-                appData[4] = (unsigned char)highbyte;
-                
+                #ifdef USE_RG15
+                        polledString = pollReadingFromRG15();
+                        polledString.trim();
+                        Serial.print("polled string: "); Serial.println(polledString);
+                        int pLen = polledString.length();
+                        if (pLen > 0){
+                                char charBuffer[pLen];
+                                polledString.toCharArray(charBuffer, pLen);
+                                appDataSize = pLen;
+                                for (int i=0;i<pLen;i++){
+                                        appData[i] = byte((uint8_t)charBuffer[i]);
+                                }
+                                resetCounterRG15 = resetCounterRG15 + 1;
+                                if (resetCounterRG15>=MAX_COUNTER_RG15){
+                                        Serial.println("Clearing Total ACC");
+                                        Serial1.println("O");
+                                        resetCounterRG15 = 0; // start over
+                                }
+                        } else {
+                                String failureMessage = "RG-15 poll failed!";
+                                pLen = failureMessage.length();
+                                char charBuffer[pLen];
+                                failureMessage.toCharArray(charBuffer, pLen);
+                                appDataSize = pLen;
+                                for (int i=0;i<pLen;i++){
+                                        appData[i] = byte((uint8_t)charBuffer[i]);
+                                }
+                        }
+                #endif     
         }
-
 }
 
 TimerEvent_t joinTimeOut; // TTN join timeout counter
@@ -539,9 +569,9 @@ void startJoiningTTN(void) {
 
 
 void setup_lorawan(unsigned int packet_interval) {
-        Serial.println(F("Setting up dutycycle..."));
+        resetCounterRG15 = 0;
         TX_INTERVAL = packet_interval;
-        Serial.print(F("Dutycycle set to "));Serial.print(TX_INTERVAL);Serial.println(F(" seconds"));
+        Serial.print(F("Current Dutycycle is set to "));Serial.print(TX_INTERVAL);Serial.println(F(" seconds in sensorcfg.h file."));
         Serial.println(F("Checking keys..."));
         EEPROM.begin(512);
         // Check init_ for 'y' or 'n'
@@ -638,7 +668,12 @@ void lorawan_runloop_once(void)
         }
         case DEVICE_STATE_SLEEP:
         {
-                LoRaWAN.sleep();
+                #ifndef USE_RG15
+                        LoRaWAN.sleep();
+                #else
+                        delay(TX_INTERVAL);
+                #endif
+
                 break;
         }
 

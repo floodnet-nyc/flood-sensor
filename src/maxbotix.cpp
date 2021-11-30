@@ -6,9 +6,9 @@
 uint16_t readings_arr[30] = {0};
 size_t n = *(&readings_arr + 1) - readings_arr;
 
-unsigned int sensorMode;
-unsigned int sensor_sampling_rate;
-unsigned int sensor_numberOfReadings;
+unsigned int SENSOR_MODE;
+unsigned int SENSOR_SAMPLING_RATE;
+unsigned int SENSOR_NUMBER_OF_READINGS;
 
 void setup_maxbotix(unsigned int mode=2, unsigned int sampling_rate=250 , unsigned int numberOfReadings=7) {
   Serial.println("Setting up Maxbotix .... ");
@@ -18,15 +18,15 @@ void setup_maxbotix(unsigned int mode=2, unsigned int sampling_rate=250 , unsign
   digitalWrite(triggerPin, LOW);  //trigger line: now off
   Serial1.begin(9600);
   Serial.println("Sensor Settings:");
-  sensorMode = mode;
+  SENSOR_MODE = mode;
   Serial.print("    Sensor mode: ");
-  Serial.println(sensorMode);
-  sensor_sampling_rate = sampling_rate;
+  Serial.println(SENSOR_MODE);
+  SENSOR_SAMPLING_RATE = sampling_rate;
   Serial.print("    Sensor sampling rate: ");
-  Serial.println(sensor_sampling_rate);
-  sensor_numberOfReadings = numberOfReadings;
+  Serial.println(SENSOR_SAMPLING_RATE);
+  SENSOR_NUMBER_OF_READINGS = numberOfReadings;
   Serial.print("    Number of readings per measurement: ");
-  Serial.println(sensor_numberOfReadings);
+  Serial.println(SENSOR_NUMBER_OF_READINGS);
 }
 
 uint16_t sensor_singleread(void) {

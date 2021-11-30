@@ -34,16 +34,24 @@
  *
  */
 
+#define USE_RG15
 
 #include <Floodsense_sensor.h>
 
 void setup() {
-  delay(3000);
   Serial.begin(115200);
-  Serial.println("Starting");
+  /* Sensors */
+  // Ultrasonic Range Finder, MaxBotix MB-7389
+  #ifdef USE_MAXBOTIX
+    setup_maxbotix(2,150,7);  //mode, sampling rate, number of readings
+  #endif
+  // Rainguage, RG-15
+  #ifdef USE_RG15
+    setup_RG15("Polling");       // Allowed strings: "P", "Polling", "C", "Continuous"
+  #endif
 
-  setup_maxbotix(2, 150, 7);  // sensor mode 2(Median), 150ms sampling rate (time between readings), 7 readings per measurement
-  setup_lorawan(60);             // uplink frequency 60 seconds - controls duty cycle
+  /* LoRaWAN */
+  setup_lorawan(60);   // duty cycle in seconds 
 }
 
 void loop() {

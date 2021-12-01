@@ -77,28 +77,27 @@ bool setModeTo(char m) {
         Serial.print("Mode set successfully to: ");
         Serial.println(RG15_OP_MODE); //always true
         modeSet = true;
-      } else {
-        Serial.println("Modeset failed");
-      }
+      } 
     }
   }
   return modeSet;
 }
 
+void clearTotalAccRG15(void) {
+  sendCMDRG15('O'); // Clear any previous Total Acc
+}
+
 void hardResetRG15(void) {
-  sendCMDRG15('K');   // get reading
-  String readSerial = getResponseRG15(5000);
+  sendCMDRG15('K');   // send Hard-reset command
+  String readSerial = getResponseRG15(10000);
   Serial.println(readSerial);
+  clearTotalAccRG15(); // clear Total Acc
 }
 
 void debugRG15(void) { // Hard reset and set mode to Polling
   hardResetRG15();
   char m = RG15_OP_MODE.charAt(0);
   bool modeSet = setModeTo(m);
-}
-
-void clearTotalAccRG15(void) {
-  sendCMDRG15('O'); // Clear any previous Total Acc
 }
 
 String readLastAvilableReading(void) {
@@ -110,8 +109,10 @@ String readLastAvilableReading(void) {
 
 bool checkForErrors(String str) {
   if (str.charAt(0) != 'A') {
+    Serial.println("Error Detected debugging...");
     return true;
   } else {
+     Serial.println("No errors.");
     return false;
   }
 }
@@ -150,6 +151,7 @@ String pollReadingFromRG15(void) {
   if (errorDetected){
     // debug and read again
     debugRG15();
+
     lastAvailReading = readLastAvilableReading();
     lastAvailReading.trim();
   }

@@ -26,7 +26,12 @@
      Reset D   D = Other
 */
 
+String RG15_OP_MODE;
 uint32_t MAX_COUNTER_RG15;
+
+void sendCMDRG15(char cmd) {
+  Serial1.println(cmd);
+}
 
 String getResponseRG15(void) {
   String readSerial;
@@ -36,67 +41,128 @@ String getResponseRG15(void) {
       readSerial += c; //makes the string readString
     }
   }
-  if (readSerial.length() > 0) {
-    Serial.println(readSerial); //for debug, see what was received
-  }
   return readSerial;
 }
 
-
-void setup_RG15(String RG15_OP_MODE = "Polling") { // Allowed strings: "P", "Polling", "C", "Continuous"
-  char charinput;
-  unsigned long startTime = millis();
-  Serial1.begin(9600); // opens Serial1 port, sets data rate to 9600 bps
-  while (1) {  // on reset
-    while (Serial1.available() > 0) {
-      charinput = Serial1.read();
-      Serial.print(charinput); // If you want to see what is in the buffer
-    }
-    if (millis() - startTime > 10000) {
-      Serial.println("Timedout");
-      break;
-    }
-  }
-  bool modeSet = false;
-  String response;
-  char m = RG15_OP_MODE.charAt(0);
-  Serial1.println('O'); // every setup clear Total Acc
-  // set mode only after seeing data
-  Serial1.println(m);
-  while (!modeSet) {
-    response = getResponseRG15();
+bool setModeTo(char m) {
+  bool setSucc = false;
+  sendCMDRG15(m);
+  String response = getResponseRG15();
+  while (!setSucc) {
     if (response.length() > 0) {
       response.toUpperCase();
       if (response.charAt(0) == m) {
-        Serial.print("Mode set successfully to: "); Serial.println(RG15_OP_MODE);
-        modeSet = true;
+        setSucc = true;
       }
     }
   }
-  // Check reset counter Max value
-  MAX_COUNTER_RG15 = 1440; //(24*60*1000)/TX_INTERVAL
-  Serial.print("the MAX_COUNTER_RG15 is: ");Serial.println(MAX_COUNTER_RG15);
+  return setSucc;
 }
 
-String pollReadingFromRG15(void) {
+String hardResetRG15(void) {
   String readSerial;
-  char charinput;
   unsigned long startTime = millis();
-  Serial1.println('R');
+  sendCMDRG15('R');   // get reading
   while (1) {           // timeout
-      while (Serial1.available()) {
-        if (Serial1.available() > 0) {
-          char c = Serial1.read();  //gets one byte from serial buffer
-          readSerial += c; //makes the string readString
-        }
-      }
-    if (millis() - startTime > 3000) {
-      Serial.println("Timedout");
+    readSerial = getResponseRG15();
+    if (millis() - startTime > 5000) {
+      // Serial.println("Timedout");
       break;
     }
   }
-  if (readSerial.length() > 0) {
-    Serial.println(readSerial);
+  return readSerial;
+}
+
+void debugRG15(void) { // Hard reset and set mode to Polling
+  char charinput;
+  String readSerial;
+  unsigned long startTime = millis();
+  sendCMDRG15('K'); // Hard RESET
+  while (1) {  // on reset
+    readSerial = getResponseRG15();
+    if (millis() - startTime > 5000) {
+      // Serial.println("Timedout");
+      break;
+    }
+  }
+  if (setModeTo(RG15_OP_MODE.charAt(0))) {
+    Serial.print("Mode set successfully to: ");
+    Serial.println(RG15_OP_MODE); //always true
+  }
+}
+
+void clearTotalAccRG15(void) {
+  sendCMDRG15('O'); // Clear any previous Total Acc
+}
+
+void setup_RG15(String mode = "Polling") { // Allowed strings: "P", "Polling", "C", "Continuous"
+  RG15_OP_MODE = mode;
+  char charinput;
+  unsigned long startTime = millis();
+  Serial1.begin(9600); // opens Serial1 port, sets data rate to 9600 bps
+  debugRG15();
+  clearTotalAccRG15();
+  // Check reset counter Max value
+  MAX_COUNTER_RG15 = 1440; //(24*60*1000)/TX_INTERVAL
+  Serial.print("the MAX_COUNTER_RG15 is: "); Serial.println(MAX_COUNTER_RG15);
+}
+
+String readLastAvilableReading(void) {
+  String readSerial;
+  unsigned long startTime = millis();
+  sendCMDRG15('R');   // get reading
+  while (1) {           // timeout
+    readSerial = getResponseRG15();
+    if (millis() - startTime > 1000) {
+      // Serial.println("Timedout");
+      break;
+    }
   }
   return readSerial;
+}
+
+bool checkForErrors(String str) {
+  if (str.charAt(0) != 'A') {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+bool isEventDetected(String str){
+  if (str.charAt(0)==';' && str.indexOf("Event") > 0){
+    Serial.println("Event detected by RG-15");    
+    return true;
+  } else {
+    return false;
+  }
+}
+
+String pollReadingFromRG15(void) {
+  // Set mode to Polling
+  if (setModeTo(RG15_OP_MODE.charAt(0))) {
+    Serial.print("Mode set successfully to: ");
+    Serial.println(RG15_OP_MODE); //always true
+  }
+  // Poll last available reading
+  String lastAvailReading = readLastAvilableReading();
+  lastAvailReading.trim();
+  // check if it is Event detected string
+  /* Event detected string format:
+        ;----------------------------------------
+        Event
+        SW 1.000 2020.07.06
+  */
+  // Check for Event
+  if (isEventDetected(lastAvailReading)){
+    // read again
+    // Poll last available reading
+    String lastAvailReading = readLastAvilableReading();
+    lastAvailReading.trim();
+  }
+  // Check for Errors
+  if (checkForErrors(lastAvailReading)){
+    debugRG15();
+  }
+  return lastAvailReading;
 }

@@ -529,7 +529,7 @@ static void prepareTxFrame( uint8_t port ) {
                                                 ctr2++;
                                         }
                                         readings_array_pg15[cntr] = atof(arr) * 100; // convert char array to readings and *100 to remove decimals
-                                        Serial.println(readings_array_pg15[cntr]);
+                                        // Serial.println(readings_array_pg15[cntr]);
                                         cntr = cntr + 1;
                                 }
                                 ptr = strtok (NULL, " ");   // Iterate
@@ -542,25 +542,25 @@ static void prepareTxFrame( uint8_t port ) {
                 }
                 appDataSize = 17;
                 int idx = 0;
-                Serial.println("The readings are: ");
+                // Serial.println("The readings are: ");
                 for (int i = 0; i < 4; i++) {
-                        Serial.println(readings_array_pg15[i]);
+                        // Serial.println(readings_array_pg15[i]);
                         appData[4 * i] = byte((uint32_t)readings_array_pg15[i] & 0xFF);
-                        Serial.println(appData[4 * i]);
+                        // Serial.println(appData[4 * i]);
                         appData[4 * i + 1] = byte(((uint32_t)readings_array_pg15[i] >> 8) & 0xFF);
-                        Serial.println(appData[4 * i + 1]);
+                        // Serial.println(appData[4 * i + 1]);
                         appData[4 * i + 2] = byte(((uint32_t)readings_array_pg15[i] >> 16) & 0xFF);
-                        Serial.println(appData[4 * i + 2]);
+                        // Serial.println(appData[4 * i + 2]);
                         appData[4 * i + 3] = byte(((uint32_t)readings_array_pg15[i] >> 32) & 0xFF);
-                        Serial.println(appData[4 * i + 3]);
+                        // Serial.println(appData[4 * i + 3]);
                 }
-                Serial.println();
+                // Serial.println();
                 if (mmFound) {
                         Serial.println("Units are mm.");
                         appData[16] = byte('m');
                 } else {
                         Serial.println("Units are in.");
-                        appData[16] = byte('i');
+                        // appData[16] = byte('i');
                 }
                 counter_rg15++;
 #endif

@@ -163,6 +163,7 @@ void setup_RG15(String mode = "Polling") { // Allowed strings: "P", "Polling", "
   // opens Serial1 port, sets data rate to 9600 bps
   Serial1.begin(9600);
   printResponseRG15(10000);
+  hardResetRG15();
   //Manual mode set
   clearTotalAccRG15(); // No response
   setModeTo(m);

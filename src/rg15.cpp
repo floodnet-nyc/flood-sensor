@@ -36,7 +36,7 @@ void sendCMDRG15(char cmd) {
 String getResponseRG15(uint TIME_OUT = 3000) {
   String readSerial;
   unsigned long startTime = millis();
-  while(1){
+  while (1) {
     while (Serial1.available()) {
       if (Serial1.available() > 0) {
         char c = Serial1.read();  //gets one byte from serial buffer
@@ -44,9 +44,9 @@ String getResponseRG15(uint TIME_OUT = 3000) {
       }
     }
     if (millis() - startTime > TIME_OUT) {
-        // Serial.println("Timedout");
-        break;
-      }
+      // Serial.println("Timedout");
+      break;
+    }
   }
   return readSerial;
 }
@@ -69,15 +69,13 @@ bool setModeTo(char m) {
   bool modeSet = false;
   String response;
   Serial1.println(m);
-  while (!modeSet) {
-    response = getResponseRG15(3000);
-    if (response.length() > 0) {
-      response.toUpperCase();
-      if (response.charAt(0) == m) {
-        Serial.print("Mode set successfully to: ");
-        Serial.println(RG15_OP_MODE); //always true
-        modeSet = true;
-      } 
+  response = getResponseRG15(3000);
+  if (response.length() > 0) {
+    response.toUpperCase();
+    if (response.charAt(0) == m) {
+      Serial.print("Mode set successfully to: ");
+      Serial.println(RG15_OP_MODE); //always true
+      modeSet = true;
     }
   }
   return modeSet;
@@ -112,7 +110,7 @@ bool checkForErrors(String str) {
     Serial.println("Error Detected debugging...");
     return true;
   } else {
-     Serial.println("No errors.");
+    Serial.println("No errors.");
     return false;
   }
 }
@@ -148,7 +146,7 @@ String pollReadingFromRG15(void) {
     lastAvailReading.trim();
   }
   bool errorDetected = checkForErrors(lastAvailReading);
-  if (errorDetected){
+  if (errorDetected) {
     // debug and read again
     debugRG15();
 
@@ -167,7 +165,6 @@ void setup_RG15(String mode = "Polling") { // Allowed strings: "P", "Polling", "
   printResponseRG15(10000);
   hardResetRG15();
   //Manual mode set
-  clearTotalAccRG15(); // No response
   setModeTo(m);
   // Check reset counter Max value
   MAX_COUNTER_RG15 = 1440; //(24*60*1000)/TX_INTERVAL

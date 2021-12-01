@@ -498,7 +498,9 @@ static void prepareTxFrame( uint8_t port ) {
                 if (counter_rg15 >= MAX_COUNTER_RG15){
                         Serial.println("Resetting Counter....");
                         counter_rg15 = 0;       //reset every 24 hrs or 1440 minutes
-                        clearTotalAccRG15();
+                }
+                if (counter_rg15==0){
+                        clearTotalAccRG15();   //clear ACK at every cycle including reset
                 }
                 Serial.print("Counter is: ");Serial.println(counter_rg15);
                 String polledString;

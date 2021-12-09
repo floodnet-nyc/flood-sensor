@@ -228,3 +228,15 @@ The following is the ultrasonic sensor readings vs temperature over a period of 
 This library has modules for each component, i.e. LoRa, Ultrasonic Sensor, etc. This enables to add future modules/functionalities without the need to modify the others. The sensor configuration is stored in the file `sensorcfg.h` which contains the variables that can be changed during run-time and are shared between all the modules.
 
 Including the `floodsense_sensor.h` by using `#include <Floodsense_sensor.h>` setups the complete library. This header file has the reference to all the other header files and any further new header files must be linked to this file.
+
+------------------------------------------------------------------------------------------------------------------------
+Shield: [![CC BY-NC-SA 4.0][cc-by-nc-sa-shield]][cc-by-nc-sa]
+
+This work is licensed under a
+[Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License][cc-by-nc-sa].
+
+[![CC BY-NC-SA 4.0][cc-by-nc-sa-image]][cc-by-nc-sa]
+
+[cc-by-nc-sa]: http://creativecommons.org/licenses/by-nc-sa/4.0/
+[cc-by-nc-sa-image]: https://licensebuttons.net/l/by-nc-sa/4.0/88x31.png
+[cc-by-nc-sa-shield]: https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg

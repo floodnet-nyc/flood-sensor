@@ -111,7 +111,7 @@ Here below is a list of parameters that can be changed during the run-time of th
 
 Three types of downlinks are available, categorized based on functionality. 
 
-**Sensor downlink command format:**
+**Sensor downlink format:**
 
 ```<header> <command>```
 

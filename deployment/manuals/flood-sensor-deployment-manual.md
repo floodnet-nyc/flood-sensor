@@ -5,7 +5,7 @@ Once the sensor deployment location is identified, this manual explains the next
 - [Flood Sensor Deployment Manual](#flood-sensor-deployment-manual)
   - [1. Things to do - Before leaving the lab](#1-things-to-do---before-leaving-the-lab)
     - [1.1. Checklist](#11-checklist)
-    - [1.2. Notes on Sensor mount preperation](#12-notes-on-sensor-mount-preperation)
+    - [1.2. Notes on Sensor mount preparation](#12-notes-on-sensor-mount-preperation)
     - [1.3. Registering sensor on TTN Application](#13-registering-sensor-on-ttn-application)
     - [1.4. Acquiring FloodNet approval](#14-acquiring-floodnet-approval)
     - [1.5. Acquiring NYC DOT approval](#15-acquiring-nyc-dot-approval)

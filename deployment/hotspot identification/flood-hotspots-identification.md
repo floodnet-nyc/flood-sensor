@@ -18,4 +18,6 @@ The Mayor’s Office of Climate and Resiliency has also provided us with a list 
 Once a location is proposed, we consult the [NYC Stormwater Flood Maps](https://experience.arcgis.com/experience/4b290961cac34643a49b9002f165fad8/) to confirm that this location is likely to be impacted by flooding in a Moderate Stormwater Event.
 
 ## 3. Gateway Location
-Once we have a potential
+Once we have a potential sensor location, we need to ensure that it is proximate to a LoRaWAN gateway. In this [Sensor Locations Planner](https://www.google.com/maps/d/edit?mid=1njszfj9XP9E2616GYRWTTzQ7gLllMuxZ&usp=sharing), we have mapped out existing locations of gateways that we have installed, or that are visible on this [TTN Mapper](https://ttnmapper.org/heatmap/).
+
+If our potential sensor location is not close enough to one of these gateways, it will slow down the process a bit. In order to mount, we will have to seek out a location where we can mount a gateway. Typically, we can identify these locations by building relationships with organizations in the area. Our [Google Form](https://forms.gle/4kJpujo9pDt7hZmRA) provides an opportunity for community members to identify potential gateway sites. We mount gateways according to this [Floodnet Gateway setup](https://github.com/floodnet-nyc/floodnet-gateway) guide.

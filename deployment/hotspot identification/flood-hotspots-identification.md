@@ -1,7 +1,5 @@
 # Flood Hotspots Identification
-To determine flood sensor locations, we take a variety of considerations into account. This manual describes those considerations and how they factor into the selection process. Once a location is selected, we deploy our sensor through a process described in the [Flood Sensor Deployment Manual](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/manuals/flood-sensor-deployment-manual.md)
-
-It is important that our sensors are well distributed throughout all five boroughs of NYC, and that they are located in flood prone locations. Proximity to a LoRaWAN gateway is also a requirement, so we must either locate our sensors near existing gateways, or establish relationships with 
+To determine flood sensor locations, we take a variety of considerations into account. This manual describes how those considerations factor into the selection process. Once a location is selected, we deploy our sensor through a process described in the [Flood Sensor Deployment Manual](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/manuals/flood-sensor-deployment-manual.md)
 
 **Table of Contents:**
 - [Flood Hotspots Identificantion](#flood-hotspots-identification)

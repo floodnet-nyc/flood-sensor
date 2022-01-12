@@ -13,6 +13,7 @@ Once the sensor deployment location is identified, this manual explains the next
   - [5. Joining FloodNet network](#5-joining-floodnet-network)
   - [6. Start Sensing](#6-start-sensing)
   - [7. Signage](#7-signage)
+  - [8. Next Steps](#8-next-steps)
 
 ## 1. Things to do - Before leaving the lab
 
@@ -37,3 +38,6 @@ To maximize solar power harvesting, the solar panel shall face South and be expo
 ## 6. Start Sensing
 
 ## 7. Signage
+
+## 8. Next Steps
+After a successful installation, follow the below steps to complete the sensor deployment process:

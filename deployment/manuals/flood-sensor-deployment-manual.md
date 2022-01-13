@@ -31,8 +31,10 @@ Below are a few examples of different DOT signpost designs found across NYC, exp
 ### 1.3. Registering sensor on TTN Application
 
 ### 1.4. Acquiring FloodNet approval
+Sensor locations confirmed in weekly meeting prior to deployment
 
 ### 1.5. Acquiring NYC DOT approval
+(applicable if on structure other than drive rail which have blanket approval)
 
 ## 2. Identifying Optimal Solar Panel Placement
 To maximize solar power harvesting, the solar panel shall face South and be exposed to direct sunlight. 
@@ -52,6 +54,13 @@ The following steps details the sensor installation process to be followed in th
 ## 5. Start Sensing
 
 ## 6. Signage
+Mounting metal sign on drive rail (two nut and bolt fastners) or placing sticker on other mounting point.
 
-## 7. Next Steps
+## 7. Photo
+Photos of sensor installed on location (for records and use in FieldKit dashboard). Photo should include surrounding area (from approx. 10 feet away).
+
+## 8. Next Steps
 After a successful installation, follow the below steps to complete the sensor deployment process:
+
+## Sensor Locations Logged in Database
+New sensor locations should be recorded into master spreadsheet as well as deployment map

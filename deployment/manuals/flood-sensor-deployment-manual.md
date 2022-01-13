@@ -18,7 +18,8 @@ Once the sensor deployment location is identified, this manual explains the next
   - [4. Joining the FloodNet network](#4-joining-the-floodnet-network)
   - [5. Start Sensing](#5-start-sensing)
   - [6. Signage](#6-signage)
-  - [7. Next Steps](#7-next-steps)
+  - [7. Photo](#7-photo)
+  - [8. Next Steps](#8-next-steps)
 
 ## 1. Things to do - Before leaving the lab
 This section details the necessary preperation needed prior to deployment including checklists, mounting preperation, adding the sensor to the TTN app. 
@@ -61,6 +62,5 @@ Photos of sensor installed on location (for records and use in FieldKit dashboar
 
 ## 8. Next Steps
 After a successful installation, follow the below steps to complete the sensor deployment process:
-
 ### 8.1 Sensor Locations Logged in Database
 New sensor locations should be recorded into master spreadsheet as well as deployment map

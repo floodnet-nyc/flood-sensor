@@ -62,5 +62,5 @@ Photos of sensor installed on location (for records and use in FieldKit dashboar
 ## 8. Next Steps
 After a successful installation, follow the below steps to complete the sensor deployment process:
 
-## Sensor Locations Logged in Database
+### 8.1 Sensor Locations Logged in Database
 New sensor locations should be recorded into master spreadsheet as well as deployment map

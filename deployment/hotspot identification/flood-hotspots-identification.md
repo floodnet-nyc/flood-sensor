@@ -5,7 +5,8 @@ Several parameters are relevant when determining flood sensor locations. This ma
 - [Flood Hotspots Identificantion](#flood-hotspots-identification)
   - [1. Community Engagement](#1-community-engagement)
   - [2. Verification of Flooding](#2-verification-of-flooding)
-  - [3. Gateway Location](#3-gateway-location)
+  - [3. Identification of Gateway Location](#3-identification-of-gateway-location)
+  - [4. Identification of Mounting Infrastructure](#4-identification-of-mounting-infrastructure)
 
 ## 1. Community Engagement
 We want to make sure that those who are most impacted by severe flooding have a say in determining where sensors will be mounted. This [Google Form](https://forms.gle/4kJpujo9pDt7hZmRA) allows NYC residents to suggest locations for deployment.
@@ -17,7 +18,10 @@ The Mayor’s Office of Climate and Resiliency has also provided us with a list 
 ## 2. Verification of Flooding
 Once a location is proposed, we consult the [NYC Stormwater Flood Maps](https://experience.arcgis.com/experience/4b290961cac34643a49b9002f165fad8/) to confirm that this location is likely to be impacted by flooding in a Moderate Stormwater Event.
 
-## 3. Gateway Location
+## 3. Identification of Gateway Location
 Once we have a potential sensor location, we need to ensure that it is proximate to a LoRaWAN gateway. In this [Sensor Locations Planner](https://www.google.com/maps/d/edit?mid=1njszfj9XP9E2616GYRWTTzQ7gLllMuxZ&usp=sharing), we have mapped out existing locations of gateways that we have installed, or that are visible on this [TTN Mapper](https://ttnmapper.org/heatmap/).
 
 If our potential sensor location is not close enough to one of these gateways, it will slow down the process a bit. In order to mount, we will have to seek out a location where we can mount a gateway. Typically, we can identify these locations by building relationships with organizations in the area. Our [Google Form](https://forms.gle/4kJpujo9pDt7hZmRA) provides an opportunity for community members to identify potential gateway sites. We mount gateways according to this [Floodnet Gateway setup](https://github.com/floodnet-nyc/floodnet-gateway) guide.
+
+## 4. Identification of Mounting Infrastructure
+After confirming that a location is flood-prone and proximate to a gateway, we need to determine where we will mount the sensors. Our sensors are designed to be mounted on U-Channel sign posts. We have permission from DOT to mount sensors on these poles, provided that we notify DOT whenever we install a new sensor. We use the streetview feature in Google Maps to locate sign posts in the region we have chosen, and cross-reference these locations with the [NYC Stormwater Flood Maps](https://experience.arcgis.com/experience/4b290961cac34643a49b9002f165fad8/) to verify that the specific mounting location we have chosen is flood-prone. Typically, we compile streetview and map images in a Google Doc, which our technical team can reference in the field.

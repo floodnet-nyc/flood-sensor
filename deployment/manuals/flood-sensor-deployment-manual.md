@@ -5,7 +5,7 @@ Once the sensor deployment location is identified, this manual explains the next
 - [Flood Sensor Deployment Manual](#flood-sensor-deployment-manual)
   - [1. Things to do - Before leaving the lab](#1-things-to-do---before-leaving-the-lab)
     - [1.1. Checklist](#11-checklist)
-    - [1.2. Notes on Sensor mount preparation](#12-notes-on-sensor-mount-preperation)
+    - [1.2. Notes on Sensor mount preperation](#12-notes-on-sensor-mount-preperation)
     - [1.3. Registering sensor on TTN Application](#13-registering-sensor-on-ttn-application)
     - [1.4. Acquiring FloodNet approval](#14-acquiring-floodnet-approval)
     - [1.5. Acquiring NYC DOT approval](#15-acquiring-nyc-dot-approval)
@@ -20,15 +20,32 @@ Once the sensor deployment location is identified, this manual explains the next
   - [6. Signage](#6-signage)
   - [7. Photo](#7-photo)
   - [8. Next Steps](#8-next-steps)
+    - [8.1 Sensor Locations Logged in Database](#81-sensor-locations-logged-in-database)
 
 ## 1. Things to do - Before leaving the lab
 This section details the necessary preperation needed prior to deployment including checklists, mounting preperation, adding the sensor to the TTN app. 
 ### 1.1. Checklist
 This section contains the checklist for necessary tools, hardware, and equipment needed for the sensor deployment procedures.
+| No | Item                                       | Count/sensor |
+|----|--------------------------------------------|-------|
+| 1  | [High leverage combination pliers](https://www.knipex.com/products/combination-and-multifunctional-pliers/high-leverage-combination-pliers/high-leverage-combination-pliers/0205200)           | 1     |
+| 2  | [Adjustable wrench](https://www.kleintools.com/catalog/adjustable-wrenches/adjustable-wrench-standard-capacity-18-inch)                          | 1     |
+| 3  | [Phillips #2 screwdriver](https://www.kleintools.com/catalog/screwdrivers/2-phillips-screwdriver-4-round-shank)                    | 1     |
+|  4  | [Oversized Clipped Washers](https://www.mcmaster.com/93409A136/)                                           |    4   |
+|  5  | [Green Powder-Coated Steel Strut Channel with Mounting Plate]()                                           |    1   |
+|  6  | [Stainless Steel Hex Head Screw - 7/16"-14 thread size](https://www.mcmaster.com/92800A393/)                                           |    4   |
+|  7  |  [Locknuts - 7/16"-14 thread size](https://www.mcmaster.com/90630A112/)                                        |    4   |
 ### 1.2. Notes on Sensor mount preperation
 After the mounting infrastructure has been chosen(see [Flood Hotspots Identification](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/hotspot%20identification/flood-hotspots-identification.md) document), the next step is to identify the mounting position on the post/pole itself. 
 
-Below are a few examples of different DOT signpost designs found across NYC, explaining optimal sensor placement scenarios. 
+Below are a few examples of different DOT signpost designs found across NYC, explaining optimal sensor placement scenarios.
+
+*<insert_image_signpost_with_parking_sign>*
+
+*<insert_image_signpost_with_stop_sign>*
+
+*<insert_images_other_types>*
+
 ### 1.3. Registering sensor on TTN Application
 
 ### 1.4. Acquiring FloodNet approval

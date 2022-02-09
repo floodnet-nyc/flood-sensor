@@ -1,5 +1,5 @@
 # Flood Hotspots Identification
-Several parameters are relevant when determining flood sensor locations. This manual describes those parameters, and how they factor into the selection process. Once a location is selected, we deploy our sensor through a process described in the [Flood Sensor Deployment Manual](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/manuals/flood-sensor-deployment-manual.md).
+This manual describes the parameters that inform sensor location selection. Once a location is selected, we deploy our sensor through a process described in the [Flood Sensor Deployment Manual](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/manuals/flood-sensor-deployment-manual.md).
 
 **Table of Contents:**
 - [Flood Hotspots Identificantion](#flood-hotspots-identification)

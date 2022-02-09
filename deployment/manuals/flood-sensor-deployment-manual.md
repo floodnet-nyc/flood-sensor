@@ -55,10 +55,10 @@ Sensor locations confirmed in weekly meeting prior to deployment
 (applicable if on structure other than drive rail which have blanket approval)
 
 ## 2. Identifying Optimal Solar Panel Placement
-To maximize solar power harvesting, the solar panel shall face South and be exposed to direct sunlight. 
+To maximize solar power harvesting, the solar panel should be south-facing and exposed to direct sunlight. 
 
 ## 3. Sensor Installation Process
-The following steps details the sensor installation process to be followed in the field. 
+The following steps detail the sensor installation process to be followed in the field. 
 ### 3.1. Accessing the infrastructure
 
 ### 3.2. Mount installation 

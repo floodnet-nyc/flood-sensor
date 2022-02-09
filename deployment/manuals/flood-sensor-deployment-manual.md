@@ -5,7 +5,7 @@ Once the sensor deployment location is identified, this manual explains the next
 - [Flood Sensor Deployment Manual](#flood-sensor-deployment-manual)
   - [1. Things to do - Before leaving the lab](#1-things-to-do---before-leaving-the-lab)
     - [1.1. Checklist](#11-checklist)
-    - [1.2. Notes on Sensor mount preperation](#12-notes-on-sensor-mount-preperation)
+    - [1.2. Notes on Sensor mount preparation](#12-notes-on-sensor-mount-preparation)
     - [1.3. Registering sensor on TTN Application](#13-registering-sensor-on-ttn-application)
     - [1.4. Acquiring FloodNet approval](#14-acquiring-floodnet-approval)
     - [1.5. Acquiring NYC DOT approval](#15-acquiring-nyc-dot-approval)
@@ -35,7 +35,7 @@ This section contains the checklist for necessary tools, hardware, and equipment
 |  5  | [Green Powder-Coated Steel Strut Channel with Mounting Plate]()                                           |    1   |
 |  6  | [Stainless Steel Hex Head Screw - 7/16"-14 thread size](https://www.mcmaster.com/92800A393/)                                           |    4   |
 |  7  |  [Locknuts - 7/16"-14 thread size](https://www.mcmaster.com/90630A112/)                                        |    4   |
-### 1.2. Notes on Sensor mount preperation
+### 1.2. Notes on Sensor mount preparation
 After we have identified the ideal mounting infrastructure (see [Flood Hotspots Identification](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/hotspot%20identification/flood-hotspots-identification.md) document), the next step is to identify the mounting position on the post/pole itself. 
 
 Below are a few examples of different DOT signpost designs found across NYC, explaining optimal sensor placement scenarios.

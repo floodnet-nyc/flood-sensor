@@ -8,8 +8,8 @@ Once the sensor deployment location is identified, this manual explains the next
     - [1.2. Notes on Sensor mount preparation](#12-notes-on-sensor-mount-preparation)
     - [1.3. Registering sensor on TTN Application](#13-registering-sensor-on-ttn-application)
     - [1.4. Acquiring FloodNet approval](#14-acquiring-floodnet-approval)
-    - [1.5. Acquiring NYC DOT approval](#15-acquiring-nyc-dot-approval)
-  - [2. Identifying Optimal Solar Panel Placement](#2-identifying-optimal-solar-panel-placement)
+    - [1.5. Acquiring Approval for Mounting Location](#15-acquiring-approval-for-mounting-location)
+  - [2. Confirming Mounting Location on the Ground](#2-confirming-mounting-location-on-the-ground)
   - [3. Sensor Installation Process](#3-sensor-installation-process)
     - [3.1. Accessing the infrastructure](#31-accessing-the-infrastructure)
     - [3.2. Mount installation](#32-mount-installation)
@@ -51,21 +51,34 @@ Below are a few examples of different DOT signpost designs found across NYC, exp
 ### 1.4. Acquiring FloodNet approval
 Sensor locations confirmed in weekly meeting prior to deployment
 
-### 1.5. Acquiring NYC DOT approval
-(applicable if on structure other than drive rail which have blanket approval)
+### 1.5. Acquiring Approval for Mounting Location
+We have blanket approval from DOT to mount sensors on drive rails, also known as U-Channel posts. Each month, we update them on where new sensors have been installed. We have to obtain special approval to mount on other types of DOT infrastructure.
 
-## 2. Identifying Optimal Solar Panel Placement
-To maximize solar power harvesting, the solar panel should be south-facing and exposed to direct sunlight. 
+To mount on a utility pole, we have to obtain approval from the company that owns that pole. This process varies depending on the company.
+
+## 2. Confirming Mounting Location on the Ground
+Though we try to identify optimal sensor placement [before leaving the lab](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/hotspot%20identification/flood-hotspots-identification.md), unexpected obstacles can arise once we arrive at the mounting site. Ideally, drive rails should be perpendicular to the sidewalk and well secured. They should not be overly shaded by a large building or aboveground train track.
+
+Sometimes, a new mounting location will have to be selected in the field. Helpful clues for selecting a flood-prone location include:
+- Drive rail is close to a storm drain
+- Street near drive rail is muddy and/or marked by the accumulation of trash
+- Drive rail is located on the north side of the street, or has good sunlight exposure
+- Drive rail is tall enough for sensor to be out of reach
 
 ## 3. Sensor Installation Process
-The following steps detail the sensor installation process to be followed in the field. 
+The following steps detail the sensor installation process to be followed in the field.
+
 ### 3.1. Accessing the infrastructure
 
 ### 3.2. Mount installation 
 
 ### 3.3. Solar Panel installation
+To maximize solar power harvesting, the solar panel should be south-facing and exposed to direct sunlight. This factors into location selection, as discussed in the [Flood Hotspots Identification](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/hotspot%20identification/flood-hotspots-identification.md) document, but we also have to adjust the panel orientation as we are installing the sensor itself.
 
 ### 3.4. Levelling
+Though we try to avoid mounting on overly slanted drive rails, a bit of slant is almost unavoidable. Once the sensor is partially secured to the drive rail, we use a level to determine how the pitch of the drive rail is impacting the angle of the mounting infrastructure. We use washers, zip ties, or other spacers to adjust the angle at which the sensor is mounted to the drive rail.
+
+*<insert_image_sensor_angle_adjusted_with_spacers>*
 
 ## 4. Joining the FloodNet network
 
@@ -73,6 +86,8 @@ The following steps detail the sensor installation process to be followed in the
 
 ## 6. Signage
 Mounting metal sign on drive rail (two nut and bolt fastners) or placing sticker on other mounting point.
+
+*<insert_image_sensor_signage>*
 
 ## 7. Photo
 Photos of sensor installed on location (for records and use in FieldKit dashboard). Photo should include surrounding area (from approx. 10 feet away).

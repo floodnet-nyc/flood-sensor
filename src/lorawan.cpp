@@ -352,7 +352,7 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
                   |   0x41     |         8 bytes        |          8 bytes      |         16 bytes        |
                  */
                 Serial.println("Change APPEUI");
-                if (mcpsIndication->BufferSize == 33) // 33: 0x41, AppEUI, AppKey, DevEUI
+                if (mcpsIndication->BufferSize == 33) // 33: 0x41, AppEUI, DevEUI, AppKey
                 {
                         CFG_CHANGE_DETECTED = true;
                         // Modify AppEUI

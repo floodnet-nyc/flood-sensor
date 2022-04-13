@@ -16,6 +16,9 @@
    RGB green means received done;
  */
 
+#define SENSING_STATE 0x73
+#define RESET_STATE 0x72
+#define CFG_STATE 0x78
 
 bool autoFeed = false;      // Watchdog timer 
 bool SEND_CFG_AS_UPLINK = true;        // Set to true at start and when there is a change in sensor cfg; used to send sensor cfg via uplink
@@ -30,20 +33,21 @@ const int newDevEUIAddress = 40;
 const int defaultAppEUIAddress = 50; // 50 to 57
 const int defaultAppKeyAddress = 58; // 58 to 73
 const int defaultDevEUIAddress = 75; // 75 to 82
+const int isDeployed = 90;
+
+char useOrigApp = 'y';
+char init_ = 'n'; //Set to non zero value after saving default keys on the first boot 
 /*
   Semantic Versioning 2.0.0 Format:
         MAJOR_VERSION.MINOR_VERSION.PATCH_VERSION
 */
 const int MAJOR_VERSION = 4; // incompatible changes
-const int MINOR_VERSION = 0; // add functionality in a backwards compatible manner
-const int PATH_VERSION = 1; // backwards compatible bug fixes
-
-uint8_t SENSOR_STATE = 0x78;  // Default sensor state is 'stop' -> Uplinks are CFG packets
+const int MINOR_VERSION = 1; // add functionality in a backwards compatible manner
+const int PATCH_VERSION = 0; // backwards compatible bug fixes
 
 unsigned int ERROR_FLAGS;
 
-char useOrigApp = 'y';
-char init_ = 'n'; //Set to non zero value after saving default keys on the first boot
+uint8_t SENSOR_STATE = CFG_STATE;  // Default sensor state before deployment is 'stop' -> Uplinks are CFG packets
 
 /* OTAA para*/
 uint8_t devEui[] = TTN_DEVEUI;
@@ -58,30 +62,20 @@ uint32_t devAddr =  ( uint32_t )0x0000;
 /*LoraWan channelsmask, default channels 0-7*/
 uint16_t userChannelsMask[6] = { 0xFF00, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 }; // 0xFF00 from 00FF
 
-/*LoraWan region, select in arduino IDE tools*/
-LoRaMacRegion_t loraWanRegion = ACTIVE_REGION;
+/*LoraWan region, override IDE defaults*/
+LoRaMacRegion_t loraWanRegion = LORAMAC_REGION_US915;
 
-/*LoraWan Class, Class A and Class C are supported*/
-DeviceClass_t loraWanClass = LORAWAN_CLASS;
+/*LoraWan Class A*/
+DeviceClass_t loraWanClass = CLASS_A;
 
 /*the application data transmission duty cycle.  value in [ms].*/
 uint16_t TX_INTERVAL;    // sensor data update frequency
 uint32_t appTxDutyCycle = 10*1000;  // current state, default is CFG update rate
 
-/*OTAA or ABP*/
-bool overTheAirActivation = LORAWAN_NETMODE;
-
-/*ADR enable*/
-bool loraWanAdr = LORAWAN_ADR;
-
-/* set LORAWAN_Net_Reserve ON, the node could save the network info to flash, when node reset not need to join again */
-bool keepNet = LORAWAN_NET_RESERVE;
-
-/* Indicates if the node is sending confirmed or unconfirmed messages */
-bool isTxConfirmed = LORAWAN_UPLINKMODE;
-
-/* Application port */
-uint8_t appPort = 2;
+bool overTheAirActivation = 1;
+bool loraWanAdr = false;
+bool keepNet = false;
+bool isTxConfirmed = 0;
 /*!
    Number of trials to transmit the frame, if the LoRaMAC layer did not
    receive an acknowledgment. The MAC performs a datarate adaptation,
@@ -102,11 +96,14 @@ uint8_t appPort = 2;
    Note, that if NbTrials is set to 1 or 2, the MAC will not decrease
    the datarate, in case the LoRaMAC layer did not receive an acknowledgment
  */
+uint8_t appPort = 2;
 uint8_t confirmedNbTrials = 4;
 #define timetillwakeup 10000
 static TimerEvent_t sleep;
 static TimerEvent_t wakeUp;
 uint8_t lowpower = 1;
+
+
 
 void ModifyDutyCycle(McpsIndication_t *mcpsIndication){
         unsigned long dutycycle = 0;
@@ -203,6 +200,7 @@ void ModifySensorSettings(McpsIndication_t *mcpsIndication){
 
 void ModifyKeys(McpsIndication_t *mcpsIndication) {
         EEPROM.begin(512);
+        EEPROM.write(isDeployed, byte('y'));
         for (int i = 0; i < 8; ++i)
         {
                 EEPROM.write(newAppAddress + i, byte(mcpsIndication->Buffer[i + 1])); //big-endian
@@ -291,21 +289,21 @@ void InitStoreKeys(void) {
         {
                 EEPROM.write(defaultAppKeyAddress + i, byte(appKey[i])); //big-endian
         }
-        Serial.println("Default Keys saved in the Flash Memory.");
+        Serial.println("Default Keys saved in the EEPROM.");
 }
 
 void process_operation(McpsIndication_t *mcpsIndication){
         if ((char(mcpsIndication->Buffer[1]) == 's') && (char(mcpsIndication->Buffer[2]) == 't') && (char(mcpsIndication->Buffer[3]) == 'a') && (char(mcpsIndication->Buffer[4]) == 'r') && (char(mcpsIndication->Buffer[5]) == 't')) {
                 Serial.println("Start sensing, uplinks are Ultrasonic measurements.");
                 SEND_CFG_AS_UPLINK = false;
-                SENSOR_STATE = 0x73;
+                SENSOR_STATE = SENSING_STATE;
         } else if ((char(mcpsIndication->Buffer[1]) == 's') && (char(mcpsIndication->Buffer[2]) == 't') && (char(mcpsIndication->Buffer[3]) == 'o') && (char(mcpsIndication->Buffer[4]) == 'p')) {
                 Serial.println("Stop sensing, uplinks are sensor CFG packets.");
                 SEND_CFG_AS_UPLINK = true;
-                SENSOR_STATE = 0x78;
+                SENSOR_STATE = CFG_STATE;
         } else if ((char(mcpsIndication->Buffer[1]) == 'r') && (char(mcpsIndication->Buffer[2]) == 'e') && (char(mcpsIndication->Buffer[3]) == 's') && (char(mcpsIndication->Buffer[4]) == 'e') && (char(mcpsIndication->Buffer[5]) == 't')) {
                 Serial.println("Reset Sensor.");
-                SENSOR_STATE = 0x72;
+                SENSOR_STATE = RESET_STATE;
                 // resets after updating it's CFG
         } else {
                 Serial.println("Invalid Operation");
@@ -440,7 +438,7 @@ static void prepareTxFrame( uint8_t port )
                 // Minor 
                 appData[9] = (unsigned char)MINOR_VERSION;
                 // Patch
-                appData[10] = (unsigned char)PATH_VERSION;
+                appData[10] = (unsigned char)PATCH_VERSION;
                 
                 // Update only once
                 if (CFG_CHANGE_DETECTED == true){
@@ -542,6 +540,31 @@ void setup_lorawan(unsigned int packet_interval) {
         Serial.println(F("Setting up dutycycle..."));
         TX_INTERVAL = packet_interval;
         Serial.print(F("Dutycycle set to "));Serial.print(TX_INTERVAL);Serial.println(F(" seconds"));
+        /* On reset check if sensor has been deployed. 
+                        If deployed -> start sending data upon reset 
+                        else -> default is a CFG uplink
+        */
+        EEPROM.begin(512);
+        char is_dep = char(EEPROM.read(isDeployed));
+        EEPROM.end();
+
+        if (is_dep == 'y'){
+                SENSOR_STATE = SENSING_STATE;
+                Serial.println("\n\n========================================================="); 
+                Serial.println("Sensor is deployed!"); 
+                Serial.println("=========================================================\n\n");
+                Serial.print("Reset cause CY_SYS_RESET_WDT: ");Serial.println(CY_SYS_RES_CAUSE_REG & (CY_SYS_RESET_WDT) );  // If True - 1
+                Serial.print("Reset cause CY_SYS_RESET_PROTFAULT: ");Serial.println(CY_SYS_RES_CAUSE_REG &(CY_SYS_RESET_PROTFAULT)); // If true - 8 
+                Serial.print("Reset cause CY_SYS_RESET_SW: ");Serial.println(CY_SYS_RES_CAUSE_REG &(CY_SYS_RESET_SW)); // If true - 16
+        } else{
+                EEPROM.begin(512);
+                  // write a 0 to all 512 bytes of the EEPROM
+                for (int i = 0; i < 512; i++) {
+                        EEPROM.write(i, 0);
+                }
+                EEPROM.end();  
+        }
+
         Serial.println(F("Checking keys..."));
         EEPROM.begin(512);
         // Check init_ for 'y' or 'n'
@@ -555,7 +578,7 @@ void setup_lorawan(unsigned int packet_interval) {
                         LoadNewKeys();
                 } else {
                         Serial.println("Using default Keys...");
-                        // check if any of them are zeroes and load from Flash if needed
+                        // check if any of them are zeroes and load from EEPROM if needed
                         for (int i = 0; i < 8; ++i)
                         {
                                 devEui[i] = (uint8_t) EEPROM.read(defaultDevEUIAddress + i); //big-endian
@@ -577,9 +600,7 @@ void setup_lorawan(unsigned int packet_interval) {
                 InitStoreKeys();
         }
         EEPROM.end();
-#if (AT_SUPPORT)
-        enableAt();
-#endif
+
         deviceState = DEVICE_STATE_INIT;
         LoRaWAN.ifskipjoin(); // downlinks fail if this is not called!
 }
@@ -590,13 +611,6 @@ void lorawan_runloop_once(void)
         {
         case DEVICE_STATE_INIT:
         {
-#if (LORAWAN_DEVEUI_AUTO)
-                LoRaWAN.generateDeveuiByChipID();
-#endif
-#if (AT_SUPPORT)
-                Serial.println("Getting device parameters...");
-                getDevParam();
-#endif
                 printDevParam();
                 LoRaWAN.init(loraWanClass, loraWanRegion);
                 deviceState = DEVICE_STATE_JOIN;
@@ -609,7 +623,8 @@ void lorawan_runloop_once(void)
         }
         case DEVICE_STATE_SEND:
         {
-                if (SENSOR_STATE == 0x78){
+                
+                if (SENSOR_STATE == CFG_STATE){
                         appTxDutyCycle = 10 * 1000; 
                 } else {
                         appTxDutyCycle = TX_INTERVAL * 1000;
@@ -627,7 +642,7 @@ void lorawan_runloop_once(void)
                 txDutyCycleTime = appTxDutyCycle + randr( 0, APP_TX_DUTYCYCLE_RND );
                 LoRaWAN.cycle(txDutyCycleTime);
                 // check if state is reset
-                if (SENSOR_STATE == 0x72){
+                if (SENSOR_STATE == RESET_STATE){
                         // Reset
                         innerWdtEnable(false);
                         delay(5000); //Wait until the MCU resets       

@@ -10,7 +10,7 @@
  *    RX2        -> Maxbotix Serial Pin (Pin 5: Serial output)
  *    GPIO 5     -> Maxbotix triggerPin (Pin 4: Ranging start/stop)
  *
- *  --------------------------------------------------------------------------------/
+ *  -------------------------------------------------------------------------------- */
 
 
 #include <Floodsense_sensor.h>

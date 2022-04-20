@@ -46,7 +46,7 @@ uint16_t sensor_singleread(void) {
       char rc = Serial1.read();
       if (rc == 'R')
       {
-        while (index < 3)
+        while (index < 4)
         {
           if (Serial1.available())
           {

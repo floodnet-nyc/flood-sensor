@@ -56,7 +56,7 @@ uint16_t sensor_singleread(void) {
         }
       }
       distance = (serialbuffer[0] - '0') * 1000 + (serialbuffer[1] - '0') * 100 + (serialbuffer[2] - '0') * 10 + (serialbuffer[3] - '0');
-      if (distance>0){
+      if (distance>=0){ // Max range readings
         newData = true;
       } 
     }

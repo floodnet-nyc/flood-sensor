@@ -1,31 +1,32 @@
-# FloodSense Sensor Technical Documentation
-The latest and current deployment version of flood sensor is maintained on the [main](https://github.com/floodsense/floodsense_sensor/tree/main) branch
+# Flood Sensor Technical Documentation
+The latest and current deployment version of flood sensor is maintained on the [main](https://github.com/floodnet-nyc/flood-sensor) branch
 
-[This repository](https://github.com/floodsense/floodsense_sensor) contains the source code for the Floodsense sensor which uses ultrasonic sensor technology to detect floods and send the data over LoRa using LoRaWAN protocol. [Here](https://github.com/floodsense/sensor_experiments) is the experiments repo containing technical documentation, analysis and additional support related to this library.
+[This repository](https://github.com/floodnet-nyc/flood-sensor) contains the source code for the FloodNet's flood sensor which uses ultrasonic ranging technology to capture flood depths and frequencies in real-time, and sends the data to the backend using LoRaWAN protocol. [Here](https://github.com/floodsense/sensor_experiments) is the experiments repo containing technical documentation, analysis and additional support related to this library.
 
-<u>Note while using this library with CubeCell boards:</u> *For every firmware upload, clear the EEPROM by running the EEPROM example to delete the old keys. EEPROM is unaffected by firmware change and shall be cleared manually every time.*
+**<u>Note:</u>** *For every new firmware upload, clear the EEPROM by running the EEPROM example to delete the old keys. EEPROM is unaffected by firmware change and shall be cleared manually every time when re-using an old sensor that has been previously deployed.*
 
 
-## Introduction
+## Introduction   
 Of the myriad impacts that are predicted to accompany climate change, flooding is expected to have an out-sized influence on public health, infrastructure, and mobility in urban areas. In New York City, for example, sea level rise and an increase in the occurrence of high intensity rain storms (which convey large volumes of water to drains, leading to backups and overflows) have led to a dramatic increase in flood risk, particularly in low-lying and coastal neighborhoods. The physical presence of standing water on streets and sidewalks can impede mobility and restrict access to transportation. Additionally, urban flood water contains a diverse array of contaminants, including industrial and household chemicals, fuels, and sewage.  Access to real-time information on flooding can improve resiliency and efficiency by allowing residents to identify navigable transportation routes and make informed decisions to avoid exposure to floodwater contaminants.
 
-One of the goals of the [FloodSense](https://www.floodnet.nyc/) project is to develop a flood sensor that overcomes common sensor challenges, as well as the digital infrastructure necessary to log, process, and present the data in combination with other publicly available information, such as rainfall data, 311 flooding complaints, and social media feeds. This document specifies the sensor design, building instructions, initial deployment and schematics for technology transfer of the sensor development for the FloodSense project at 370 Jay Street, 13th Floor.
+One of the goals of the [FloodNet](https://www.floodnet.nyc/) project is to develop a flood sensor that overcomes common sensor challenges, as well as the digital infrastructure necessary to log, process, and present the data in combination with other publicly available information, such as rainfall data, 311 flooding complaints, and social media feeds. This document specifies the sensor design, building instructions, initial deployment and schematics for technology transfer of the sensor development for the flood sensor at 370 Jay Street, 13th Floor.
 
 <img src="img/mountedv3.jpeg" width="480" >
 
 
 
-## Build Instructions
+## Sensor Build Instructions
 
 Step by step build instructions are documented with images on the [documentation](https://floodsense.github.io//quality-management/sensor-assembly-qap/) website.
 
-## Installation
+## Installing this Library
+
 All the following three sub-sections are needed to be completed in order to satisfy the requirements to run the software for this sensor. Furthermore, in order to utilize the complete functionalities of the sensor, a back-end support is needed.
 
-#### Necessary Software
+### Necessary Software
 For simplicity, Arduino IDE has been used in the documentation but other IDEs can also be used. Arduino IDE, can be downloaded from [Arduino's website](https://www.arduino.cc/en/software). The Arduino IDE is used for uploading the firmware to the microcontroller.
 
-#### FloodSense Sensor Library
+### FloodSense Sensor Library
 Download the FloodSense Sensor Library from [here](https://github.com/floodsense/floodsense_sensor). This library contains the source code "src" folder, which is the firmware and contains all the necessary files for this sensor to work.
 
 **Method 1:**
@@ -39,15 +40,15 @@ Download the FloodSense Sensor Library from [here](https://github.com/floodsense
 <br />
 2. Select the downloaded ZIP folder of this library from your computer
 
-#### Installing CubeCell Library
+### Installing CubeCell Library
 
 This repo is built to run on CubeCell's example library. To install the CubeCell's library, follow the instructions on their repo [here](https://github.com/HelTecAutomation/CubeCell-Arduino/tree/master/InstallGuide)
 
 ## Using FloodSense Library
 
-The default sensor state after reset is `stop`, in which the sensor sends its current configuration via uplink every 10 seconds. To start sensing, change the sensor state to `start` by sending a command via downlink. When sensing, the duty cycle is `packet_interval`, default is 60 seconds.
+The default sensor state after flashing the firmware is `CFG_STATE` or `stop`, in which the sensor sends its current configuration via uplink every 10 seconds. To start sensing, change the sensor state to `START_SENSING` or `start`, by sending a command via downlink. When sensing, the duty cycle is `packet_interval`, and by default is set to 60 seconds.
 
-The following is an example from the examples folder, which demonstrates how this library functionality can be used only with few lines of code:
+The following is an example which demonstrates how this library functionality can be used only with few lines of code:
 
 ```cpp
 
@@ -70,6 +71,16 @@ void loop() {
 The main loop contains a single function `lorawan_runloop_once()` which runs all the time handling LoRa, Low Power management, Deep Sleep, Sensors operation, and everything else.
 
 The `void setup()` sets up the sensor's serial communication (used for debugging), Ultrasonic sensor (`setup_maxbotix()` function), and finally lmic library handles the LoRaWAN and is setup using `lmicsetup(usigned int packet_interval)` function. Default `packet_interval` is `60s` and can be changed according by modifying this number in seconds.
+
+### Deployment using this Library
+
+When the sensor is deployed, upon successful migration to the live application, the sensor saves it's deployed state under the variable `isDeployed`. When deployed **<u>and</u>** started, the sensor saves it's sensing state using `isStarted`. This enables the sensor to start sending readings as uplinks automatically upon any unforeseen or unwanted resets when deployed.
+
+Below is the flow explaining this logic:
+
+<img src="img/sensor_states_flow_diagram.png" width="680">
+<br />
+
 
 #### Sensor Configuration file
 The Sensor Config file, `sensorcfg.h` contains important pin definitions, flags and parameters that can be changed during runtime. However some parameters are fixed for a given architecture and shouldn't be modified during runtime such as Pins, Card and Chip Selects etc.
@@ -109,7 +120,7 @@ Here below is a list of parameters that can be changed during the run-time of th
 
 ## Modifying Sensor Configuration using Downlinks
 
-Three types of downlinks are available, categorized based on functionality. 
+Three types of downlinks are available, categorized based on functionality.
 
 **Sensor downlink format:**
 

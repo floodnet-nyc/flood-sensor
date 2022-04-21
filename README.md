@@ -26,12 +26,12 @@ All the following three sub-sections are needed to be completed in order to sati
 ### Necessary Software
 For simplicity, Arduino IDE has been used in the documentation but other IDEs can also be used. Arduino IDE, can be downloaded from [Arduino's website](https://www.arduino.cc/en/software). The Arduino IDE is used for uploading the firmware to the microcontroller.
 
-### FloodSense Sensor Library
+### Flood Sensor Library
 Download the FloodSense Sensor Library from [here](https://github.com/floodsense/floodsense_sensor). This library contains the source code "src" folder, which is the firmware and contains all the necessary files for this sensor to work.
 
 **Method 1:**
 1. Find Arduino libraries folder
-2. Clone the library folder into the Arduino>libraries
+2. Clone the library and copy the `firmware` folder into the Arduino>libraries
 
 [**Method 2:**](https://www.arduino.cc/en/guide/libraries)
 1. In Arduino IDE, go to: Sketch> Include Library> Add .ZIP Library..

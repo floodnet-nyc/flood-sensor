@@ -33,7 +33,7 @@ const int isStarted = 91;
 */
 const int MAJOR_VERSION = 4; // incompatible changes
 const int MINOR_VERSION = 2; // add functionality in a backwards compatible manner
-const int PATCH_VERSION = 0; // backwards compatible bug fixes
+const int PATCH_VERSION = 1; // backwards compatible bug fixes
 
 
 /*flags*/

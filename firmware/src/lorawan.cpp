@@ -32,7 +32,7 @@ const int isStarted = 91;
         MAJOR_VERSION.MINOR_VERSION.PATCH_VERSION
 */
 const int MAJOR_VERSION = 4; // incompatible changes
-const int MINOR_VERSION = 2; // add functionality in a backwards compatible manner
+const int MINOR_VERSION = 3; // add functionality in a backwards compatible manner
 const int PATCH_VERSION = 1; // backwards compatible bug fixes
 
 

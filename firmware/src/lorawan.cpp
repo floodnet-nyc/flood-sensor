@@ -281,8 +281,9 @@ void process_operation(McpsIndication_t *mcpsIndication) {
                 appTxDutyCycle = 10*1000;
         } else if ((char(mcpsIndication->Buffer[1]) == 'r') && (char(mcpsIndication->Buffer[2]) == 'e') && (char(mcpsIndication->Buffer[3]) == 's') && (char(mcpsIndication->Buffer[4]) == 'e') && (char(mcpsIndication->Buffer[5]) == 't')) {
                 Serial.println("Reset Sensor.");
-                SENSOR_STATE = RESET_STATE;
-                // resets after updating it's CFG
+                // Reset
+                innerWdtEnable(false);
+                delay(10000); //Wait until the MCU resets       
         } else {
                 Serial.println("Invalid Operation");
         }
@@ -328,7 +329,7 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
                         ModifyKeys(mcpsIndication);
                         // Reset
                         innerWdtEnable(false);
-                        delay(5000); //Wait until the MCU resets
+                        delay(10000); //Wait until the MCU resets
                 } else {
                         Serial.println("Invalid Keys!");
                 }
@@ -496,7 +497,7 @@ void joinTimedOutEvent(void) {
         //  reset the MCU
         Serial.println("Join TimedOut, resetting the MCU will join default TTN Application..");
         innerWdtEnable(false);
-        delay(5000); //Wait until the MCU resets
+        delay(10000); //Wait until the MCU resets
 }
 
 void ifJoinedTTN(void) {
@@ -621,12 +622,6 @@ void lorawan_runloop_once(void)
                 // Schedule next packet transmission
                 txDutyCycleTime = appTxDutyCycle + randr( 0, APP_TX_DUTYCYCLE_RND );
                 LoRaWAN.cycle(txDutyCycleTime);
-                // check if state is reset
-                if (SENSOR_STATE == RESET_STATE) {
-                        // Reset
-                        innerWdtEnable(false);
-                        delay(5000); //Wait until the MCU resets
-                }
                 Serial.print("Going to sleep, next uplink in "); Serial.print(TX_INTERVAL); Serial.println(" s.");
                 deviceState = DEVICE_STATE_SLEEP;
                 break;

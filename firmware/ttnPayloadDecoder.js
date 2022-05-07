@@ -26,7 +26,7 @@ function Decoder(b, port) {
     */
 
     // Duty cycle
-    var sensor_sleep = (b[2]<< 8) | b[1];
+    var sensor_sleep = (b[2] << 8) | b[1];
     decoded.sensor_sleep = sensor_sleep;
 
     // Sensor Mode
@@ -43,11 +43,11 @@ function Decoder(b, port) {
 
     // Sensor State
     var sensor_state = b[7].toString();
-    if (sensor_state == "115"){
+    if (sensor_state == "115") {
       sensor_state = "Sensing";
-    } else if (sensor_state == "120"){
+    } else if (sensor_state == "120") {
       sensor_state = "CFG Update";
-    } else if (sensor_state == "114"){
+    } else if (sensor_state == "114") {
       sensor_state = "Reset";
     }
     decoded.sensor_state = sensor_state;
@@ -58,48 +58,48 @@ function Decoder(b, port) {
     let patch = b[10].toString();
     let v = "v";
     let dot = ".";
-    let fw_ver = v.concat(major,dot,minor,dot,patch);
+    let fw_ver = v.concat(major, dot, minor, dot, patch);
     decoded.fw_ver = fw_ver;
 
-    
+
   } else {
-      // Regular Payload
-      var sdError, battery, distance;
-      // Converting Error Flag bits
-      sdError = errorFlag % 2;
-      decoded.sdError = sdError;
-  
-      // battery
-      battery = (b[2] << 8) | b[1]; // battery in centi Volts
-      battery = battery / 1000; // Convert to Volts
-      decoded.battery = battery;
-  
-      // distance
-      distance = (b[4] << 8) | b[3];
-      decoded.distance = distance;
-      
-      if (b[5]!== null){
-        // temperature
-        var temperature = (b[6] & 0x80 ? 0xFFFF<<16 : 0) | b[6]<<8 | b[5];
-        temperature = temperature/100;
-        decoded.temperature = temperature;
-        
-        // pressure
-        var pressure = (((b[10]<<24) | (b[9]<<16)) | (b[8]<<8)) | b[7];
-        pressure = pressure/100;
-        decoded.pressure = pressure;
-      
-        // altitude
-        var altitude = (b[12] << 8) | b[11];
-        altitude = altitude/100;
-        decoded.altitude = altitude;
-      
-        // humidity
-        var humidity = (b[14] << 8) | b[13];
-        humidity = humidity/100;
-        decoded.humidity = humidity;
-      }
+    // Regular Payload
+    var sdError, battery, distance;
+    // Converting Error Flag bits
+    sdError = errorFlag % 2;
+    decoded.sdError = sdError;
+
+    // battery
+    battery = (b[2] << 8) | b[1]; // battery in centi Volts
+    battery = battery / 1000; // Convert to Volts
+    decoded.battery = battery;
+
+    // distance
+    distance = (b[4] << 8) | b[3];
+    decoded.distance = distance;
+
+    if (b[5] !== null) {
+      // temperature
+      var temperature = (b[6] & 0x80 ? 0xFFFF << 16 : 0) | b[6] << 8 | b[5];
+      temperature = temperature / 100;
+      decoded.temperature = temperature;
+
+      // pressure
+      var pressure = (((b[10] << 24) | (b[9] << 16)) | (b[8] << 8)) | b[7];
+      pressure = pressure / 100;
+      decoded.pressure = pressure;
+
+      // altitude
+      var altitude = (b[12] << 8) | b[11];
+      altitude = altitude / 100;
+      decoded.altitude = altitude;
+
+      // humidity
+      var humidity = (b[14] << 8) | b[13];
+      humidity = humidity / 100;
+      decoded.humidity = humidity;
     }
-    
-    return decoded; 
+  }
+
+  return decoded;
 }

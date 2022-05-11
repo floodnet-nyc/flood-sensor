@@ -1,0 +1,6 @@
+{
+    "configuration": "LORAWAN_REGION=9,LORAWAN_CLASS=0,LORAWAN_DEVEUI=0,LORAWAN_NETMODE=0,LORAWAN_ADR=0,LORAWAN_UPLINKMODE=1,LORAWAN_Net_Reserve=0,LORAWAN_AT_SUPPORT=0,LORAWAN_RGB=1,LORAWAN_DebugLevel=0",
+    "board": "CubeCell:CubeCell:CubeCell-BoardPlus",
+    "port": "/dev/tty.usbserial-0001",
+    "sketch": "floodsensor.ino"
+}

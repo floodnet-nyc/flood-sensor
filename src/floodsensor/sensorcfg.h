@@ -3,29 +3,28 @@
 
 #pragma once
 
+// ------------------- Sensors -------------------------
+
+//#define USE_MAXBOTIX
+// #define USE_RG15
+#define USE_TIPPING_BUCKET
+
 // ------------------   Pins   -------------------------
 
-#define VBATPIN A7
-#define cardSelect 10
 
 // ----------------   Constants   ----------------------
 
-// SD chip select pin
-#define chipSelect 10
 
 // ----------------   Variables   ----------------------
 
-// ----------------   FeatherWing   ----------------------
-#define LOGGER //Comment if FeatherWing is not connected
-
 // Duty cycle
-extern unsigned int TX_INTERVAL;
+extern uint32_t appTxDutyCycle;
 
 /*    Sensor Operation Modes:
-            Mode 1: Mean
-            Mode 2: Median
-            Mode 3: Mode
-*/
+ Mode 1: Mean
+ Mode 2: Median
+ Mode 3: Mode
+ */
 extern unsigned int sensorMode;
 
 // Time between the readings
@@ -34,8 +33,11 @@ extern unsigned int sensor_sampling_rate;
 // Number of readings for a given sensor mode
 extern unsigned int sensor_numberOfReadings;
 
-// ------------------- Error Flags ----------------------
+// Rg-15 Acc reset
+extern uint32_t MAX_COUNTER_RG15;
 
-extern int SD_ERROR;
+extern String RG15_OP_MODE; //allowed: "P", "Polling", "C", "Continuous"
+
+// ------------------- Error Flags ----------------------
 
 #endif

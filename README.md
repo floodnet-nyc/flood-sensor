@@ -6,10 +6,8 @@ The latest and current deployment version of flood sensor is maintained on the [
 **<u>Note:</u>** *For every new firmware upload, clear the EEPROM by running the EEPROM example to delete the old keys. EEPROM is unaffected by firmware change and shall be cleared manually every time when re-using an old sensor that has been previously deployed.*
 
 
-## Introduction   
-Of the myriad impacts that are predicted to accompany climate change, flooding is expected to have an out-sized influence on public health, infrastructure, and mobility in urban areas. In New York City, for example, sea level rise and an increase in the occurrence of high intensity rain storms (which convey large volumes of water to drains, leading to backups and overflows) have led to a dramatic increase in flood risk, particularly in low-lying and coastal neighborhoods. The physical presence of standing water on streets and sidewalks can impede mobility and restrict access to transportation. Additionally, urban flood water contains a diverse array of contaminants, including industrial and household chemicals, fuels, and sewage.  Access to real-time information on flooding can improve resiliency and efficiency by allowing residents to identify navigable transportation routes and make informed decisions to avoid exposure to floodwater contaminants.
-
-One of the goals of the [FloodNet](https://www.floodnet.nyc/) project is to develop a flood sensor that overcomes common sensor challenges, as well as the digital infrastructure necessary to log, process, and present the data in combination with other publicly available information, such as rainfall data, 311 flooding complaints, and social media feeds. This document specifies the sensor design, building instructions, initial deployment and schematics for technology transfer of the sensor development for the flood sensor at 370 Jay Street, 13th Floor.
+## About FloodNet   
+[FloodNet](https://www.floodnet.nyc/) is a cooperative of communities, researchers, and New York City government agencies working to better understand the frequency, severity, and impacts of flooding in New York City. The data and knowledge gained can be used by local residents, researchers, city agencies, and others to advocate around and work to reduce flood risk. FloodNet brings together innovative sources of information on street flooding impacts in neighborhoods that are vulnerable to high tides, storm surge, and stormwater runoff.
 
 <img src="img/mountedv3.jpeg" width="480" >
 

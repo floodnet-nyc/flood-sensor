@@ -23,7 +23,7 @@ a.button {
 }
 </style>
 
-<div class="btn-group" align="right">
+<div class="button-group minor-group" align="right">
   <a href="https://docs.google.com/forms/d/e/1FAIpQLScIM4Nu0z6l5HO8uzl9k4RGRSzU549LakNMNijnjGAHodFg9w/viewform" class="button">Suggest a Sensor Location</a>
   <a href="mailto:info@floodnet.nyc" class="button">Contact us</a>
 </div>

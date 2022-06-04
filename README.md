@@ -7,26 +7,9 @@
 
 <br>
 
-<style>
-a.button {
-  background-color: #1f5f6e;
-  border-radius:0.22em;
-  color: white;
-  padding: 4px 6px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 12px;
-  margin:0 0.1em 0.1em 0;
-  cursor: pointer;
-  transition: all 0.2s;
-}
-</style>
 
-<div class="button-group minor-group" align="right">
-  <a href="https://docs.google.com/forms/d/e/1FAIpQLScIM4Nu0z6l5HO8uzl9k4RGRSzU549LakNMNijnjGAHodFg9w/viewform" class="button">Suggest a Sensor Location</a>
-  <a href="mailto:info@floodnet.nyc" class="button">Contact us</a>
-</div>
+| [Suggest a sensor location](https://docs.google.com/forms/d/e/1FAIpQLScIM4Nu0z6l5HO8uzl9k4RGRSzU549LakNMNijnjGAHodFg9w/viewform) | [_@_ Contact us](mailto:info@floodnet.nyc) |
+| :----------: | :----------: |
 
 <br>
 
@@ -38,7 +21,6 @@ This repository houses the build, deployment, and maintenance information for th
 - [How to deploy a flood sensor](#how-to-deploy-a-flood-sensor)
 - [How to maintain a flood sensor](#how-to-maintain-a-flood-sensor)
 - [Additional Resources](#additional-resources)
-<br>
 <br>
 
 # About FloodNet

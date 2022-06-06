@@ -20,11 +20,11 @@ This repository houses the build, deployment, and maintenance information for th
 - [How to build a flood sensor](#how-to-build-a-flood-sensor)
 - [How to deploy a flood sensor](#how-to-deploy-a-flood-sensor)
 - [How to maintain a flood sensor](#how-to-maintain-a-flood-sensor)
-- [Additional Resources](#additional-resources)
+- [Additional resources](#additional-resources)
 <br>
 
 # About FloodNet
-FloodNet is a partnership between academic researchers at New York University and the City University of New York, and NYC municipal agencies (NYC Mayor’s Office of Climate & Environmental Justice and Mayor’s Office of the Chief Technology Officer), working in consultation with community organizations to better understand the frequency, severity, and impacts of flooding in New York City.
+FloodNet is a partnership between academic researchers at New York University and the City University of New York, and NYC municipal agencies (NYC Mayor’s Office of Climate & Environmental Justice and Mayor’s Office of the Chief Technology Officer), working in consultation with community organizations.
 
 # How to build a flood sensor
 
@@ -32,7 +32,7 @@ FloodNet is a partnership between academic researchers at New York University an
 
 # How to maintain a flood sensor
 
-# Additional Resources
+# Additional resources
 
 
 

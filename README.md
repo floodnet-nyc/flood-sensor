@@ -43,38 +43,38 @@ This section contains the resources to build a flood sensor from the raw materia
 
 Please note that these instructions are relevant only to the end-device sensing component within a larger sensor network infrastructure. For an overview of the complete network infrastructure refer to the FloodNet network infrastructure on the [documentation website](https://floodnet-nyc.github.io//real-time-data-pipeline/#31-data-flow-pipeline-overview). The [Gateway](https://github.com/floodnet-nyc/floodnet-gateway) and [NodeRED](https://github.com/floodnet-nyc/floodnet-nodered) repositiories are linked in the additional resources section for reference. 
 
-## BOM 
+### BOM 
 The total sensor cost per unit is below $200. When mounting hardware is included the total cost of the sensor plus mounting hardware comes around $210. A list of complete bill of materials for the sensor and mounting hardware is available in the [BOM](https://github.com/floodnet-nyc/flood-sensor/tree/main/hardware/BOM.md) document.
 
 
-## Sensor build instructions with Quality Assurance Procedures
+### Sensor build instructions with Quality Assurance Procedures
 The step by step sensor build instructions including images, quality assurance steps, and quality control checks are detailed in the FloodNet's [QA/QC documentation](https://floodnet-nyc.github.io//quality-management/sensor-assembly-qap/) website.
 
 
-## Installing sensor software
+### Installing sensor software
 After the sensor assembly stage is the installation of the sensor firmware. To install the sensor's firmware follow the steps detailed in the of the firmware folder's [README.md](https://github.com/floodnet-nyc/flood-sensor/tree/main/firmware/readme.md). 
 
-## Quality Control Testing 
+### Quality Control Testing 
 
-### In-lab sensor measurements validation
+#### In-lab sensor measurements validation
 
-## Troubleshooting
+### Troubleshooting
 
 # How to deploy a flood sensor
 
-## Deployment location identification strategy
+### Deployment location identification strategy
 
-## Criteria for a good mounting options
+### Criteria for a good mounting options
 
-## Flood sensor deployment steps
+### Flood sensor deployment steps
 
 # How to maintain a flood sensor
 
-## Firmware updates
+### Firmware updates
 
-## Common problems
+### Common problems
 
-## Maintenance visits
+### Maintenance visits
 
 # Additional resources
 

@@ -39,15 +39,14 @@ FloodNet is a partnership between academic researchers at New York University an
 
 <img src="img/mountedv3.jpeg" width="480" >
 
-## 2. How to build a flood sensor
-This section contains the necessary resources to build a flood sensor from the raw materials state to a final product. 
-
-Please note that these instructions are relevant only to the flood sensors i.e. the end-device sensing component within a larger sensor network infrastructure. For more details about the complete network infrastructure(figure below) refer to the FloodNet network infrastructure on the [documentation website](https://floodnet-nyc.github.io//real-time-data-pipeline/#31-data-flow-pipeline-overview). 
+_Note:_ This repository is relevant only to the flood sensors i.e. the end-device sensing component within a larger sensor network infrastructure. For more details about the complete network infrastructure(figure below) refer to the FloodNet [documentation website](https://floodnet-nyc.github.io//real-time-data-pipeline/#31-data-flow-pipeline-overview). 
 
 Further, [Gateway](https://github.com/floodnet-nyc/floodnet-gateway) and [NodeRED](https://github.com/floodnet-nyc/floodnet-nodered) repositiories are linked in the additional resources section for reference. 
 
 <img src="img/nw-infrastructure-overview.png" >
 
+## 2. How to build a flood sensor
+This section contains the necessary resources to build a flood sensor from the raw materials state to a final product. 
 
 ### 2.1 BOM 
 The total sensor cost per unit is below $200. When mounting hardware is included the total cost of the sensor plus mounting hardware comes around $210. A list of complete bill of materials for the sensor and mounting hardware is available in the [BOM](https://github.com/floodnet-nyc/flood-sensor/tree/main/hardware/BOM.md) document.

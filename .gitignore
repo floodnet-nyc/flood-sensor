@@ -6,6 +6,9 @@
 *.o
 *.so
 
+#vscode host dependent file
+firmware/.vscode/c_cpp_properties.json
+
 # Packages #
 *.7z
 *.dmg
@@ -25,3 +28,4 @@
 .DS_Store
 .DS_Store?
 ._*
+

@@ -53,7 +53,7 @@ The total sensor cost per unit is below $200. When mounting hardware is included
 
 
 ### 2.2 Sensor build instructions with Quality Assurance Procedures
-The step by step sensor build instructions including images and quality assurance steps are detailed in the FloodNet's [Sensor build with Quality Assurance Procedures](https://floodnet-nyc.github.io//quality-management/sensor-assembly-qap/) page on the documentation website to ensure high quality sensor builds with consistency.
+The step by step sensor build instructions including images and quality assurance steps are detailed in the [Sensor build with Quality Assurance Procedures](https://floodnet-nyc.github.io//quality-management/sensor-assembly-qap/) page on the FloodNet's documentation website to ensure high quality sensor builds with consistency.
 
 
 ### 2.3 Installing sensor software

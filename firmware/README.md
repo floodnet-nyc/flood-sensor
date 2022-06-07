@@ -1,4 +1,6 @@
-Document detailing the installation and usage of this library.
+
+# Installation and Usage
+
 
 
 - [Installation and Usage](#installation-and-usage)
@@ -21,7 +23,6 @@ Document detailing the installation and usage of this library.
   - [Understanding the uplink message payload](#understanding-the-uplink-message-payload)
     - [Uplink Packet Format](#uplink-packet-format)
 
-# Installation and Usage
 
 ## Installing necessary softwares and libraries
 

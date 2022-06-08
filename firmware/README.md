@@ -1,8 +1,5 @@
 # Firmware technical documentation
 
-
-
-
 - [Firmware technical documentation](#firmware-technical-documentation)
   - [Installation and setup](#installation-and-setup)
     - [Arduino IDE](#arduino-ide)

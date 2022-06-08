@@ -51,7 +51,7 @@ This section contains the necessary resources to build a flood sensor from the r
 <br>
 
 - **Installing sensor software:**
-  - After the sensor assembly stage is the installation of the sensor firmware. To install the sensor's firmware follow the steps detailed in the of the firmware folder's [README.md](https://github.com/floodnet-nyc/flood-sensor/blob/main/firmware/README.md). 
+  - After the sensor assembly stage is the installation of the sensor firmware. To install the sensor's firmware follow the steps detailed in the of the firmware folder's [README.md](https://github.com/floodnet-nyc/flood-sensor/tree/main/firmware/readme.md). 
 
 <br>
 
@@ -77,19 +77,19 @@ The FloodNet sensors are deployed on street sign poles, over the sidewalk, follo
 - **Flood sensor deployment steps:**
 
 ## How to maintain a flood sensor
-This section contains the information needed for sensor maintenance runs and visits.
+The maintenance maual is the [README.md](https://github.com/floodnet-nyc/flood-sensor/tree/main/maintenance/README.md) document which contains the information needed for sensor maintenance runs and visits. Below are a list of common maintenance visit reasons listed and linked to the recommended fixes detailed on the manual. 
 
-- **Firmware updates:**
-
-<br>
-
-- **Common problems:**
-
-<br>
-
-- **Maintenance visits:**
-
-<br>
+- **Common maintenance visit reasons:**
+  - Trending down battery profile due to:
+    - Not enough sunlight 
+    - Battery does not charge
+  - Brownouts
+  - Antenna Issues
+  - Manual Firmware updates
+  - Operational Issues:
+    - Inaccurate or unexpected sensor measurements
+    - No sensor measurements
+  - Sensor swapout in the case of a failure
 
 ## Additional resources
 

@@ -51,7 +51,7 @@ This section contains the necessary resources to build a flood sensor from the r
 <br>
 
 - **Installing sensor software:**
-  - After the sensor assembly stage is the installation of the sensor firmware. To install the sensor's firmware follow the steps detailed in the of the firmware folder's [README.md](https://github.com/floodnet-nyc/flood-sensor/tree/main/firmware/readme.md). 
+  - After the sensor assembly stage is the installation of the sensor firmware. To install the sensor's firmware follow the steps detailed in the of the firmware folder's [README.md](https://github.com/floodnet-nyc/flood-sensor/blob/main/firmware/README.md). 
 
 <br>
 

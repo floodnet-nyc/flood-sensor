@@ -17,7 +17,6 @@ firmware/.vscode/c_cpp_properties.json
 *.jar
 *.rar
 *.tar
-*.zip
 
 # Logs and databases #
 *.log

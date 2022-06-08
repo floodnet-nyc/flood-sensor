@@ -114,8 +114,8 @@ This playbook details the steps for in-person maintanance visits to perform quic
 ### Manual Firmware updates
 
 ### Operational Issues:
-	- Inaccurate or unexpected sensor measurements
-	- No sensor measurements
+  - Inaccurate or unexpected sensor measurements
+  - No sensor measurements
 ### Sensor swapout in the case of a failure
 
 

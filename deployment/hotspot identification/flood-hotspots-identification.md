@@ -25,7 +25,14 @@ We are partnered with NY Sea Grant and the Science and Resilience Institute of J
 The Mayor’s Office of Climate and Resiliency has also provided us with a list of flood-prone neighborhoods, to help us ensure that we are distributing our sensors throughout all five boroughs.
 
 ## 2. Verification of Flooding
-Once a location is proposed, we consult the [NYC Stormwater Flood Maps](https://experience.arcgis.com/experience/4b290961cac34643a49b9002f165fad8/) to confirm that this location is likely to be impacted by flooding in a Moderate Stormwater Event.
+Once a location is proposed, we consult the [NYC Stormwater Flood Maps](https://experience.arcgis.com/experience/4b290961cac34643a49b9002f165fad8/) to confirm that this location is likely to be impacted by flooding in a Moderate Stormwater Event. 
+
+<p align="center">
+  <img width="200" alt="Screen Shot 2022-06-24 at 11 43 52 AM" src="https://user-images.githubusercontent.com/59215820/175576645-eda4971e-e09d-4b02-a26d-a11e77c93043.png">
+</p>
+<p align="center">
+  An example of an area prone to deep and contiguous flooding, where a sensor has been deployed.
+</p>
 
 ## 3. Identification of Gateway Location
 Once we have a potential sensor location, we need to ensure that it is proximate to a LoRaWAN gateway.

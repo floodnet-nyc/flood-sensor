@@ -46,6 +46,13 @@ After confirming that a location is flood-prone and proximate to a gateway, we n
 ### 4.1. Acceptable DOT Infrastructure
 Our sensors are designed to be mounted on U-Channel sign posts. We have permission from DOT to mount sensors on these poles, provided that we notify DOT whenever we install a new sensor. We have been instructed to avoid mounting on stop signs when possible
 ### 4.2. Ideal Sign Post Location
-We use the street view feature in Google Maps to locate sign posts in the region we have chosen, and cross-reference these locations with the [NYC Stormwater Flood Maps](https://experience.arcgis.com/experience/4b290961cac34643a49b9002f165fad8/) to verify that the specific mounting location we have chosen is flood-prone. If there are tall buildings on the south side of the street, we try to select mounting locations on the north side. This ensures that our sensors will have plenty of sun exposure. It is also important to consider the distance from the sensor to the nearest gateway. Ensure that this distance is less than 1 mile. Once these conditions are satisfied, we compile street view and map images in a Google Sheet, which our technical team can reference in the field. This sheet could include more than one potential sign post that satisfies the above conditions in each area.  
-Deployed sensors on ideal sign post locations:  
-![hoyt 5th](https://user-images.githubusercontent.com/105950235/175569789-9e65056a-1ca5-41c5-b0f1-3fcdd978370e.jpg) ![126th 7th](https://user-images.githubusercontent.com/105950235/175575464-7dc1b4c6-d0c3-47ff-9cde-ca8c4f0bdc40.jpg)
+We use the street view feature in Google Maps to locate sign posts in the region we have chosen, and cross-reference these locations with the [NYC Stormwater Flood Maps](https://experience.arcgis.com/experience/4b290961cac34643a49b9002f165fad8/) to verify that the specific mounting location we have chosen is flood-prone. If there are tall buildings on the south side of the street, we try to select mounting locations on the north side. This ensures that our sensors will have plenty of sun exposure. It is also important to reconsider the proximity to the nearest gateway and ensure that the signpost is within a distance of about a mile or less. Once these conditions are satisfied, we compile street view and map images in a Google Sheet, which our technical team can reference in the field. Alongwith these images the Google sheet also includes the intersection where the sign post is located, a Google maps link to the location, the latitudinal and longitudinal coordinates of the sign post, the location of the closest gateway and the distance to it, and the flooding profile of the area. In addition, this sheet could also include details of more than one potential sign post that satisfies the above conditions in an area. Multiple sign post locations are identified in an area in case of unforeseen conditions in the field.
+
+<p align = "center">
+<img width ="240" alt ="hoyt 5th" src="https://user-images.githubusercontent.com/105950235/175569789-9e65056a-1ca5-41c5-b0f1-3fcdd978370e.jpg">
+<img width ="200" alt ="126th 7th" src="https://user-images.githubusercontent.com/105950235/175575464-7dc1b4c6-d0c3-47ff-9cde-ca8c4f0bdc40.jpg">
+
+</p>
+<p align = "center">
+Deployed sensors on ideal sign post locations
+</p>

@@ -57,7 +57,7 @@ We have blanket approval from DOT to mount sensors on drive rails, also known as
 To mount on a utility pole, we have to obtain approval from the company that owns that pole. This process varies depending on the company.
 
 ## 2. Confirming Mounting Location on the Ground
-Though we try to identify optimal sensor placement [before leaving the lab](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/hotspot%20identification/flood-hotspots-identification.md), unexpected obstacles can arise once we arrive at the mounting site. Ideally, drive rails should be perpendicular to the sidewalk and well secured. They should not be overly shaded by a large building or aboveground train track.
+Though we try to identify optimal sensor placement [before leaving the lab](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/hotspot%20identification/flood-hotspots-identification.md), unexpected obstacles can arise once we arrive at the mounting site. Ideally, drive rails should be perpendicular to the sidewalk and well secured. They should not be overly shaded by a large building or aboveground train track. It is also to make sure that the sensor is not mounted in the path of a truck or bus.
 
 Sometimes, a new mounting location will have to be selected in the field. Helpful clues for selecting a flood-prone location include:
 - Drive rail is close to a storm drain

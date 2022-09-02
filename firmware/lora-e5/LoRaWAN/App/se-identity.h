@@ -95,12 +95,12 @@ extern "C" {
 /*!
  * end-device IEEE EUI (big endian)
  */
-#define LORAWAN_DEVICE_EUI                                 { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
+#define LORAWAN_DEVICE_EUI                                 {0xE4,0xFA,0x88,0xCC,0x8A,0xA8,0xD5,0x6A}
 
 /*!
  * App/Join server IEEE EUI (big endian)
  */
-#define LORAWAN_JOIN_EUI                                   { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 }
+#define LORAWAN_JOIN_EUI                                   {0xBB,0xBB,0xBB,0x54,0x36,0x53,0x57,0x69}
 
 /*!
  * When set to 1 DevAddr is LORAWAN_DEVICE_ADDRESS
@@ -117,12 +117,12 @@ extern "C" {
 /*!
  * Application root key
  */
-#define LORAWAN_APP_KEY                                    00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+#define LORAWAN_APP_KEY                                    5D,A5,FA,AD,8A,08,DC,D6,E5,E6,38,DA,69,A9,97,77
 
 /*!
  * Network root key
  */
-#define LORAWAN_NWK_KEY                                    00,00,00,00,00,00,00,00,00,00,00,00,00,00,00,00
+#define LORAWAN_NWK_KEY                                    5D,A5,FA,AD,8A,08,DC,D6,E5,E6,38,DA,69,A9,97,77
 
 /*!
  * Forwarding Network session key

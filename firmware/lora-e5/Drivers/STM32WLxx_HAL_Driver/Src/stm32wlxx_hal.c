@@ -425,6 +425,14 @@ __weak void HAL_Delay(uint32_t Delay)
   }
 }
 
+__weak void HAL_Delay_Microseconds(volatile uint32_t Delay)
+{
+  uint32_t clk_cycle_start = DWT->CYCCNT; // Data watchpoint and trace register; Cycle count register
+  /* Go to number of cycles for system */
+  Delay *= (HAL_RCC_GetHCLKFreq() / 1000000);
+  /* Delay till end */
+  while ((DWT->CYCCNT - clk_cycle_start) < Delay);
+}
 
 /**
   * @brief Suspend Tick increment.

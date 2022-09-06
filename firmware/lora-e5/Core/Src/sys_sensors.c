@@ -19,7 +19,7 @@ void MaxBotix_Init(void) {
   MX_LPUART1_UART_Init();
   APP_LOG(TS_ON, VLEVEL_L, "\n\nLPUART1 has been initialized.\n\n");
   HAL_GPIO_WritePin(MB_PWR_GPIO_Port, MB_PWR_Pin, GPIO_PIN_RESET);
-  //	todo: monitor MB_OC_Pin
+  //  todo: monitor MB_OC_Pin
   HAL_GPIO_WritePin(MB_CTL_GPIO_Port, MB_CTL_Pin, GPIO_PIN_RESET);
 }
 

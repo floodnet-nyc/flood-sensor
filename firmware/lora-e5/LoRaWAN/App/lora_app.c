@@ -15,10 +15,7 @@
 #include "sys_sensors.h"
 #include "utilities_def.h"
 
-typedef enum TxEventType_e {
-  TX_ON_TIMER,
-  TX_ON_EVENT
-} TxEventType_t;
+typedef enum TxEventType_e { TX_ON_TIMER, TX_ON_EVENT } TxEventType_t;
 
 #define LED_PERIOD_TIME 500
 #define JOIN_TIME 2000
@@ -78,31 +75,26 @@ static UTIL_TIMER_Object_t StopJoinTimer;
 static volatile uint8_t IsTxFramePending = 0;
 
 void LoRaWAN_Init(void) {
-	  uint32_t feature_version = 0UL;
-	  APP_LOG(TS_OFF, VLEVEL_M, "APPLICATION_VERSION: V%X.%X.%X\r\n",
-			  (uint8_t)(APP_VERSION_MAIN),
-			  (uint8_t)(APP_VERSION_SUB1),
-			  (uint8_t)(APP_VERSION_SUB2));
-	  APP_LOG(TS_OFF, VLEVEL_M, "MW_LORAWAN_VERSION:  V%X.%X.%X\r\n",
-			  (uint8_t)(LORAWAN_VERSION_MAIN),
-			  (uint8_t)(LORAWAN_VERSION_SUB1),
-			  (uint8_t)(LORAWAN_VERSION_SUB2));
-	  APP_LOG(TS_OFF, VLEVEL_M, "MW_RADIO_VERSION:    V%X.%X.%X\r\n",
-			  (uint8_t)(SUBGHZ_PHY_VERSION_MAIN),
-			  (uint8_t)(SUBGHZ_PHY_VERSION_SUB1),
-			  (uint8_t)(SUBGHZ_PHY_VERSION_SUB2));
-	  LmHandlerGetVersion(LORAMAC_HANDLER_L2_VERSION, &feature_version);
-	  APP_LOG(TS_OFF, VLEVEL_M, "L2_SPEC_VERSION:     V%X.%X.%X\r\n",
-			  (uint8_t)(feature_version >> 24),
-			  (uint8_t)(feature_version >> 16),
-			  (uint8_t)(feature_version >> 8));
-	  LmHandlerGetVersion(LORAMAC_HANDLER_REGION_VERSION, &feature_version);
-	  APP_LOG(TS_OFF, VLEVEL_M, "RP_SPEC_VERSION:     V%X-%X.%X.%X\r\n",
-			  (uint8_t)(feature_version >> 24),
-			  (uint8_t)(feature_version >> 16),
-			  (uint8_t)(feature_version >> 8),
-			  (uint8_t)(feature_version));
-	  APP_LOG(TS_ON, VLEVEL_M, "Initializing Tx and Join timers..\r\n");
+  uint32_t feature_version = 0UL;
+  APP_LOG(TS_OFF, VLEVEL_M, "APPLICATION_VERSION: V%X.%X.%X\r\n",
+          (uint8_t)(APP_VERSION_MAIN), (uint8_t)(APP_VERSION_SUB1),
+          (uint8_t)(APP_VERSION_SUB2));
+  APP_LOG(TS_OFF, VLEVEL_M, "MW_LORAWAN_VERSION:  V%X.%X.%X\r\n",
+          (uint8_t)(LORAWAN_VERSION_MAIN), (uint8_t)(LORAWAN_VERSION_SUB1),
+          (uint8_t)(LORAWAN_VERSION_SUB2));
+  APP_LOG(TS_OFF, VLEVEL_M, "MW_RADIO_VERSION:    V%X.%X.%X\r\n",
+          (uint8_t)(SUBGHZ_PHY_VERSION_MAIN),
+          (uint8_t)(SUBGHZ_PHY_VERSION_SUB1),
+          (uint8_t)(SUBGHZ_PHY_VERSION_SUB2));
+  LmHandlerGetVersion(LORAMAC_HANDLER_L2_VERSION, &feature_version);
+  APP_LOG(TS_OFF, VLEVEL_M, "L2_SPEC_VERSION:     V%X.%X.%X\r\n",
+          (uint8_t)(feature_version >> 24), (uint8_t)(feature_version >> 16),
+          (uint8_t)(feature_version >> 8));
+  LmHandlerGetVersion(LORAMAC_HANDLER_REGION_VERSION, &feature_version);
+  APP_LOG(TS_OFF, VLEVEL_M, "RP_SPEC_VERSION:     V%X-%X.%X.%X\r\n",
+          (uint8_t)(feature_version >> 24), (uint8_t)(feature_version >> 16),
+          (uint8_t)(feature_version >> 8), (uint8_t)(feature_version));
+  APP_LOG(TS_ON, VLEVEL_M, "Initializing Tx and Join timers..\r\n");
   UTIL_TIMER_Create(&StopJoinTimer, JOIN_TIME, UTIL_TIMER_ONESHOT,
                     OnStopJoinTimerEvent, NULL);
   UTIL_SEQ_RegTask((1 << CFG_SEQ_Task_LmHandlerProcess), UTIL_SEQ_RFU,
@@ -144,13 +136,20 @@ static void SendTxData(void) {
 
   if (isPending == 1) {
     LmHandlerErrorStatus_t status = LORAMAC_HANDLER_ERROR;
-    uint16_t dist_mm = getSensorReading(2,150,7);
+    uint16_t dist_mm = getSensorReading(2, 150, 7);
+    uint16_t batt_level_adc = SYS_GetBatteryLevel();
     AppDataBuffer[0] = (uint8_t)dist_mm;
-    APP_LOG(TS_OFF, VLEVEL_L, "Low byte: %x\n", AppDataBuffer[0]);
-    AppDataBuffer[1] = (uint8_t)(dist_mm>>8);
-    APP_LOG(TS_OFF, VLEVEL_L, "High byte: %x\n", AppDataBuffer[1]);
+    APP_LOG(TS_OFF, VLEVEL_L, "Distance (Low byte): %x\n", AppDataBuffer[0]);
+    AppDataBuffer[1] = (uint8_t)(dist_mm >> 8);
+    APP_LOG(TS_OFF, VLEVEL_L, "Distance (High byte): %x\n", AppDataBuffer[1]);
+    AppDataBuffer[2] = (uint8_t)batt_level_adc;
+    APP_LOG(TS_OFF, VLEVEL_L, "Battery Level (Low byte): %x\n",
+            AppDataBuffer[2]);
+    AppDataBuffer[3] = (uint8_t)(batt_level_adc >> 8);
+    APP_LOG(TS_OFF, VLEVEL_L, "Battery Level (High byte): %x\n",
+            AppDataBuffer[3]);
     LmHandlerAppData_t appData = {
-        .Buffer = AppDataBuffer, .BufferSize = 2, .Port = 1};
+        .Buffer = AppDataBuffer, .BufferSize = 4, .Port = 1};
     status = LmHandlerSend(&appData, LORAMAC_HANDLER_UNCONFIRMED_MSG, true);
     APP_LOG(TS_ON, VLEVEL_L, "Uplink send %s\r\n", status);
   }
@@ -158,24 +157,19 @@ static void SendTxData(void) {
 
 static void OnTxTimerEvent(void *context) {
   UTIL_TIMER_Stop(&TxTimer);
-  /* USER CODE BEGIN OnTxTimerEvent_1 */
   IsTxFramePending = 1;
   UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LoRaSendOnTxTimerOrButtonEvent),
                    CFG_SEQ_Prio_0);
   UTIL_TIMER_Start(&TxTimer);
 }
 
-static void OnTxData(LmHandlerTxParams_t *params) {
-}
+static void OnTxData(LmHandlerTxParams_t *params) {}
 
-static void OnJoinRequest(LmHandlerJoinParams_t *joinParams) {
-}
+static void OnJoinRequest(LmHandlerJoinParams_t *joinParams) {}
 
-static void OnBeaconStatusChange(LmHandlerBeaconParams_t *params) {
-}
+static void OnBeaconStatusChange(LmHandlerBeaconParams_t *params) {}
 
-static void OnClassChange(DeviceClass_t deviceClass) {
-}
+static void OnClassChange(DeviceClass_t deviceClass) {}
 
 static void OnMacProcessNotify(void) {
   UTIL_SEQ_SetTask((1 << CFG_SEQ_Task_LmHandlerProcess), CFG_SEQ_Prio_0);

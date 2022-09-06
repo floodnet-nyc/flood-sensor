@@ -8,6 +8,7 @@ extern "C" {
 
 #include "stm32wlxx_hal.h"
 
+
 void Error_Handler(void);
 
 #define RTC_PREDIV_A ((1<<(15-RTC_N_PREDIV_S))-1)

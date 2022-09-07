@@ -75,6 +75,7 @@ static UTIL_TIMER_Object_t StopJoinTimer;
 static volatile uint8_t IsTxFramePending = 0;
 
 void LoRaWAN_Init(void) {
+  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_SET);
   uint32_t feature_version = 0UL;
   APP_LOG(TS_OFF, VLEVEL_M, "APPLICATION_VERSION: V%X.%X.%X\r\n",
           (uint8_t)(APP_VERSION_MAIN), (uint8_t)(APP_VERSION_SUB1),
@@ -134,6 +135,12 @@ static void SendTxData(void) {
   IsTxFramePending = 0;
   CRITICAL_SECTION_END();
 
+  HAL_GPIO_WritePin(LED_GPIO_Port, LED_Pin, GPIO_PIN_RESET);
+
+  if (TxPeriodicity != 60000){
+	  OnTxPeriodicityChanged(60000);
+  }
+
   if (isPending == 1) {
     LmHandlerErrorStatus_t status = LORAMAC_HANDLER_ERROR;
     uint16_t dist_mm = getSensorReading(2, 150, 7);
@@ -165,7 +172,9 @@ static void OnTxTimerEvent(void *context) {
 
 static void OnTxData(LmHandlerTxParams_t *params) {}
 
-static void OnJoinRequest(LmHandlerJoinParams_t *joinParams) {}
+static void OnJoinRequest(LmHandlerJoinParams_t *joinParams)
+{
+}
 
 static void OnBeaconStatusChange(LmHandlerBeaconParams_t *params) {}
 

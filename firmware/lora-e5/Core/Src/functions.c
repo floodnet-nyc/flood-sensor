@@ -59,7 +59,7 @@ uint16_t mode_(unsigned int number_of_samples){
                 mode_ = readings_arr[i];
             }
         } else
-            counter = 1;          // reset counter.
+            counter = 1;         
     }
     return mode_;
 }

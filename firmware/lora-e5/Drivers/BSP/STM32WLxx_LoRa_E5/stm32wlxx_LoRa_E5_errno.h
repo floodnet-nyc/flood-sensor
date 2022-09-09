@@ -1,22 +1,3 @@
-/**
-  ******************************************************************************
-  * @file    stm32wlxx_LoRa_E5_errno.h
-  * @author  MCD Application Team
-  * @brief   Error Code.
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2020(-2021) STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-
-/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32WLXX_LORA_E5_ERRNO_H
 #define STM32WLXX_LORA_E5_ERRNO_H
 
@@ -24,7 +5,6 @@
  extern "C" {
 #endif
 
-/* Common Error codes */
 #define BSP_ERROR_NONE                         0
 #define BSP_ERROR_NO_INIT                     -1
 #define BSP_ERROR_WRONG_PARAM                 -2
@@ -42,6 +22,4 @@
 }
 #endif
 
-#endif /* STM32WLXX_LoRa_E5_ERRNO_H */
-
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
+#endif

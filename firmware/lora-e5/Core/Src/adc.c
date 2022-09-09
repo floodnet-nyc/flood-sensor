@@ -1,45 +1,8 @@
-/* USER CODE BEGIN Header */
-/**
-  ******************************************************************************
-  * @file    adc.c
-  * @brief   This file provides code for the configuration
-  *          of the ADC instances.
-  ******************************************************************************
-  * @attention
-  *
-  * Copyright (c) 2022 STMicroelectronics.
-  * All rights reserved.
-  *
-  * This software is licensed under terms that can be found in the LICENSE file
-  * in the root directory of this software component.
-  * If no LICENSE file comes with this software, it is provided AS-IS.
-  *
-  ******************************************************************************
-  */
-/* USER CODE END Header */
-/* Includes ------------------------------------------------------------------*/
 #include "adc.h"
-
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
 
 ADC_HandleTypeDef hadc;
 
-/* ADC init function */
-void MX_ADC_Init(void)
-{
-
-  /* USER CODE BEGIN ADC_Init 0 */
-
-  /* USER CODE END ADC_Init 0 */
-
-  /* USER CODE BEGIN ADC_Init 1 */
-
-  /* USER CODE END ADC_Init 1 */
-
-  /** Configure the global features of the ADC (Clock, Resolution, Data Alignment and number of conversion)
-  */
+void MX_ADC_Init(void) {
   hadc.Instance = ADC;
   hadc.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   hadc.Init.Resolution = ADC_RESOLUTION_12B;
@@ -59,65 +22,26 @@ void MX_ADC_Init(void)
   hadc.Init.SamplingTimeCommon2 = ADC_SAMPLETIME_39CYCLES_5;
   hadc.Init.OversamplingMode = DISABLE;
   hadc.Init.TriggerFrequencyMode = ADC_TRIGGER_FREQ_HIGH;
-  if (HAL_ADC_Init(&hadc) != HAL_OK)
-  {
+  if (HAL_ADC_Init(&hadc) != HAL_OK) {
     Error_Handler();
   }
-  /* USER CODE BEGIN ADC_Init 2 */
-
-  /* USER CODE END ADC_Init 2 */
-
 }
 
-void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
-{
-
+void HAL_ADC_MspInit(ADC_HandleTypeDef *adcHandle) {
   GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if(adcHandle->Instance==ADC)
-  {
-  /* USER CODE BEGIN ADC_MspInit 0 */
-
-  /* USER CODE END ADC_MspInit 0 */
-    /* ADC clock enable */
+  if (adcHandle->Instance == ADC) {
     __HAL_RCC_ADC_CLK_ENABLE();
-
     __HAL_RCC_GPIOB_CLK_ENABLE();
-    /**ADC GPIO Configuration
-    PB3     ------> ADC_IN2
-    */
     GPIO_InitStruct.Pin = ADC_IN_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(ADC_IN_GPIO_Port, &GPIO_InitStruct);
-
-  /* USER CODE BEGIN ADC_MspInit 1 */
-
-  /* USER CODE END ADC_MspInit 1 */
   }
 }
 
-void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
-{
-
-  if(adcHandle->Instance==ADC)
-  {
-  /* USER CODE BEGIN ADC_MspDeInit 0 */
-
-  /* USER CODE END ADC_MspDeInit 0 */
-    /* Peripheral clock disable */
+void HAL_ADC_MspDeInit(ADC_HandleTypeDef *adcHandle) {
+  if (adcHandle->Instance == ADC) {
     __HAL_RCC_ADC_CLK_DISABLE();
-
-    /**ADC GPIO Configuration
-    PB3     ------> ADC_IN2
-    */
     HAL_GPIO_DeInit(ADC_IN_GPIO_Port, ADC_IN_Pin);
-
-  /* USER CODE BEGIN ADC_MspDeInit 1 */
-
-  /* USER CODE END ADC_MspDeInit 1 */
   }
 }
-
-/* USER CODE BEGIN 1 */
-
-/* USER CODE END 1 */

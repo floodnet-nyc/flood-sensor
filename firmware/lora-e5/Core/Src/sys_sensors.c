@@ -38,8 +38,6 @@ uint16_t Maxbotix_Single_Read(void) {
         if (HAL_UART_Receive(&hlpuart1, (uint8_t *)&RxBuffer, 4, 50) ==
             HAL_OK) {
           if (isdigit(RxBuffer[3])) {
-//            APP_PRINTF((const char *)&RxBuffer);
-//            APP_PRINTF("\n");
             newData = true;
           }
           if (newData) {

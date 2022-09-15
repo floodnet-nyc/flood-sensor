@@ -28,3 +28,5 @@ firmware/.vscode/c_cpp_properties.json
 .DS_Store?
 ._*
 
+/firmware/lora-e5/Debug
+

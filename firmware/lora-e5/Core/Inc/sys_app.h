@@ -19,7 +19,7 @@ extern "C" {
     {                                                                          \
       UTIL_ADV_TRACE_COND_FSend(VLEVEL_ALWAYS, T_REG_OFF, TS_ON, __VA_ARGS__); \
     }                                                                          \
-  } while (0); 
+  } while (0);
 #define APP_PRINTF(...)                                                        \
   do {                                                                         \
     {                                                                          \
@@ -40,8 +40,9 @@ extern "C" {
 #endif
 
 void SystemApp_Init(void);
-uint16_t getSensorReading(uint8_t mode, uint16_t sampling_rate,
-                                   uint8_t number_of_samples);
+uint16_t getSensorReading(uint8_t averaging_method, uint16_t sampling_rate,
+                          uint8_t number_of_samples, uint32_t timeout_mb,
+                          uint8_t number_of_tries);
 void GetUniqueId(uint8_t *id);
 uint32_t GetDevAddr(void);
 

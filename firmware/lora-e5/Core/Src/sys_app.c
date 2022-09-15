@@ -1,27 +1,25 @@
-#include <stdio.h>
-#include "platform.h"
 #include "sys_app.h"
 #include "adc_if.h"
+#include "platform.h"
+#include "stm32_lpm.h"
 #include "stm32_seq.h"
 #include "stm32_systime.h"
-#include "stm32_lpm.h"
-#include "timer_if.h"
-#include "utilities_def.h"
 #include "sys_debug.h"
 #include "sys_sensors.h"
+#include "timer_if.h"
+#include "utilities_def.h"
+#include <stdio.h>
 
-
-#define MAX_TS_SIZE (int) 16
-#define LORAWAN_MAX_BAT   254
+#define MAX_TS_SIZE (int)16
+#define LORAWAN_MAX_BAT 254
 
 static uint8_t SYS_TimerInitialisedFlag = 0;
 
 static void TimestampNow(uint8_t *buff, uint16_t *size);
-static void tiny_snprintf_like(char *buf, uint32_t maxsize, const char *strFormat, ...);
+static void tiny_snprintf_like(char *buf, uint32_t maxsize,
+                               const char *strFormat, ...);
 
-
-void SystemApp_Init(void)
-{
+void SystemApp_Init(void) {
   __HAL_RCC_WAKEUPSTOP_CLK_CONFIG(RCC_STOP_WAKEUPCLOCK_MSI);
   UTIL_TIMER_Init();
   SYS_TimerInitialisedFlag = 1;
@@ -34,31 +32,27 @@ void SystemApp_Init(void)
   MaxBotix_Init();
   UTIL_LPM_Init();
   UTIL_LPM_SetOffMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_DISABLE);
-#if defined (LOW_POWER_DISABLE) && (LOW_POWER_DISABLE == 1)
+#if defined(LOW_POWER_DISABLE) && (LOW_POWER_DISABLE == 1)
   UTIL_LPM_SetStopMode((1 << CFG_LPM_APPLI_Id), UTIL_LPM_DISABLE);
-#elif !defined (LOW_POWER_DISABLE)
+#elif !defined(LOW_POWER_DISABLE)
 #error LOW_POWER_DISABLE not defined
-#endif 
+#endif
 }
 
+void UTIL_SEQ_Idle(void) { UTIL_LPM_EnterLowPower(); }
 
-void UTIL_SEQ_Idle(void)
-{
-  UTIL_LPM_EnterLowPower();
+uint16_t getSensorReading(uint8_t averaging_method, uint16_t sampling_rate,
+                          uint8_t number_of_samples, uint32_t timeout_mb,
+                          uint8_t number_of_tries) {
+  uint16_t val = Maxbotix_Read_Using_Modes(
+      averaging_method, sampling_rate, number_of_samples, timeout_mb, number_of_tries);
+  return val;
 }
 
-uint16_t getSensorReading(uint8_t mode, uint16_t sampling_rate,
-                                   uint8_t number_of_samples){
-	uint16_t val = Maxbotix_Read_Using_Modes(mode, sampling_rate, number_of_samples);
-	return val;
-}
-
-void GetUniqueId(uint8_t *id)
-{
+void GetUniqueId(uint8_t *id) {
   uint32_t val = 0;
   val = LL_FLASH_GetUDN();
-  if (val == 0xFFFFFFFF)  
-  {
+  if (val == 0xFFFFFFFF) {
     uint32_t ID_1_3_val = HAL_GetUIDw0() + HAL_GetUIDw2();
     uint32_t ID_2_val = HAL_GetUIDw1();
 
@@ -70,9 +64,7 @@ void GetUniqueId(uint8_t *id)
     id[2] = (ID_2_val) >> 16;
     id[1] = (ID_2_val) >> 8;
     id[0] = (ID_2_val);
-  }
-  else  
-  {
+  } else {
     id[7] = val & 0xFF;
     id[6] = (val >> 8) & 0xFF;
     id[5] = (val >> 16) & 0xFF;
@@ -86,21 +78,19 @@ void GetUniqueId(uint8_t *id)
   }
 }
 
-uint32_t GetDevAddr(void)
-{
+uint32_t GetDevAddr(void) {
   uint32_t val = 0;
   val = LL_FLASH_GetUDN();
-  if (val == 0xFFFFFFFF)
-  {
+  if (val == 0xFFFFFFFF) {
     val = ((HAL_GetUIDw0()) ^ (HAL_GetUIDw1()) ^ (HAL_GetUIDw2()));
   }
   return val;
 }
 
-static void TimestampNow(uint8_t *buff, uint16_t *size)
-{
+static void TimestampNow(uint8_t *buff, uint16_t *size) {
   SysTime_t curtime = SysTimeGet();
-  tiny_snprintf_like((char *)buff, MAX_TS_SIZE, "%ds%03d:", curtime.Seconds, curtime.SubSeconds);
+  tiny_snprintf_like((char *)buff, MAX_TS_SIZE, "%ds%03d:", curtime.Seconds,
+                     curtime.SubSeconds);
   *size = strlen((char *)buff);
 }
 
@@ -113,7 +103,7 @@ void UTIL_ADV_TRACE_PostSendHook(void) {
 }
 
 static void tiny_snprintf_like(char *buf, uint32_t maxsize,
-             const char *strFormat, ...) {
+                               const char *strFormat, ...) {
   va_list vaArgs;
   va_start(vaArgs, strFormat);
   UTIL_ADV_TRACE_VSNPRINTF(buf, maxsize, strFormat, vaArgs);

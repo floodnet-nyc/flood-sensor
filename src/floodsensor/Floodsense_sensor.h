@@ -9,6 +9,5 @@
 #include "lorawan.h"
 #include "maxbotix.h"
 #include "rg15.h"
-#include "tipping_bucket.h"
 
 #endif

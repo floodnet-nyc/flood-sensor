@@ -16,14 +16,7 @@
 
 #define USE_RG15
 #define USE_TIPPING_BUCKET
-// #define USE_MAXBOTIX
 
-// If using the tipping bucket the sensing period is blocking while it senses so its duration defines the transmit cycle
-#ifdef USE_TIPPING_BUCKET
-uint16_t default_sleep_duration = 0;
-#else
-uint16_t default_sleep_duration = 60;
-#endif
 
 void setup() {
   delay(3000);
@@ -38,7 +31,7 @@ void setup() {
   setup_RG15("Polling");
   #endif
 
-  setup_lorawan(default_sleep_duration);             // uplink frequency 60 seconds - controls duty cycle
+  setup_lorawan(60);             // uplink frequency 60 seconds - controls duty cycle
 }
 
 void loop() {

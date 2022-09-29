@@ -425,7 +425,7 @@ void prepareMaxbotixFrame() {
 }
 
 void prepareRG15Frame(){
-      if (counter_rg15 >= MAX_COUNTER_RG15){
+      if (counter_rg15 >= 1440){
                         Serial.println("Resetting Counter....");
                         counter_rg15 = 0;       //reset every 24 hrs or 1440 minutes
                 }
@@ -500,6 +500,7 @@ void prepareRG15Frame(){
 void prepareTippingBucketFrame() {
   Serial.print(tip_count);
   Serial.println(" tips counted in last period");
+  appDataSize = appDataSize +2;
   tip_count = tip_count * 100;      // milli mm_rain. In payload decoder, divide by 1000 to get rainfall in mm.
   byte lowbyte, highbyte;
   lowbyte = lowByte(tip_count);
@@ -531,7 +532,6 @@ static void prepareTxFrame(uint8_t port) {
 // #ifdef USE_MAXBOTIX
 //     prepareMaxbotixFrame();
 // #endif
-    appDataSize = 19;
 // #ifdef USE_RG15
     prepareRG15Frame();
 // #endif

@@ -27,7 +27,7 @@
 */
 
 String RG15_OP_MODE;
-uint32_t MAX_COUNTER_RG15;
+uint32_t MAX_COUNTER_RG15 = 1440;
 
 void sendCMDRG15(char cmd) {
   Serial1.println(cmd);

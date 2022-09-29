@@ -34,7 +34,7 @@ extern unsigned int sensor_sampling_rate;
 extern unsigned int sensor_numberOfReadings;
 
 // Rg-15 Acc reset
-const uint32_t MAX_COUNTER_RG15 = 1440;
+// uint32_t MAX_COUNTER_RG15 = 1440;
 
 extern String RG15_OP_MODE; //allowed: "P", "Polling", "C", "Continuous"
 

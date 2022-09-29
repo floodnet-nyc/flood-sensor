@@ -424,89 +424,77 @@ void prepareMaxbotixFrame() {
   appData[4] = (unsigned char)highbyte;
 }
 
-void prepareRG15Frame() {
-  if (counter_rg15 >= MAX_COUNTER_RG15) {
-    Serial.println("Resetting Counter....");
-    counter_rg15 = 0; // reset every 24 hrs or 1440 minutes
-  }
-  if (counter_rg15 == 0) {
-    clearTotalAccRG15(); // clear ACK at every cycle including reset
-  }
-  Serial.print("Counter is: ");
-  Serial.println(counter_rg15);
-  String polledString;
-  polledString = pollReadingFromRG15();
-  if (polledString == "read failed"){
-        for (int i = 0; i < 4; i++) {
-        appData[4 * i] = 0;
-        appData[4 * i + 1] = 0;
-        appData[4 * i + 2] = 0;
-        appData[4 * i + 3] = 0;
-        }
-        return;
-  }
-  polledString.trim();
-  Serial.print("polled string: ");
-  Serial.println(polledString);
-  char charBuffer[140];
-  polledString.toCharArray(charBuffer, 140);
-  char delim[] = " ";
+void prepareRG15Frame(){
+      if (counter_rg15 >= MAX_COUNTER_RG15){
+                        Serial.println("Resetting Counter....");
+                        counter_rg15 = 0;       //reset every 24 hrs or 1440 minutes
+                }
+                if (counter_rg15==0){
+                        clearTotalAccRG15();   //clear ACK at every cycle including reset
+                }
+                Serial.print("Counter is: ");Serial.println(counter_rg15);
+                String polledString;
+                polledString = pollReadingFromRG15();
+                polledString.trim();
+                Serial.print("polled string: "); Serial.println(polledString);
+                char charBuffer[140];
+                polledString.toCharArray(charBuffer, 140);
+                char delim[] = " ";
 
-  char *ptr = strtok(charBuffer, delim); // Extract the first word
-  // Check if it is Acc
-  char *acc;
-  acc = strstr(charBuffer, "Acc");
-  bool mmFound = false;
-  float readings_array_pg15[4] = {0};
-  if (*acc == 'A' && *(acc + 1) == 'c' && *(acc + 2) == 'c') {
-    int cntr = 0; // measurements counter; 4 total if Acc in line
-    while (ptr != NULL) {
-      char *foundDot = strstr(ptr, ".");
-      if (foundDot != NULL) {
-        char *p = ptr; // char pointer
-        int ctr2 = 0;  // char counter
-        char arr[6];   // arr to store reading
-        while (*p != NULL) {
-          arr[ctr2] = *p;
-          p++;
-          ctr2++;
-        }
-        readings_array_pg15[cntr] =
-            atof(arr) *
-            100; // convert char array to readings and *100 to remove decimals
-        // Serial.println(readings_array_pg15[cntr]);
-        cntr = cntr + 1;
-      }
-      ptr = strtok(NULL, " "); // Iterate
-      if (!mmFound) {          // Check units
-        if (*ptr == 'm' && *(ptr + 1) == 'm') {
-          mmFound = true;
-        }
-      }
-    }
-  }
-  int idx = 0;
-  // Serial.println("The readings are: ");
-  for (int i = 0; i < 4; i++) {
-    // Serial.println(readings_array_pg15[i]);
-    appData[4 * i] = byte((uint32_t)readings_array_pg15[i] & 0xFF);
-    // Serial.println(appData[4 * i]);
-    appData[4 * i + 1] = byte(((uint32_t)readings_array_pg15[i] >> 8) & 0xFF);
-    // Serial.println(appData[4 * i + 1]);
-    appData[4 * i + 2] = byte(((uint32_t)readings_array_pg15[i] >> 16) & 0xFF);
-    // Serial.println(appData[4 * i + 2]);
-    appData[4 * i + 3] = byte(((uint32_t)readings_array_pg15[i] >> 32) & 0xFF);
-    // Serial.println(appData[4 * i + 3]);
-  }
-  // Serial.println();
-  if (mmFound) {
-    Serial.println("Units are mm.");
-    appData[16] = byte('m');
-  } else {
-    Serial.println("Units are in.");
-    // appData[16] = byte('i');
-  }
-  counter_rg15++;
+                char *ptr = strtok(charBuffer, delim);  // Extract the first word
+                // Check if it is Acc
+                char *acc;
+                acc = strstr (charBuffer, "Acc");
+                bool mmFound = false;
+                float readings_array_pg15[4];
+                if (*acc == 'A' && *(acc + 1) == 'c' && *(acc + 2) == 'c') {
+                        int cntr = 0; // measurements counter; 4 total if Acc in line
+                        while (ptr != NULL) {
+                                char *foundDot = strstr (ptr, ".");
+                                if (foundDot != NULL) {
+                                        char *p = ptr;  // char pointer
+                                        int ctr2 = 0;   // char counter
+                                        char arr[6];    // arr to store reading 
+                                        while (*p != NULL) {
+                                                arr[ctr2] = *p;
+                                                p++;
+                                                ctr2++;
+                                        }
+                                        readings_array_pg15[cntr] = atof(arr) * 100; // convert char array to readings and *100 to remove decimals
+                                        // Serial.println(readings_array_pg15[cntr]);
+                                        cntr = cntr + 1;
+                                }
+                                ptr = strtok (NULL, " ");   // Iterate
+                                if (!mmFound) {             // Check units
+                                        if (*ptr == 'm' && *(ptr + 1) == 'm') {
+                                                mmFound = true;
+                                        }
+                                }
+                        }
+                }
+                appDataSize = 17;
+                int idx = 0;
+                // Serial.println("The readings are: ");
+                for (int i = 0; i < 4; i++) {
+                        // Serial.println(readings_array_pg15[i]);
+                        appData[4 * i] = byte((uint32_t)readings_array_pg15[i] & 0xFF);
+                        // Serial.println(appData[4 * i]);
+                        appData[4 * i + 1] = byte(((uint32_t)readings_array_pg15[i] >> 8) & 0xFF);
+                        // Serial.println(appData[4 * i + 1]);
+                        appData[4 * i + 2] = byte(((uint32_t)readings_array_pg15[i] >> 16) & 0xFF);
+                        // Serial.println(appData[4 * i + 2]);
+                        appData[4 * i + 3] = byte(((uint32_t)readings_array_pg15[i] >> 32) & 0xFF);
+                        // Serial.println(appData[4 * i + 3]);
+                }
+                // Serial.println();
+                if (mmFound) {
+                        Serial.println("Units are mm.");
+                        appData[16] = byte('m');
+                } else {
+                        Serial.println("Units are in.");
+                        // appData[16] = byte('i');
+                }
+                counter_rg15++;  
 }
 
 void prepareTippingBucketFrame() {

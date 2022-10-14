@@ -18,12 +18,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="3ceb2cb0-876c-4f00-ba4f-71478b97f832" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/lora-e5.iml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/CMakeLists_template.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -54,7 +49,8 @@
     "WebServerToolWindowFactoryState": "false",
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
-    "last_opened_file_path": "/Users/psc368/Documents/GitHub/floodsense_sensor/firmware/lora-e5"
+    "last_opened_file_path": "/Users/psc368/Documents/GitHub/floodsense_sensor/firmware/lora-e5",
+    "nodejs_package_manager_path": "npm"
   }
 }]]></component>
   <component name="RunManager">
@@ -78,7 +74,7 @@
       <option name="presentableId" value="Default" />
       <updated>1665764594172</updated>
       <workItem from="1665764595343" duration="6000" />
-      <workItem from="1665764645812" duration="144000" />
+      <workItem from="1665764645812" duration="486000" />
     </task>
     <servers />
   </component>

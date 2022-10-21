@@ -492,7 +492,7 @@ void prepareRG15Frame(){
                         appData[16] = byte('m');
                 } else {
                         Serial.println("Units are in.");
-                        // appData[16] = byte('i');
+                        appData[16] = byte('i');
                 }
                 counter_rg15++;  
 }

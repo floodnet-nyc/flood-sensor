@@ -6,6 +6,9 @@
 *.o
 *.so
 
+#vscode host dependent file
+firmware/.vscode/c_cpp_properties.json
+
 # Packages #
 *.7z
 *.dmg
@@ -14,7 +17,6 @@
 *.jar
 *.rar
 *.tar
-*.zip
 
 # Logs and databases #
 *.log
@@ -25,3 +27,7 @@
 .DS_Store
 .DS_Store?
 ._*
+
+/firmware/lora-e5/Debug
+
+/Debug

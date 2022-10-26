@@ -33,7 +33,7 @@ uint16_t Maxbotix_Single_Read(uint32_t timeout_mb, uint8_t number_of_tries) {
     HAL_GPIO_WritePin(MB_CTL_GPIO_Port, MB_CTL_Pin, GPIO_PIN_SET);
     HAL_Delay(1); // todo: implement HAL_Delay_Microseconds()
     HAL_GPIO_WritePin(MB_CTL_GPIO_Port, MB_CTL_Pin, GPIO_PIN_RESET);
-    if (HAL_UART_Receive(&hlpuart1, (uint8_t *)&rx, 1, 10) == HAL_OK) {
+    if (HAL_UART_Receive(&hlpuart1, (uint8_t *)&rx, 1, 20) == HAL_OK) {
       if ((char)rx == 'R') {
         if (HAL_UART_Receive(&hlpuart1, (uint8_t *)&RxBuffer, 4, timeout_mb) ==
             HAL_OK) {
@@ -43,6 +43,8 @@ uint16_t Maxbotix_Single_Read(uint32_t timeout_mb, uint8_t number_of_tries) {
           if (newData) {
             for (int i = 0; i < 4; i++)
               dist_mm += (RxBuffer[3 - i] - '0') * pow(10, i);
+            if (dist_mm==0)
+            	newData = false;
           }
         }
       } else {

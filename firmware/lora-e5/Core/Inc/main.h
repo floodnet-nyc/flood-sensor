@@ -22,14 +22,14 @@ void Error_Handler(void);
 #define MB_OC_GPIO_Port GPIOB
 #define LED_Pin GPIO_PIN_6
 #define LED_GPIO_Port GPIOB
-#define MB_RX_Pin GPIO_PIN_1
+#define MB_RX_Pin GPIO_PIN_0
 #define MB_RX_GPIO_Port GPIOC
-#define MB_CTL_Pin GPIO_PIN_0
+#define MB_CTL_Pin GPIO_PIN_1
 #define MB_CTL_GPIO_Port GPIOC
 #define MB_PWR_Pin GPIO_PIN_0
 #define MB_PWR_GPIO_Port GPIOA
-#define BQ24210_PG_Pin GPIO_PIN_4
-#define BQ24210_PG_Port GPIOB
+//#define BQ24210_PG_Pin GPIO_PIN_4
+//#define BQ24210_PG_Port GPIOB
 
 
 #ifdef __cplusplus

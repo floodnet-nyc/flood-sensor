@@ -16,7 +16,7 @@ extern "C" {
 #define DEBUG_RF_DTB1_ENABLED                0
 #define DEBUG_RF_BUSY_ENABLED                0
 #define DEBUGGER_ENABLED                     0
-#define LOW_POWER_DISABLE                    1
+#define LOW_POWER_DISABLE                    0
 
 
 #ifdef __cplusplus

@@ -143,7 +143,7 @@ static void SendTxData(void) {
 
   if (isPending == 1) {
     LmHandlerErrorStatus_t status = LORAMAC_HANDLER_ERROR;
-    uint16_t dist_mm = getSensorReading(2, 50, 7, 10, 3);
+    uint16_t dist_mm = getSensorReading(2, 150, 7, 150, 7);				/* todo: improve timing and performance */
     uint16_t batt_level_adc = SYS_GetBatteryLevel();
     AppDataBuffer[0] = (uint8_t)dist_mm;
     APP_LOG(TS_OFF, VLEVEL_L, "Distance (Low byte): %x\n", AppDataBuffer[0]);

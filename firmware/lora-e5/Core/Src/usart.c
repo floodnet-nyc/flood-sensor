@@ -16,7 +16,8 @@ void MX_LPUART1_UART_Init(void) {
   hlpuart1.Init.HwFlowCtl = UART_HWCONTROL_NONE;
   hlpuart1.Init.OneBitSampling = UART_ONE_BIT_SAMPLE_DISABLE;
   hlpuart1.Init.ClockPrescaler = UART_PRESCALER_DIV1;
-  hlpuart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
+  hlpuart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_SWAP_INIT;
+  hlpuart1.AdvancedInit.Swap = UART_ADVFEATURE_SWAP_ENABLE;
   if (HAL_HalfDuplex_Init(&hlpuart1) != HAL_OK) {
     Error_Handler();
   }

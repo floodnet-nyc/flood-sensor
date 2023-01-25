@@ -46,6 +46,8 @@ uint16_t getSensorReading(uint8_t averaging_method, uint16_t sampling_rate,
 void GetUniqueId(uint8_t *id);
 uint32_t GetDevAddr(void);
 
+uint32_t HAL_GetTick(void);
+
 #ifdef __cplusplus
 }
 #endif

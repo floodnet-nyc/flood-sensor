@@ -15,6 +15,7 @@
 char is_deployed;
 char is_started;
 
+#define LED_GREEN GPIO6
 
 /* EEPROM params */
 const int selectionAddress = 8; // Single char (y/n) in ASCII
@@ -505,6 +506,8 @@ void ifJoinedTTN(void) {
         if (joinTimeOut.IsRunning) {
                 TimerStop(&joinTimeOut);
                 Serial.println("joinTimeOut Timer is stopped");
+        } else{
+                digitalWrite(LED_GREEN, LOW);
         }
 }
 
@@ -519,6 +522,9 @@ void startJoiningTTN(void) {
 
 
 void setup_lorawan(unsigned int packet_interval) {
+        /* LED switch */
+        pinMode(LED_GREEN, OUTPUT);
+        digitalWrite(LED_GREEN, HIGH);
         /* On reset check if sensor has been deployed.
 
                             no

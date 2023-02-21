@@ -1,3 +1,24 @@
+/* USER CODE BEGIN Header */
+/**
+  ******************************************************************************
+  * @file    stm32wlxx_hal_conf.h
+  * @author  MCD Application Team
+  * @brief   HAL configuration file.
+  ******************************************************************************
+  * @attention
+  *
+  * Copyright (c) 2020 STMicroelectronics.
+  * All rights reserved.
+  *
+  * This software is licensed under terms that can be found in the LICENSE file
+  * in the root directory of this software component.
+  * If no LICENSE file comes with this software, it is provided AS-IS.
+  *
+  ******************************************************************************
+  */
+/* USER CODE END Header */
+
+/* Define to prevent recursive inclusion -------------------------------------*/
 #ifndef STM32WLxx_HAL_CONF_H
 #define STM32WLxx_HAL_CONF_H
 
@@ -5,32 +26,38 @@
  extern "C" {
 #endif
 
+/* Exported types ------------------------------------------------------------*/
+/* Exported constants --------------------------------------------------------*/
+
 /* ########################## Module Selection ############################## */
+/**
+  * @brief This is the list of modules to be used in the HAL driver
+  */
 #define HAL_MODULE_ENABLED
 #define HAL_ADC_MODULE_ENABLED
-/*#define HAL_COMP_MODULE_ENABLED         */
-/*#define HAL_CRC_MODULE_ENABLED          */
-/*#define HAL_CRYP_MODULE_ENABLED         */
-/*#define HAL_DAC_MODULE_ENABLED          */
-/*#define HAL_GTZC_MODULE_ENABLED         */
-/*#define HAL_HSEM_MODULE_ENABLED         */
-/*#define HAL_I2C_MODULE_ENABLED          */
-/*#define HAL_I2S_MODULE_ENABLED          */
-/*#define HAL_IPCC_MODULE_ENABLED         */
-/*#define HAL_IRDA_MODULE_ENABLED         */
-/*#define HAL_IWDG_MODULE_ENABLED         */
-/*#define HAL_LPTIM_MODULE_ENABLED        */
-/*#define HAL_PKA_MODULE_ENABLED          */
-/*#define HAL_RNG_MODULE_ENABLED          */
+/*#define HAL_COMP_MODULE_ENABLED   */
+/*#define HAL_CRC_MODULE_ENABLED   */
+/*#define HAL_CRYP_MODULE_ENABLED   */
+/*#define HAL_DAC_MODULE_ENABLED   */
+/*#define HAL_GTZC_MODULE_ENABLED   */
+/*#define HAL_HSEM_MODULE_ENABLED   */
+/*#define HAL_I2C_MODULE_ENABLED   */
+/*#define HAL_I2S_MODULE_ENABLED   */
+/*#define HAL_IPCC_MODULE_ENABLED   */
+/*#define HAL_IRDA_MODULE_ENABLED   */
+/*#define HAL_IWDG_MODULE_ENABLED   */
+/*#define HAL_LPTIM_MODULE_ENABLED   */
+/*#define HAL_PKA_MODULE_ENABLED   */
+/*#define HAL_RNG_MODULE_ENABLED   */
 #define HAL_RTC_MODULE_ENABLED
-/*#define HAL_SMARTCARD_MODULE_ENABLED    */
-/*#define HAL_SMBUS_MODULE_ENABLED        */
-/*#define HAL_SPI_MODULE_ENABLED          */
+/*#define HAL_SMARTCARD_MODULE_ENABLED   */
+/*#define HAL_SMBUS_MODULE_ENABLED   */
+#define HAL_SPI_MODULE_ENABLED
 #define HAL_SUBGHZ_MODULE_ENABLED
-/*#define HAL_TIM_MODULE_ENABLED          */
+/*#define HAL_TIM_MODULE_ENABLED   */
 #define HAL_UART_MODULE_ENABLED
-/*#define HAL_USART_MODULE_ENABLED        */
-/*#define HAL_WWDG_MODULE_ENABLED         */
+/*#define HAL_USART_MODULE_ENABLED   */
+/*#define HAL_WWDG_MODULE_ENABLED   */
 #define HAL_EXTI_MODULE_ENABLED
 #define HAL_CORTEX_MODULE_ENABLED
 #define HAL_DMA_MODULE_ENABLED
@@ -40,6 +67,9 @@
 #define HAL_RCC_MODULE_ENABLED
 
 /* ########################## Register Callbacks selection ############################## */
+/**
+  * @brief This is the list of modules where register callback can be used
+  */
 #define USE_HAL_ADC_REGISTER_CALLBACKS         0u
 #define USE_HAL_COMP_REGISTER_CALLBACKS        0u
 #define USE_HAL_CRYP_REGISTER_CALLBACKS        0u
@@ -61,40 +91,73 @@
 #define USE_HAL_WWDG_REGISTER_CALLBACKS        0u
 
 /* ########################## Oscillator Values adaptation ####################*/
+/**
+  * @brief Adjust the value of External High Speed oscillator (HSE) used in your application.
+  *        This value is used by the RCC HAL module to compute the system frequency
+  *        (when HSE is used as system clock source, directly or through the PLL).
+  */
 
 #if !defined (HSE_VALUE)
 #define HSE_VALUE                           32000000UL  /*!< Value of the External oscillator in Hz */
-#endif 
+#endif /* HSE_VALUE */
 
 #if !defined (HSE_STARTUP_TIMEOUT)
 #define HSE_STARTUP_TIMEOUT                 100UL       /*!< Time out for HSE start up, in ms */
-#endif 
+#endif /* HSE_STARTUP_TIMEOUT */
 
+/**
+  * @brief Internal Multiple Speed oscillator (MSI) default value.
+  *        This value is the default MSI range value after Reset.
+  */
 #if !defined  (MSI_VALUE)
 #define MSI_VALUE                           4000000UL   /*!< Value of the Internal oscillator in Hz*/
-#endif 
+#endif /* MSI_VALUE */
 
+/**
+  * @brief Internal High Speed oscillator (HSI) value.
+  *        This value is used by the RCC HAL module to compute the system frequency
+  *        (when HSI is used as system clock source, directly or through the PLL).
+  */
 #if !defined  (HSI_VALUE)
 #define HSI_VALUE                           16000000UL  /*!< Value of the Internal oscillator in Hz*/
-#endif 
+#endif /* HSI_VALUE */
 
+/**
+  * @brief Internal Low Speed oscillator (LSI) value.
+  */
 #if !defined (LSI_VALUE)
 #define LSI_VALUE                           32000UL     /*!< LSI Typical Value in Hz*/
-#endif 
+#endif /* LSI_VALUE */                                  /*!< Value of the Internal Low Speed oscillator in Hz
+                                                        The real value may vary depending on the variations
+                                                        in voltage and temperature. */
 
+/**
+  * @brief External Low Speed oscillator (LSE) value.
+  *        This value is used by the UART, RTC HAL module to compute the system frequency
+  */
 #if !defined (LSE_VALUE)
 #define LSE_VALUE                           32768UL     /*!< Value of the External oscillator in Hz*/
-#endif 
+#endif /* LSE_VALUE */
 
+/**
+  * @brief Internal Multiple Speed oscillator (HSI48) default value.
+  *        This value is the default HSI48 range value after Reset.
+  */
 #if !defined (HSI48_VALUE)
 #define HSI48_VALUE                         48000000UL  /*!< Value of the Internal oscillator in Hz*/
-#endif 
+#endif /* HSI48_VALUE */
 
 #if !defined (LSE_STARTUP_TIMEOUT)
 #define LSE_STARTUP_TIMEOUT                 5000UL      /*!< Time out for LSE start up, in ms */
-#endif 
+#endif /* LSE_STARTUP_TIMEOUT */
+
+/* Tip: To avoid modifying this file each time you need to use different HSE,
+   ===  you can define the HSE value in your toolchain compiler preprocessor. */
 
 /* ########################### System Configuration ######################### */
+/**
+  * @brief This is the HAL system configuration section
+  */
 #define  VDD_VALUE                          3300U                             /*!< Value of VDD in mv */
 #define  TICK_INT_PRIORITY                  ((1uL <<__NVIC_PRIO_BITS) - 1uL)  /*!< tick interrupt priority (lowest by default) */
 #define  USE_RTOS                           0U
@@ -265,10 +328,10 @@
   void assert_failed(uint8_t* file, uint32_t line);
 #else
   #define assert_param(expr) ((void)0U)
-#endif 
+#endif /* USE_FULL_ASSERT */
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif 
+#endif /* STM32WLxx_HAL_CONF_H */

@@ -1,9 +1,18 @@
 #include "main.h"
 #include "app_lorawan.h"
 #include "gpio.h"
+#include "ff.h"
+#include "ff_gen_drv.h"
+#include "user_diskio.h"
 
 void SystemClock_Config(void);
 
+FATFS FatFs;
+FRESULT fres;
+FIL SFLASHPath[];
+char buffer[512];
+char str[100] = {"Hello World\0"};
+int bw;
 
 int main(void) {
 
@@ -11,9 +20,54 @@ int main(void) {
   SystemClock_Config();
   MX_GPIO_Init();
   MX_LoRaWAN_Init();
+  MX_SPI2_Init();
+
+  MX_FATFS_Init();
+    /* USER CODE BEGIN 2 */
+    HAL_Delay(100);
+
+
+    //format drive
+    //f_mkfs("", FM_ANY, 0, buffer, sizeof(buffer));
+
+    FATFS_LinkDriver(&USER_Driver, SFLASHPath);
+
+    //Mount drive
+    fres = f_mount(&FatFs, &SFLASHPath, 0);
+    if (fres != FR_OK)
+    {
+//      APP_LOG();
+      while(1);
+    }
+
+
+    fres = f_open(&SFLASHPath, "test", FA_CREATE_ALWAYS | FA_WRITE);
+    if (fres != FR_OK)
+    {
+   	 while(1);
+    }
+    else
+    {
+  	  fres = f_write(&SFLASHPath, &str, sizeof(str), bw);
+  	  fres = f_close(&SFLASHPath);
+    }
+
+
+    fres = f_open(&SFLASHPath, "test", FA_READ);
+    if (fres != FR_OK)
+    {
+  	  while(1);
+    }
+    else
+    {
+  	  fres = f_read(&SFLASHPath, &buffer, 11, bw);
+    }
+    f_close(&SFLASHPath);
+
 
   while (1) {
-    MX_LoRaWAN_Process();
+//    MX_LoRaWAN_Process();
+
   }
 }
 

@@ -1,79 +1,92 @@
 #include "main.h"
+
+#include "app_fatfs.h"
 #include "app_lorawan.h"
-#include "gpio.h"
 #include "ff.h"
 #include "ff_gen_drv.h"
+#include "gpio.h"
+#include "spi.h"
+#include "sys_app.h"
 #include "user_diskio.h"
 
 void SystemClock_Config(void);
 
 FATFS FatFs;
 FRESULT fres;
-FIL SFLASHPath[];
-char buffer[512];
-char str[100] = {"Hello World\0"};
-int bw;
+int32_t ProcessStatus = 0;
 
 int main(void) {
-
   HAL_Init();
   SystemClock_Config();
   MX_GPIO_Init();
   MX_LoRaWAN_Init();
   MX_SPI2_Init();
-
+  APP_LOG(TS_ON, VLEVEL_M, "Initializing FATFS...\n");
   MX_FATFS_Init();
-    /* USER CODE BEGIN 2 */
-    HAL_Delay(100);
+  HAL_Delay(100);
+  APP_LOG(TS_ON, VLEVEL_M, "FATFS init successful.\n");
 
+  // Mount drive
+  fres = f_mount(&FatFs, "", 0);
+  if (fres != FR_OK) {
+    APP_LOG(TS_ON, VLEVEL_M, "mount failed.\n");
+    while (1)
+      ;
+  } else {
+    APP_LOG(TS_ON, VLEVEL_M, "mounted fatfs.\n");
+  }
 
-    //format drive
-    //f_mkfs("", FM_ANY, 0, buffer, sizeof(buffer));
+  uint32_t freeClust;
+  FATFS* fs_ptr = &FatFs;
+  fres = f_getfree("", &freeClust,
+                  &fs_ptr);  // Warning! This fills fs.n_fatent and fs.csize!
+  if (fres != FR_OK) {
+    APP_LOG(TS_ON, VLEVEL_M, "f_getfree() failed, res = %d\r\n", fres);
+    while (1)
+      ;
+  }
+  APP_LOG(TS_ON, VLEVEL_M, "f_getfree() done!\r\n");
 
-    FATFS_LinkDriver(&USER_Driver, SFLASHPath);
+  uint32_t totalBlocks = (FatFs.n_fatent - 2) * FatFs.csize;
+  uint32_t freeBlocks = freeClust * FatFs.csize;
 
-    //Mount drive
-    fres = f_mount(&FatFs, &SFLASHPath, 0);
-    if (fres != FR_OK)
-    {
-//      APP_LOG();
-      while(1);
-    }
+  APP_LOG(TS_ON, VLEVEL_M, "Total blocks: %lu (%lu Mb)\r\n", totalBlocks,
+              totalBlocks / 2000);
+  APP_LOG(TS_ON, VLEVEL_M, "Free blocks: %lu (%lu Mb)\r\n", freeBlocks, freeBlocks / 2000);
 
+  DIR dir;
+  fres = f_opendir(&dir, "/");
+  if (fres != FR_OK) {
+    APP_LOG(TS_ON, VLEVEL_M, "open dir failed.\n");
+    while (1)
+      ;
+  } else {
+    APP_LOG(TS_ON, VLEVEL_M, "open dir success.\n");
+  }
+  //
+  //	fres = f_closedir(&dir);
+  //	if(fres != FR_OK) {
+  //		APP_LOG(TS_ON, VLEVEL_M, "close dir failed.\n");
+  //		while(1);
+  //	} else {
+  //		APP_LOG(TS_ON, VLEVEL_M, "close dir success.\n");
+  //	}
 
-    fres = f_open(&SFLASHPath, "test", FA_CREATE_ALWAYS | FA_WRITE);
-    if (fres != FR_OK)
-    {
-   	 while(1);
-    }
-    else
-    {
-  	  fres = f_write(&SFLASHPath, &str, sizeof(str), bw);
-  	  fres = f_close(&SFLASHPath);
-    }
-
-
-    fres = f_open(&SFLASHPath, "test", FA_READ);
-    if (fres != FR_OK)
-    {
-  	  while(1);
-    }
-    else
-    {
-  	  fres = f_read(&SFLASHPath, &buffer, 11, bw);
-    }
-    f_close(&SFLASHPath);
-
+  FIL logFile;
+  fres = f_open(&logFile, "log.txt", FA_OPEN_APPEND | FA_WRITE);
+  if (fres != FR_OK) {
+    APP_LOG(TS_ON, VLEVEL_M, "file open failed.\n");
+    while (1)
+      ;
+  } else {
+    APP_LOG(TS_ON, VLEVEL_M, "file opened.\n");
+  }
 
   while (1) {
-//    MX_LoRaWAN_Process();
-
   }
 }
 
-
 void SystemClock_Config(void) {
-
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
 
@@ -105,7 +118,6 @@ void SystemClock_Config(void) {
   }
 }
 
-
 void Error_Handler(void) {
   __disable_irq();
   while (1) {
@@ -113,5 +125,5 @@ void Error_Handler(void) {
 }
 
 #ifdef USE_FULL_ASSERT
-void assert_failed(uint8_t *file, uint32_t line) {}
+void assert_failed(uint8_t* file, uint32_t line) {}
 #endif

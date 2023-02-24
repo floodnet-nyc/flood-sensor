@@ -20,71 +20,24 @@ int main(void) {
 	HAL_Init();
 	SystemClock_Config();
 	MX_GPIO_Init();
-	MX_LoRaWAN_Init();
 	MX_SPI2_Init();
 	uint8_t b;
 	W25Q_read_chipID(&b);
-//	APP_LOG(TS_ON, VLEVEL_M, "Initializing FATFS...\n");
-//	MX_FATFS_Init();
-//	HAL_Delay(100);
-//	APP_LOG(TS_ON, VLEVEL_M, "FATFS init successful.\n");
-//
-//	// Mount drive
-//	fres = f_mount(&FatFs, "", 0);
-//	if (fres != FR_OK) {
-//		APP_LOG(TS_ON, VLEVEL_M, "mount failed.\n");
-//		while (1)
-//			;
-//	} else {
-//		APP_LOG(TS_ON, VLEVEL_M, "mounted fatfs.\n");
-//	}
-//
-//	uint32_t freeClust;
-//	FATFS* fs_ptr = &FatFs;
-//	fres = f_getfree("", &freeClust,
-//			&fs_ptr);  // Warning! This fills fs.n_fatent and fs.csize!
-//	if (fres != FR_OK) {
-//		APP_LOG(TS_ON, VLEVEL_M, "f_getfree() failed, res = %d\r\n", fres);
-//		while (1)
-//			;
-//	}
-//	APP_LOG(TS_ON, VLEVEL_M, "f_getfree() done!\r\n");
-//
-//	uint32_t totalBlocks = (FatFs.n_fatent - 2) * FatFs.csize;
-//	uint32_t freeBlocks = freeClust * FatFs.csize;
-//
-//	APP_LOG(TS_ON, VLEVEL_M, "Total blocks: %lu (%lu Mb)\r\n", totalBlocks,
-//			totalBlocks / 2000);
-//	APP_LOG(TS_ON, VLEVEL_M, "Free blocks: %lu (%lu Mb)\r\n", freeBlocks,
-//			freeBlocks / 2000);
-//
-//	DIR dir;
-//	fres = f_opendir(&dir, "/");
-//	if (fres != FR_OK) {
-//		APP_LOG(TS_ON, VLEVEL_M, "open dir failed.\n");
-//		while (1)
-//			;
-//	} else {
-//		APP_LOG(TS_ON, VLEVEL_M, "open dir success.\n");
-//	}
-//	//
-//	//	fres = f_closedir(&dir);
-//	//	if(fres != FR_OK) {
-//	//		APP_LOG(TS_ON, VLEVEL_M, "close dir failed.\n");
-//	//		while(1);
-//	//	} else {
-//	//		APP_LOG(TS_ON, VLEVEL_M, "close dir success.\n");
-//	//	}
-//
-//	FIL logFile;
-//	fres = f_open(&logFile, "log.txt", FA_OPEN_APPEND | FA_WRITE);
-//	if (fres != FR_OK) {
-//		APP_LOG(TS_ON, VLEVEL_M, "file open failed.\n");
-//		while (1)
-//			;
-//	} else {
-//		APP_LOG(TS_ON, VLEVEL_M, "file opened.\n");
-//	}
+	MX_LoRaWAN_Init();
+
+	/*		Test Procedure		
+	 *	- Start
+	 *	- Initialize HAL, Clocks, GPIO, SPI, and LoRaWAN stack
+	 *	- Start blinking LED
+	 *	- Check for MaxBotix
+	 *		- Check for valid readings 
+	 *	- Check Flash Chip ID via SPI
+	 *	- Start joining LoRaWAN
+	 *	- When joined, stop blinking and drive LED ON always
+	 *	- Send test payload <Maxbotix(Y/N), Flash ChipID(Y/N)>
+	 *	- End 
+	 */
+
 
 	while (1) {
 	}

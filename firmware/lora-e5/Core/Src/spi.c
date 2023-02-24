@@ -140,4 +140,15 @@ W25Q_status W25Q_read_chipID(uint8_t *buff){
 	APP_LOG(TS_OFF, VLEVEL_M, "chipID: %d\n", temp);
 	APP_LOG(TS_OFF, VLEVEL_M, "chip is %s\n", (temp0=0xEF)?"detected!":"not detected...!");
 	return state;
-}	
+}
+
+W25Q_status W25Q_test_procedure(void){
+	/*		----- Test procedure to calculate IC good sector/pages % -----
+	 *	- read mfg chip id and validate
+	 *	- read unique chip id 					(to be sent via uplink)
+	 *	- write all 1's and read them - check for stuck bits
+	 *	- repeat with 0's
+	 *	- Calculate IC's good sectors/pages percentage 		(to be sent via uplink)
+	 *	
+	 */
+}

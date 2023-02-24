@@ -14,7 +14,7 @@
 #include "sys_app.h"
 #include "sys_sensors.h"
 #include "utilities_def.h"
-#include "TinyGPSPlus.h"
+
 
 typedef enum TxEventType_e { TX_ON_TIMER, TX_ON_EVENT } TxEventType_t;
 

@@ -1,5 +1,5 @@
 #include "gpio.h"
-
+#include "main.h"
 
 void MX_GPIO_Init(void)
 {
@@ -43,6 +43,12 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(BQ24210_PG_Port, &GPIO_InitStruct);
+
+  GPIO_InitStruct.Pin = W25Q_CS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(W25Q_CS_Port, &GPIO_InitStruct);
 
   /* Enable Solar charger IC */
   HAL_GPIO_WritePin(BQ24210_PG_Port, BQ24210_PG_Pin, GPIO_PIN_RESET);

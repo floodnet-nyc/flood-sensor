@@ -49,7 +49,7 @@ else ()
     add_compile_options(-Og -g)
 endif ()
 
-include_directories(Core/Inc Drivers/BSP/STM32WLxx_LoRa_E5 LoRaWAN/App LoRaWAN/Target Drivers/CMSIS/Include Drivers/STM32WLxx_HAL_Driver/Inc Drivers/STM32WLxx_HAL_Driver/Inc/Legacy Utilities/trace/adv_trace Utilities/misc Utilities/sequencer Utilities/timer Utilities/lpm/tiny_lpm Middlewares/Third_Party/LoRaWAN/LmHandler/Packages Middlewares/Third_Party/SubGHz_Phy Middlewares/Third_Party/SubGHz_Phy/stm32_radio_driver Drivers/CMSIS/Device/ST/STM32WLxx/Include Middlewares/Third_Party/LoRaWAN/Crypto Middlewares/Third_Party/LoRaWAN/Mac/Region Middlewares/Third_Party/LoRaWAN/Mac Middlewares/Third_Party/LoRaWAN/LmHandler Middlewares/Third_Party/LoRaWAN/Utilities)
+include_directories(Core/Inc Drivers/BSP/STM32WLxx_LoRa_E5 FATFS/App FATFS/Target LoRaWAN/App LoRaWAN/Target Drivers/CMSIS/Include Drivers/STM32WLxx_HAL_Driver/Inc Drivers/STM32WLxx_HAL_Driver/Inc/Legacy Utilities/trace/adv_trace Utilities/misc Utilities/sequencer Utilities/timer Utilities/lpm/tiny_lpm Middlewares/Third_Party/LoRaWAN/LmHandler/Packages Middlewares/Third_Party/SubGHz_Phy Middlewares/Third_Party/SubGHz_Phy/stm32_radio_driver Middlewares/Third_Party/FatFs/src Drivers/CMSIS/Device/ST/STM32WLxx/Include Middlewares/Third_Party/LoRaWAN/Crypto Middlewares/Third_Party/LoRaWAN/Mac/Region Middlewares/Third_Party/LoRaWAN/Mac Middlewares/Third_Party/LoRaWAN/LmHandler Middlewares/Third_Party/LoRaWAN/Utilities)
 
 add_definitions(-DDEBUG -DCORE_CM4 -DUSE_HAL_DRIVER -DSTM32WLE5xx)
 

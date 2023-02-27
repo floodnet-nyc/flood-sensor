@@ -48,6 +48,16 @@ extern "C" {
 #define W25Q_TOTAL_SECTORS		256U		// 4096/16	
 #define W25Q_TOTAL_BLOCKS		16U		// 256/16
 
+/* W25Q80DV/DL IDs */
+#define W25Q_MFG_ID 			0xEFU
+#define W25Q_DEVICE_ID 			0x13U
+
+
+/* W25Q address ranges */
+#define W25Q_ADD_BEGIN			0x000000U
+#define W25Q_ADD_END			0x0FFFFFU
+
+
 typedef enum{
 	W25Q_OK = 0,
 	W25Q_BUSY,
@@ -64,16 +74,15 @@ typedef struct W25Q_status_reg {
 	bool sleep;
 }W25Q_status_reg;
 
-W25Q_status W25Q_init(void);
-W25Q_status W25Q_read_chipID(uint8_t *buff);
-W25Q_status W25Q_read_full_chipID(uint8_t *buff);
-W25Q_status W25Q_read_JEDECID(uint8_t *buff);
+bool W25Q_verify_mfg_chipID(void);
+//bool W25Q_read_uinque_chipID(uint8_t *buff);
+bool RUN_W25Q_test_procedure(uint8_t* buff, double* pct);	// returns true on success, buff contains UID
 W25Q_status W25Q_read_SFDP_register(uint8_t *buff);
-
+bool W25Q_calc_flash_pct(double* pct);
 
 extern SPI_HandleTypeDef hspi2;
 
-void MX_SPI2_Init(void);
+void MX_SPI2_Init(void);	
 
 /* W25Q functions */
 

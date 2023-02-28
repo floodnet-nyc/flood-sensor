@@ -220,7 +220,7 @@ bool W25Q_calc_flash_pct(double* pct) {
 		*pct = (double) 100;
 	else
 		*pct = (double) 100 * ((W25Q_TOTAL_PAGES - bad_pages_counter)/W25Q_TOTAL_PAGES);
-	APP_LOG(TS_OFF, VLEVEL_M, "Bad pages percentage is: %f\n", &pct);
+	APP_LOG(TS_OFF, VLEVEL_M, "Good pages percentage is: %d\n", (uint8_t)*pct);
 	return true;
 }
 

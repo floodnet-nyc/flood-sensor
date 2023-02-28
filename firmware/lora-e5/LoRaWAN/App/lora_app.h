@@ -28,11 +28,17 @@ extern "C" {
 
 /* Includes ------------------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdbool.h>
+#include <stdint.h>
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
 /* USER CODE BEGIN ET */
+
+extern uint8_t *flash_UID;
+extern double flash_pct;
+extern bool run_flash_test;
+extern bool run_maxbotix_test;
 
 /* USER CODE END ET */
 
@@ -77,13 +83,13 @@ extern "C" {
  * LoRaWAN Adaptive Data Rate
  * @note Please note that when ADR is enabled the end-device should be static
  */
-#define LORAWAN_ADR_STATE                           LORAMAC_HANDLER_ADR_ON
+#define LORAWAN_ADR_STATE                           LORAMAC_HANDLER_ADR_OFF
 
 /*!
  * LoRaWAN Default data Rate Data Rate
  * @note Please note that LORAWAN_DEFAULT_DATA_RATE is used only when LORAWAN_ADR_STATE is disabled
  */
-#define LORAWAN_DEFAULT_DATA_RATE                   DR_0
+#define LORAWAN_DEFAULT_DATA_RATE                   DR_2
 
 /*!
  * LoRaWAN default activation type

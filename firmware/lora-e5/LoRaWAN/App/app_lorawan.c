@@ -67,11 +67,11 @@ void MX_LoRaWAN_Init(void)
   /* USER CODE BEGIN MX_LoRaWAN_Init_1 */
 
   /* USER CODE END MX_LoRaWAN_Init_1 */
-  SystemApp_Init();
+  //SystemApp_Init();
   /* USER CODE BEGIN MX_LoRaWAN_Init_2 */
 
   /* USER CODE END MX_LoRaWAN_Init_2 */
-//  LoRaWAN_Init();
+	LoRaWAN_Init();
   /* USER CODE BEGIN MX_LoRaWAN_Init_3 */
 
   /* USER CODE END MX_LoRaWAN_Init_3 */

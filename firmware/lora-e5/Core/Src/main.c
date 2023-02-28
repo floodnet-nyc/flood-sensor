@@ -1,5 +1,4 @@
 #include "main.h"
-
 #include "app_fatfs.h"
 #include "app_lorawan.h"
 #include "ff.h"
@@ -10,6 +9,7 @@
 #include "user_diskio.h"
 #include "spi.h"
 #include "sys_sensors.h"
+#include "lora_app.h"
 
 void SystemClock_Config(void);
 
@@ -17,13 +17,18 @@ FATFS FatFs;
 FRESULT fres;
 int32_t ProcessStatus = 0;
 
+uint8_t *flash_UID;
+double flash_pct;
+bool run_flash_test;
+bool run_maxbotix_test;
+
+
 int main(void) {
 	HAL_Init();
 	SystemClock_Config();
 	MX_GPIO_Init();
 	MX_SPI2_Init();
-	MX_LoRaWAN_Init();
-		
+  	SystemApp_Init();	
 	/*		Test Procedure		
 	 *	- Start
 	 *	- Initialize HAL, Clocks, GPIO, SPI, and LoRaWAN stack
@@ -37,19 +42,24 @@ int main(void) {
 	 *	- End 
 	 */
 
-	uint8_t *b;
-	double pct;
-	bool run_spi_test = RUN_W25Q_test_procedure(b, &pct);
-	if(!run_spi_test) { APP_LOG(TS_OFF, VLEVEL_M, "SPI Flash IC test failed!\n");}
-	else {APP_LOG(TS_OFF, VLEVEL_M, "success!\n");}
-	bool run_maxbotix_test = Test_Maxbotix_Init(); 
-	if(!run_maxbotix_test) { APP_LOG(TS_OFF, VLEVEL_M, "Maxbotix Readings test failed!\n");}
+	run_flash_test = RUN_W25Q_test_procedure(flash_UID, &flash_pct);
+	if(!run_flash_test) { APP_LOG(TS_OFF, VLEVEL_M, "SPI Flash IC test failed!\n");}
 	else {APP_LOG(TS_OFF, VLEVEL_M, "success!\n");}
 	APP_LOG(TS_OFF, VLEVEL_M, "UID(64) is: ");
+	uint8_t *print_UID;
+	print_UID = flash_UID;
 	for (int i=0; i<8; i++)
-		APP_LOG(TS_OFF, VLEVEL_M, "%X", *b++);
-	APP_LOG(TS_OFF, VLEVEL_M, "\n");
+		APP_LOG(TS_OFF, VLEVEL_M, "%X", *print_UID++);
+	APP_LOG(TS_OFF, VLEVEL_M, "\n");	
+	
+	run_maxbotix_test = Test_Maxbotix_Init(); 
+	if(!run_maxbotix_test) { APP_LOG(TS_OFF, VLEVEL_M, "Maxbotix Readings test failed!\n");}
+	else {APP_LOG(TS_OFF, VLEVEL_M, "success!\n");}
+	
+	MX_LoRaWAN_Init();
+
 	while (1) {
+		MX_LoRaWAN_Process();
 	}
 }
 

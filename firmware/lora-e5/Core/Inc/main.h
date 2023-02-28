@@ -8,7 +8,7 @@ extern "C" {
 #define ULTRASONIC_SENSOR
 
 #include "stm32wlxx_hal.h"
-
+#include <stdbool.h>
 
 void Error_Handler(void);
 

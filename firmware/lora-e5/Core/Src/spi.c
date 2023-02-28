@@ -239,6 +239,7 @@ bool W25Q_read_unique_chipID(uint8_t* buff){
 	pBuff = buff;
 	for(int i=0; i<8; i++)
 		*pBuff++ = W25Q_send_receive(DUMMY_BYTE);
+	HAL_GPIO_WritePin(W25Q_CS_Port, W25Q_CS_Pin, GPIO_PIN_SET);		
 	return true;	
 }
 

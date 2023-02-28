@@ -9,6 +9,7 @@
 #include "sys_app.h"
 #include "user_diskio.h"
 #include "spi.h"
+#include "sys_sensors.h"
 
 void SystemClock_Config(void);
 
@@ -40,6 +41,9 @@ int main(void) {
 	double pct;
 	bool run_spi_test = RUN_W25Q_test_procedure(b, &pct);
 	if(!run_spi_test) { APP_LOG(TS_OFF, VLEVEL_M, "SPI Flash IC test failed!\n");}
+	else {APP_LOG(TS_OFF, VLEVEL_M, "success!\n");}
+	bool run_maxbotix_test = Test_Maxbotix_Init(); 
+	if(!run_maxbotix_test) { APP_LOG(TS_OFF, VLEVEL_M, "Maxbotix Readings test failed!\n");}
 	else {APP_LOG(TS_OFF, VLEVEL_M, "success!\n");}
 	APP_LOG(TS_OFF, VLEVEL_M, "UID(64) is: ");
 	for (int i=0; i<8; i++)

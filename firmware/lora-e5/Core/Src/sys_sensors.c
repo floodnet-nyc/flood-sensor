@@ -58,6 +58,49 @@ uint16_t Maxbotix_Single_Read(uint32_t timeout_mb, uint8_t number_of_tries) {
   return dist_mm;
 }
 
+bool Test_Maxbotix_Init(void)
+{
+  /*		
+	 *	----- Test procedure to validate Maxbotix readings % ------------
+	 *	- read 100 readings from Maxbotix 
+	 *	- check to make sure values within range of acceptable Maxbotix values
+	 *	- if 100 readings are found within range, the test has passed
+	 *	- if not something is wrong with the sensor, the test has failed
+	 *
+	 */
+	uint8_t valid_readings = 0;
+	uint8_t invalid_readings = 0;
+	bool test_status = true;
+
+	HAL_GPIO_WritePin(MB_PWR_GPIO_Port, MB_PWR_Pin, GPIO_PIN_SET);
+	do {
+		uint16_t reading = 0;
+		reading = Maxbotix_Single_Read(150, 7);
+		HAL_Delay(150);
+
+		if ((reading >= 300) && (reading <= 10000))
+		{
+			valid_readings++;
+		}
+		else
+		{
+			invalid_readings++; //first reading after initialization will always be 0
+		}
+
+	} while ((valid_readings + invalid_readings) != 101);
+
+	if (valid_readings == 100)
+	{
+		APP_LOG(TS_ON, VLEVEL_L, "100 Successful Maxbotix Readings Detected. Sensor is Reading Values\n");
+	}
+	else
+	{
+		test_status = false;
+		APP_LOG(TS_ON, VLEVEL_L, "Sensor is reading improper values. Sensor has not initialized correctly\n");
+	}
+  return test_status; 
+}
+
 uint16_t Maxbotix_Read_Using_Modes(uint8_t averaging_method,
                                    uint16_t sampling_rate,
                                    uint8_t number_of_samples,

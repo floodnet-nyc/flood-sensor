@@ -75,7 +75,7 @@ typedef struct W25Q_status_reg {
 }W25Q_status_reg;
 
 bool W25Q_verify_mfg_chipID(void);
-//bool W25Q_read_uinque_chipID(uint8_t *buff);
+bool W25Q_read_uinque_chipID(uint8_t *buff);
 bool RUN_W25Q_test_procedure(uint8_t* buff, double* pct);	// returns true on success, buff contains UID
 W25Q_status W25Q_read_SFDP_register(uint8_t *buff);
 bool W25Q_calc_flash_pct(double* pct);

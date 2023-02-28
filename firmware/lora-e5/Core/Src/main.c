@@ -22,12 +22,7 @@ int main(void) {
 	MX_GPIO_Init();
 	MX_SPI2_Init();
 	MX_LoRaWAN_Init();
-	uint8_t b;
-	double pct;
-	bool run_spi_test = RUN_W25Q_test_procedure(&b, &pct);
-	if(!run_spi_test) { APP_LOG(TS_OFF, VLEVEL_M, "SPI Flash IC test failed!\n");}
-	else {APP_LOG(TS_OFF, VLEVEL_M, "success!\n");}
-	
+		
 	/*		Test Procedure		
 	 *	- Start
 	 *	- Initialize HAL, Clocks, GPIO, SPI, and LoRaWAN stack
@@ -41,7 +36,15 @@ int main(void) {
 	 *	- End 
 	 */
 
-
+	uint8_t *b;
+	double pct;
+	bool run_spi_test = RUN_W25Q_test_procedure(b, &pct);
+	if(!run_spi_test) { APP_LOG(TS_OFF, VLEVEL_M, "SPI Flash IC test failed!\n");}
+	else {APP_LOG(TS_OFF, VLEVEL_M, "success!\n");}
+	APP_LOG(TS_OFF, VLEVEL_M, "UID(64) is: ");
+	for (int i=0; i<8; i++)
+		APP_LOG(TS_OFF, VLEVEL_M, "%X", *b++);
+	APP_LOG(TS_OFF, VLEVEL_M, "\n");
 	while (1) {
 	}
 }

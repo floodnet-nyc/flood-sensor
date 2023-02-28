@@ -224,6 +224,23 @@ bool W25Q_calc_flash_pct(double* pct) {
 	return true;
 }
 
+bool W25Q_read_unique_chipID(uint8_t* buff){
+	APP_LOG(TS_ON, VLEVEL_M, "Extracting unique chipID (UID63-UID0)...\n");
+	HAL_GPIO_WritePin(W25Q_CS_Port, W25Q_CS_Pin, GPIO_PIN_RESET);
+	uint8_t state;
+	state = W25Q_send_receive(UNIQUE_ID);
+	if (state != HAL_OK) {
+		APP_LOG(TS_OFF, VLEVEL_M, "send receive failed!\n");
+		return false;
+	}
+	for(int i=0; i<4; i++)
+		W25Q_send_receive(DUMMY_BYTE);
+	uint8_t *pBuff; 
+	pBuff = buff;
+	for(int i=0; i<8; i++)
+		*pBuff++ = W25Q_send_receive(DUMMY_BYTE);
+	return true;	
+}
 
 bool RUN_W25Q_test_procedure(uint8_t* buff, double* pct) {
 	/*		
@@ -238,8 +255,8 @@ bool RUN_W25Q_test_procedure(uint8_t* buff, double* pct) {
 	bool mfg_verified = W25Q_verify_mfg_chipID();
 	if (!mfg_verified) return false; 	/* failure */
 
-	//bool uid_extracted = W25Q_read_unique_chipID(&buff);
-	//if (!uid_extracted) return false; 	/* failure */
+	bool uid_extracted = W25Q_read_unique_chipID(buff);
+	if (!uid_extracted) return false; 	/* failure */
 
 	bool pct_calculated = W25Q_calc_flash_pct(pct);
 	if (!pct_calculated) return false; 	/* failure */

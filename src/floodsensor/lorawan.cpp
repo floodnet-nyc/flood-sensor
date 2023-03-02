@@ -3,12 +3,12 @@
 #include "sensorcfg.h"
 #include <EEPROM.h>
 #include "rg15.h"
-#include "tipping_bucket.h"
+// #include "tipping_bucket.h"
 #include "sensorcfg.h"
 #include "ttncredentials.h"
+#include "innerWdt.h"
 
-
-
+#define USE_RG15
 
 
 /*Sensor states*/
@@ -70,11 +70,11 @@ LoRaMacRegion_t loraWanRegion = LORAMAC_REGION_US915;
 /*LoraWan Class A*/
 DeviceClass_t loraWanClass = CLASS_A;
 
-/*LoRaWAN application data transmission duty cycle.  value in [ms]. DEFAULT is 10 seconds*/
-uint32_t appTxDutyCycle = 10 * 1000;
+/*LoRaWAN application data transmission duty cycle.  value in [ms]. DEFAULT is 60 seconds*/
+uint32_t appTxDutyCycle = 60 * 1000;
 
-/*User defined variable - TX_INTERVAL, changes between states as needed. DEFAULT is 10 seconds*/
-uint16_t TX_INTERVAL = 10;
+/*User defined variable - TX_INTERVAL, changes between states as needed. DEFAULT is 60 seconds*/
+uint16_t TX_INTERVAL = 60;
 uint8_t appPort = 2;
 uint8_t confirmedNbTrials = 4;
 uint8_t lowpower = 1;
@@ -288,7 +288,7 @@ void process_operation(McpsIndication_t *mcpsIndication) {
         } else if ((char(mcpsIndication->Buffer[1]) == 's') && (char(mcpsIndication->Buffer[2]) == 't') && (char(mcpsIndication->Buffer[3]) == 'o') && (char(mcpsIndication->Buffer[4]) == 'p')) {
                 Serial.println("Stop sensing, uplinks are sensor CFG packets.");
                 SENSOR_STATE = CFG_STATE;
-                appTxDutyCycle = 10*1000;
+                appTxDutyCycle = 60*1000;
         } else if ((char(mcpsIndication->Buffer[1]) == 'r') && (char(mcpsIndication->Buffer[2]) == 'e') && (char(mcpsIndication->Buffer[3]) == 's') && (char(mcpsIndication->Buffer[4]) == 'e') && (char(mcpsIndication->Buffer[5]) == 't')) {
                 Serial.println("Reset Sensor.");
                 SENSOR_STATE = RESET_STATE;
@@ -486,18 +486,18 @@ void prepareRG15Frame(){
                 counter_rg15++;  
 }
 
-void prepareTippingBucketFrame(){
-        byte lowbyte, highbyte;
-        appDataSize = 17 + 2;
-        init_tipping_bucket(60, 5);
-        bucket_tip_count = tip_count_looper();
-        Serial.print(bucket_tip_count); Serial.println(" tips counted in last period");
-        lowbyte = lowByte(bucket_tip_count);
-        highbyte = highByte(bucket_tip_count);
-        appData[0] = (unsigned char)ERROR_FLAGS;
-        appData[17] = (unsigned char)lowbyte;
-        appData[18] = (unsigned char)highbyte;
-}
+// void prepareTippingBucketFrame(){
+//         byte lowbyte, highbyte;
+//         appDataSize = 17 + 2;
+//         init_tipping_bucket(60, 5);
+//         bucket_tip_count = tip_count_looper();
+//         Serial.print(bucket_tip_count); Serial.println(" tips counted in last period");
+//         lowbyte = lowByte(bucket_tip_count);
+//         highbyte = highByte(bucket_tip_count);
+//         appData[0] = (unsigned char)ERROR_FLAGS;
+//         appData[17] = (unsigned char)lowbyte;
+//         appData[18] = (unsigned char)highbyte;
+// }
 
 /* Prepares the payload of the frame */
 static void prepareTxFrame( uint8_t port ){
@@ -514,6 +514,9 @@ static void prepareTxFrame( uint8_t port ){
         // Error flags
         ERROR_FLAGS = 0x00;
 
+        // CM edit: forcing sensing 
+        SENSOR_STATE = SENSING_STATE;
+
         switch (SENSOR_STATE)
         {
         case SENSING_STATE:
@@ -527,9 +530,9 @@ static void prepareTxFrame( uint8_t port ){
                 prepareRG15Frame();
                 #endif
 
-                #ifdef USE_TIPPING_BUCKET
-                prepareTippingBucketFrame();
-                #endif
+                // #ifdef USE_TIPPING_BUCKET
+                // prepareTippingBucketFrame();
+                // #endif
 
                 break;
         }
@@ -646,6 +649,11 @@ void setup_lorawan(unsigned int packet_interval) {
         is_deployed = char(EEPROM.read(isDeployed));
         is_started = char(EEPROM.read(isStarted));
         EEPROM.end();
+
+        // CM edit: force into deployed sensing mode
+        // is_deployed = 'y';
+        // is_started == 'y';
+
         Serial.println(F("Checking previously known sensor state and setting up dutycycle....."));
         if (is_deployed == 'y') {
                 Serial.println("\n\n=========================================================");
@@ -660,12 +668,12 @@ void setup_lorawan(unsigned int packet_interval) {
                 } else { //deployed but not started
                         Serial.println("\nSensor is not started yet...! Uplinks are CFG packets...");
                         SENSOR_STATE = CFG_STATE;
-                        appTxDutyCycle = 10 *1000;
+                        appTxDutyCycle = 60 *1000;
                 }
                 Serial.println("=========================================================\n\n");
         } else { //not deployed
                 SENSOR_STATE = CFG_STATE;
-                appTxDutyCycle = 10 *1000;
+                appTxDutyCycle = 60 *1000;
         }
         Serial.print(F("\n\nDutycycle is set to ")); Serial.print(TX_INTERVAL); Serial.println(F(" seconds.\n\n"));
         Serial.println(F("Checking keys..."));

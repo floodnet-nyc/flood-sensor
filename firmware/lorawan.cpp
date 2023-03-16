@@ -17,6 +17,8 @@ char is_started;
 
 #define LED_GREEN GPIO6
 
+#define TIME_TO_REJOIN 10*24*60 // 10 days in minutes
+
 /* EEPROM params */
 const int selectionAddress = 8; // Single char (y/n) in ASCII
 const int init_Address = 9;
@@ -34,7 +36,7 @@ const int isStarted = 91;
 */
 const int MAJOR_VERSION = 4; // incompatible changes
 const int MINOR_VERSION = 3; // add functionality in a backwards compatible manner
-const int PATCH_VERSION = 1; // backwards compatible bug fixes
+const int PATCH_VERSION = 2; // backwards compatible bug fixes
 
 
 /*flags*/
@@ -71,7 +73,7 @@ uint16_t TX_INTERVAL = 10;
 uint8_t appPort = 2;
 uint8_t confirmedNbTrials = 4;
 uint8_t lowpower = 1;
-
+uint32_t uplink_number = 0;
 
 
 
@@ -420,6 +422,7 @@ static void prepareTxFrame( uint8_t port ){
                 highbyte = highByte(distance);
                 appData[3] = (unsigned char)lowbyte;
                 appData[4] = (unsigned char)highbyte;
+                uplink_number++;
                 break;
         }
 
@@ -617,6 +620,12 @@ void lorawan_runloop_once(void)
         case DEVICE_STATE_SEND:
         {
                 ifJoinedTTN(); // Runs only once on the first packet TX
+                if(uplink_number > TIME_TO_REJOIN){
+                        Serial.println("Reset Sensor to attempt re-join....");
+                        // Reset
+                        innerWdtEnable(false);
+                        delay(10000); //Wait until the MCU resets
+                }
                 prepareTxFrame(appPort);
                 // if CFG, sleep less time
                 LoRaWAN.send();

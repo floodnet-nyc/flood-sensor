@@ -17,5 +17,5 @@ The second iteration of the solar panel mount builds on the previous design and 
 The final version of the solar panel mount cleaned up the second iteration. 
 
 <p align="center">
-<img src="" width="50%">
+<img src="solar-panel-mount-final.png" width="50%">
 </p>

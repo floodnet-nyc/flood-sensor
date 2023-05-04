@@ -24,7 +24,7 @@ Needless to say, there was alot more work to be done.
 <img src="solar-panel-mount-v2.png" width="50%">
 </p>
 
-The third version of the solar panel mount addresses the lack of cable tension support in the previous iterations. In an attempt to help ease the pull directly behind the solar panel, the hole through which the solar port cable is looped through was moved lower down towards the base. 
+The second version of the solar panel mount addresses the lack of cable tension support in the previous iterations. In an attempt to help ease the pull directly behind the solar panel, the hole through which the solar port cable is looped through was moved lower down towards the base. 
 
 <p align="center">
 <img src="version2back.png" width="50%">
@@ -44,7 +44,7 @@ The solar panel mount was still considerably bulkier than necessary. Attempts to
 <img src="solar-panel-mount-final.png" width="50%">
 </p>
 
-The potential final design of the solar panel mount takes a slightly different approach in addressing cable tension concerns. Instead of having the solar port cable come out from the back of the mount, it now comes out from the side. This in turn results in a 90 degree bend internally before the cable comes out, getting rid of the tension directly on the back of the solar panel. This also rectifies the issue of the solar port cable getting caught up on the wingnut at the base of the mount. 
+The potential final design of the solar panel mount takes a slightly different approach in addressing cable tension concerns. Instead of having the solar port cable come out from the back of the mount, it now comes out from the side. This in turn results in an almost 90 degree bend internally before the cable comes out, getting rid of the tension directly on the back of the solar panel. This also rectifies the issue of the solar port cable getting caught up on the wingnut at the base of the mount. 
 
 Most importantly, however, is that the solar panel mount is signifcantly less heavy! Cutting out huge chunks from the sides of the mount leads to a more transportable and manageable design. The sturdiest component of the mount should be the base as that is the part that will undergo the most pressure out in the field. Other parts of the mount do not need to be as robust. 
 

@@ -50,3 +50,6 @@ Most importantly, however, is that the solar panel mount is signifcantly less he
 
 As of right now, this version of the solar panel mount is undergoing lab testing. Final kinks still need to be worked out such as whether there should be two holes, one on each side for the solar port cable to be looped out from, and what the best orientation for 3D printing is. 
 
+<p align="center">
+<img src="solarpanelfinalback.png" width="50%">
+</p>

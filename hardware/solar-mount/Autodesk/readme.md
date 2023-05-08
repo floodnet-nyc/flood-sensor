@@ -14,7 +14,7 @@ The design currently being utilized in the field offers great flexibility with i
 
 The first proposed revision of the original solar panel mount primarily addresses the concerns in screwing down the base. By extending the base of the solar panel mount out further, the electric drill can now be used straight down instead of at an angle. Although extending the base makes it easier to screw down the base, it also introduces an abundance of material to the design. When 3D printing, an important thing to keep in mind is how much material and support your design will need. The more you need, the longer it takes to complete a print and the less cost friendly it will be. 
 
-Upon printing out the second version, the solar panel mount was noticeably more bulkier. Even putting aside the cost and time, a bulkier design would be more cumbersome to transport. Furthermore, there was still a lack of cable tension support for the strain behind the panel. 
+Upon printing out the first version, the solar panel mount was noticeably more bulkier. Even putting aside the cost and time, a bulkier design would be more cumbersome to transport. Furthermore, there was still a lack of cable tension support for the strain behind the panel. 
 
 Needless to say, there was alot more work to be done. 
 

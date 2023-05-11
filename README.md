@@ -103,17 +103,49 @@ The maintenance maual is the [README.md](https://github.com/floodnet-nyc/flood-s
 ## Common maintenance visit reasons
   - Trending down battery profile due to:
     - Not enough sunlight 
-    - Battery does not charge
+    - Battery failure
   - Brownouts
   - Antenna Issues
   - Manual Firmware updates
   - Operational Issues:
     - Inaccurate or unexpected sensor measurements
     - No sensor measurements
-  - Sensor swapout in the case of a failure
+  - Sensor swapouts in the case of critical damages or failures
 
 # How to submit an issue
-Any kind of issues or contributions are welcome! To submit an issue please use the github issues of this repo [here](https://github.com/floodnet-nyc/flood-sensor/issues/new/choose). Please tag the issue with its relevant label while opening a new issue.  
+Any kind of issues or contributions are welcome! To submit an issues/bugs/fixes please use the github issues feature of this repo [here](https://github.com/floodnet-nyc/flood-sensor/issues/new/choose). Please use the templates below and tag the issue with its relevant label when opening a new issue. 
+
+**For general issues:**
+```
+  ### Issue/Bug/Suggestion 
+  - description here about the issue
+  - any reasoning or observations
+
+  ### Sensor version and firmware version 
+  - version of the sensor hardware and/or firmware
+
+```
+
+**For issues related to sensor operations:**
+```
+  ### Issue/Bug/Suggestion 
+  - description here about the issue
+  - sensor up/down with date and time
+  - any reasoning or observations
+
+  ### Sensor version and firmware version 
+  - version of the sensor hardware and/or firmware
+
+  ### Metadata
+  1. `deployment_id`
+  2. `dev_id`
+  3. deployed by information
+
+  ### Fixes/Action
+  - 
+
+```
+
 
 # Additional resources
 1. [An excellent guide to soldering by Adafruit!](https://learn.adafruit.com/adafruit-guide-excellent-soldering/tools)

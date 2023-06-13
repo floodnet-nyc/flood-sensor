@@ -35,6 +35,20 @@ This section contains the checklist for necessary tools, hardware, and equipment
 |  5  | [Green Powder-Coated Steel Strut Channel with Mounting Plate]()                                           |    1   |
 |  6  | [Stainless Steel Hex Head Screw - 7/16"-14 thread size](https://www.mcmaster.com/92800A393/)                                           |    4   |
 |  7  |  [Locknuts - 7/16"-14 thread size](https://www.mcmaster.com/90630A112/)                                        |    4   |
+|  8  | Ratchet Wrench - 7/16", 1/2", 9/16" and 13mm                                                                        |1|
+|  9  | Wire cutter                                                                                   |1|
+| 10  | Plier                                                                                          |1|
+| 11  | Zipties                                                                                           |5|
+| 12  | Sockets - 12mm, 13mm and 14mm                                                                       |1 |
+| 13  | Power Drill                                                                                     |  1|
+| 14  | Steel Straps and strapping tool                                                                                          |1|
+| 15  | Circuler Bubble Level                                                                                           |  1 |
+| 16  | 3" Hex head M8 bolts and 3" Hex head M6 bolts                                                                 | 2+2 |
+| 17  | M8 Lock nut and Lock washer                                                                                   | 4 |
+| 18  | M6 Lock nut and Lock washer                                                                                   | 4 |
+| 19  | 1.5" Hex head M8 bolts and 1.5" Hex head M6 bolts                                                                 | 2+2 |
+| 20  | Foldable Ladder                                                                                                 |1|    
+| 21  | 3" mending plate                                                                                                |1|
 ### 1.2. Notes on Sensor mount preparation
 After we have identified the ideal mounting infrastructure (see [Flood Hotspots Identification](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/hotspot%20identification/flood-hotspots-identification.md) document), the next step is to identify the mounting position on the post/pole itself. 
 
@@ -47,7 +61,7 @@ Below are a few examples of different DOT signpost designs found across NYC, exp
 *<insert_images_other_types>*
 
 ### 1.3. Registering sensor on TTN Application
-
+Register the sensor on TTN by following these [steps.](https://github.com/floodnet-nyc/flood-sensor/tree/main/firmware)
 ### 1.4. Acquiring FloodNet approval
 Sensor locations confirmed in weekly meeting prior to deployment
 
@@ -57,10 +71,13 @@ We have blanket approval from DOT to mount sensors on drive rails, also known as
 To mount on a utility pole, we have to obtain approval from the company that owns that pole. This process varies depending on the company.
 
 ## 2. Confirming Mounting Location on the Ground
-Though we try to identify optimal sensor placement [before leaving the lab](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/hotspot%20identification/flood-hotspots-identification.md), unexpected obstacles can arise once we arrive at the mounting site. Potential obstacles include:
-- Drive rail is slanted, or is not well secured 
-- Mounting location is overly shaded by a large building or aboveground train track
-- Mounting location is in the path of a truck or bus, and sensor mounting arm would have to point into the street
+Though we try to identify optimal sensor placement [before leaving the lab](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/hotspot%20identification/flood-hotspots-identification.md), unexpected obstacles can arise once we arrive at the mounting site.
+All the potential locations according to there priority is scouted and saved in the [FN Field Map](https://www.google.com/maps/d/u/1/edit?mid=1piTISi5Sm9NA6EmDnJhYw2CSyvhEOpE&ll=40.70724807589592%2C-73.93295012773706&z=17)
+Potential obstacles include:
+- Drive rail is slanted, or is not well secured. 
+- Mounting location is overly shaded by a large building or aboveground train track or trees.
+- Mounting location is in the path of a truck or bus, and sensor mounting arm would have to point into the street.
+- Mounting location is on grass.
 
 Sometimes, a new mounting location will have to be selected in the field. Helpful clues for selecting a flood-prone location include:
 - Drive rail is close to a storm drain
@@ -69,28 +86,61 @@ Sometimes, a new mounting location will have to be selected in the field. Helpfu
 - Drive rail is tall enough for sensor to be out of reach
 
 ## 3. Sensor Installation Process
-The following steps detail the sensor installation process to be followed in the field.
+To ensure the optimal sensor placement, we need to complete the following steps:
 
 ### 3.1. Accessing the infrastructure
+- Finalize the location for sensor placement: Carefully select the ideal spots to position the sensors throughout the area.
+- Securely position the ladder: Place the ladder on the ground firmly and securely to ensure stability while accessing higher areas for sensor installation.
+- Determine the sensor height: Assess the appropriate height at which the sensors should be placed. Generally, a range of 2-3 meters is suitable for optimal data collection and accuracy.
+- Mind the street signs: Take into consideration the street signs in the vicinity. Avoid obstructing them during sensor placement. If necessary, temporarily remove the signs to achieve the perfect sensor positioning, ensuring they are securely reinstated once the sensors are installed. *<insert_image>* 
 
 ### 3.2. Mount installation 
+To ensure proper installation of the sensor mount, follow the appropriate method based on the specific conditions and types of U-posts, drive rails, and sign posts. There are three types of installation methods outlined below:
 
+- Mounting the sensor on the front side of the post:
+  - Take the L plate attached to the mount and position it on the post at the desired height.
+  - Use two M8 1.5" bolts, two M8 locknuts, and 4 Oversized Clipped Washers to securely fasten the sensor mount on the U-post. (Refer to the provided image for visual reference.)
+
+- Mounting the sensor on the back side of the post:
+  - Place the L plate attached to the mount on the post, ensuring a mending plate is inserted between the plate and the post.
+  - Utilize two M8 3" bolts, two M8 locknuts, and 4 Oversized Clipped Washers to firmly attach the sensor mount to the U-post. (Refer to the provided image for visual reference.)
+ 
+- Mounting the sensor on the post with an obstacle such as a stop sign, parking sign, or do not enter sign:
+  - Unbolt the sign from the bottom and rotate it to create enough space for the installation of the mount. (Refer to the provided image for visual reference.)
+  - Proceed with the above two steps to securely mount the sensor on the U-post.
+
+- For mounting on a direction or signage round pole:
+[Additional information is needed to provide specific instructions for this scenario.]
+
+By carefully following these guidelines, you can ensure the proper and secure installation of the sensor mount, tailored to the specific conditions and post types involved.
 ### 3.3. Solar Panel installation
 To maximize solar power harvesting, the solar panel should be south-facing and exposed to direct sunlight. This factors into location selection, as discussed in the [Flood Hotspots Identification](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/hotspot%20identification/flood-hotspots-identification.md) document, but we also have to adjust the panel orientation as we are installing the sensor itself.
+It is essential to ensure that the wing nut is securely tightened after making any adjustments.
 
 ### 3.4. Levelling
 Though we try to avoid mounting on overly slanted drive rails, a bit of slant is almost unavoidable. Once the sensor is partially secured to the drive rail, we use a level to determine how the pitch of the drive rail is impacting the angle of the mounting infrastructure. We use washers, zip ties, or other spacers to adjust the angle at which the sensor is mounted to the drive rail.
 
 *<insert_image_sensor_angle_adjusted_with_spacers>*
+Furthermore, achieving parallel alignment of the sensor with the ground is crucial. To accomplish this, follow these steps:
+- Place the circular bubble level at the bottom of the cone and observe the reading.
+- Next, position the level on the ground directly beneath the sensor and take a reading. The bubble in the level should be in the opposite direction, indicating that the sensor is parallel to the ground. If not then adjust the mount little bit. *<insert the image*>
 
 ## 4. Joining the FloodNet network
-
+Once the installation is complete, it is important to perform a final check to ensure the proper functioning of the sensor. Follow these steps:
+- Verify the antenna tightness: Double-check that the antenna is securely tightened in place. This will help optimize the signal reception and transmission.
+- Switch on the sensor: Power on the sensor, and you should observe a green light illuminating. This indicates that the sensor is receiving power and is operational.
+- Establish connection to the gateway: Wait for a moment as the sensor establishes a connection with the gateway. The green light will turn off once the sensor successfully connects.
+- 
 ## 5. Start Sensing
+Access data on The Things Network: With the sensor connected, the collected data will become visible on The Things Network platform. You can now monitor and analyze the data transmitted by the sensor.
 
 ## 6. Signage
-Mounting metal sign on drive rail (two nut and bolt fastners) or placing sticker on other mounting point.
-
+When mounting signage on a drive rail, please follow these steps:
+- Determine the appropriate height: Position the sign at a suitable height that allows accessibility for individuals sitting in a wheelchair. This ensures inclusivity and ease of access.
+- Secure the sign to the drive rail: Utilize two 1.5" M6 bolts, along with two M8 lock washers and two M6 lock nuts, to firmly fasten the sign onto the drive rail. This ensures a secure attachment.
 *<insert_image_sensor_signage>*
+
+When mounting signage on a round pole:
 
 ## 7. Photo
 Photos of sensor installed on location (for records and use in FieldKit dashboard). Photo should include surrounding area (from approx. 10 feet away).

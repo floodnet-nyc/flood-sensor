@@ -98,19 +98,42 @@ To ensure the optimal sensor placement, we need to complete the following steps:
 To ensure proper installation of the sensor mount, follow the appropriate method based on the specific conditions and types of U-posts, drive rails, and sign posts. There are three types of installation methods outlined below:
 
 - Mounting the sensor on the front side of the post:
-  - Take the L plate attached to the mount and position it on the post at the desired height.
-  - Use two M8 1.5" bolts, two M8 locknuts, and 4 Oversized Clipped Washers to securely fasten the sensor mount on the U-post. (Refer to the provided image for visual reference.)
+ To mount the sensor on the front side of the post, follow these steps for a secure installation:
+  - Position the L plate on the post: Take the L plate that is attached to the mount and carefully place it on the front side of the post, ensuring it is positioned at the desired height.
+  - Secure the sensor mount: Using two M8 1.5" bolts, along with two M8 locknuts and four Oversized Clipped Washers, fasten the sensor mount firmly onto the U-post. Make sure the bolts are tightened securely to ensure stability.
+By properly positioning the L plate on the front side of the post and using the specified bolts, locknuts, and Oversized Clipped Washers to secure the sensor mount, you can achieve a robust and reliable installation for the sensor on the U-post. (Refer to the provided image for visual reference.)
+ <br>
+<img src="img/3319.png" >
+<br>
 
 - Mounting the sensor on the back side of the post:
-  - Place the L plate attached to the mount on the post, ensuring a mending plate is inserted between the plate and the post.
-  - Utilize two M8 3" bolts, two M8 locknuts, and 4 Oversized Clipped Washers to firmly attach the sensor mount to the U-post. (Refer to the provided image for visual reference.)
- 
-- Mounting the sensor on the post with an obstacle such as a stop sign, parking sign, or do not enter sign:
-  - Unbolt the sign from the bottom and rotate it to create enough space for the installation of the mount. (Refer to the provided image for visual reference.)
-  - Proceed with the above two steps to securely mount the sensor on the U-post.
+  To mount the sensor on the back side of the post, follow these steps for a secure installation:
+   - Position the L plate with a mending plate: Take the L plate attached to the mount and place it on the back side of the post. Ensure that a mending plate is inserted between the L plate and the post. This additional plate provides reinforcement and stability.
+   -  Secure the sensor mount: Use two M8 3" bolts, along with two M8 locknuts and four Oversized Clipped Washers, to firmly attach the sensor mount to the U-post. Fasten the bolts tightly to ensure a secure and stable mounting.
+By positioning the L plate with the mending plate on the back side of the post and using the specified M8 bolts, locknuts, and Oversized Clipped Washers, you can achieve a reliable and sturdy installation for the sensor on the U-post. (Refer to the provided image for visual reference.)
+ <br>
+<img src="img/mounted-back-slotted-plate.png" >
+<br>
 
-- For mounting on a direction or signage round pole:
-[Additional information is needed to provide specific instructions for this scenario.]
+- Mounting the sensor on the post with an obstacle such as a stop sign, parking sign, or do not enter sign:
+
+  To mount the sensor on a post with an obstacle like a stop sign, parking sign, or do not enter sign, follow these steps for a successful installation:
+  
+  - Prepare the area: Begin by unbolting the sign from the bottom, allowing it to be rotated or temporarily moved to create sufficient space for installing the mount.
+  - Install the sensor mount: Once the obstacle has been moved or rotated, proceed with the steps mentioned earlier to securely mount the sensor on the U-post. This involves using the appropriate mounting hardware and following the provided instructions.
+By carefully unbolting and repositioning the sign to create the necessary clearance, you can then proceed with the regular steps for mounting the sensor on the U-post. (Refer to the provided image for visual reference.)
+*<Insert the image with the obstruction>*
+  
+- Mounting on a direction or signage round pole:
+To ensure secure placement of the sensor, we will employ steel straps and a strapping tool. Follow these steps for a successful installation:
+  - Determine the strap length: Estimate the required length of the straps, ensuring they are long enough to securely fasten the sensor. Cut two pieces from the steel strap roll, matching the estimated length.
+  - Position the L plate on the round pole: Attach the L plate to the mount and place it on the round pole at the desired location for sensor installation.
+  - Begin strapping the first strap: Using the strapping tool, start securing the first strap around the round pole and the L plate. Apply tension to the strap using the tool and ensure it is tightly fastened.
+  - Repeat the process for the second strap: Once the first strap is securely tightened, repeat the same procedure for the second strap. Apply tension to the strap using the strapping tool, ensuring a firm and stable attachment.
+By utilizing the steel straps and strapping tool, cutting the appropriate length of straps, and securely fastening the sensor to the round pole using the L plate, you can achieve a reliable and secure placement of the sensor.(Refer to the provided image for visual reference.)
+ <br>
+<img src="img/3345-1.png" >
+<br>
 
 By carefully following these guidelines, you can ensure the proper and secure installation of the sensor mount, tailored to the specific conditions and post types involved.
 ### 3.3. Solar Panel installation
@@ -130,7 +153,7 @@ Once the installation is complete, it is important to perform a final check to e
 - Verify the antenna tightness: Double-check that the antenna is securely tightened in place. This will help optimize the signal reception and transmission.
 - Switch on the sensor: Power on the sensor, and you should observe a green light illuminating. This indicates that the sensor is receiving power and is operational.
 - Establish connection to the gateway: Wait for a moment as the sensor establishes a connection with the gateway. The green light will turn off once the sensor successfully connects.
-- 
+ 
 ## 5. Start Sensing
 Access data on The Things Network: With the sensor connected, the collected data will become visible on The Things Network platform. You can now monitor and analyze the data transmitted by the sensor.
 
@@ -138,7 +161,9 @@ Access data on The Things Network: With the sensor connected, the collected data
 When mounting signage on a drive rail, please follow these steps:
 - Determine the appropriate height: Position the sign at a suitable height that allows accessibility for individuals sitting in a wheelchair. This ensures inclusivity and ease of access.
 - Secure the sign to the drive rail: Utilize two 1.5" M6 bolts, along with two M8 lock washers and two M6 lock nuts, to firmly fasten the sign onto the drive rail. This ensures a secure attachment.
-*<insert_image_sensor_signage>*
+<br>
+<img src="img/33191.png" >
+<br>
 
 When mounting signage on a round pole:
 

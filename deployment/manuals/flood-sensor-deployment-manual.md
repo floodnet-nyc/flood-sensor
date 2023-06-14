@@ -103,7 +103,7 @@ To ensure proper installation of the sensor mount, follow the appropriate method
   - Secure the sensor mount: Using two M8 1.5" bolts, along with two M8 locknuts and four Oversized Clipped Washers, fasten the sensor mount firmly onto the U-post. Make sure the bolts are tightened securely to ensure stability.
 By properly positioning the L plate on the front side of the post and using the specified bolts, locknuts, and Oversized Clipped Washers to secure the sensor mount, you can achieve a robust and reliable installation for the sensor on the U-post. (Refer to the provided image for visual reference.)
  <br>
-<img src="img/3319.png" >
+<img src="img/IMG_3319.jpg "width="200" height="700" >
 <br>
 
 - Mounting the sensor on the back side of the post:
@@ -112,7 +112,7 @@ By properly positioning the L plate on the front side of the post and using the 
    -  Secure the sensor mount: Use two M8 3" bolts, along with two M8 locknuts and four Oversized Clipped Washers, to firmly attach the sensor mount to the U-post. Fasten the bolts tightly to ensure a secure and stable mounting.
 By positioning the L plate with the mending plate on the back side of the post and using the specified M8 bolts, locknuts, and Oversized Clipped Washers, you can achieve a reliable and sturdy installation for the sensor on the U-post. (Refer to the provided image for visual reference.)
  <br>
-<img src="img/mounted-back-slotted-plate.png" >
+<img src="img/mounted-back-slotted-plate.png" "width="300" height="600">
 <br>
 
 - Mounting the sensor on the post with an obstacle such as a stop sign, parking sign, or do not enter sign:
@@ -132,7 +132,7 @@ To ensure secure placement of the sensor, we will employ steel straps and a stra
   - Repeat the process for the second strap: Once the first strap is securely tightened, repeat the same procedure for the second strap. Apply tension to the strap using the strapping tool, ensuring a firm and stable attachment.
 By utilizing the steel straps and strapping tool, cutting the appropriate length of straps, and securely fastening the sensor to the round pole using the L plate, you can achieve a reliable and secure placement of the sensor.(Refer to the provided image for visual reference.)
  <br>
-<img src="img/3345-1.png" >
+<img src="img/IMG_3345-1.jpg" "width="200" height="700" >
 <br>
 
 By carefully following these guidelines, you can ensure the proper and secure installation of the sensor mount, tailored to the specific conditions and post types involved.
@@ -162,7 +162,7 @@ When mounting signage on a drive rail, please follow these steps:
 - Determine the appropriate height: Position the sign at a suitable height that allows accessibility for individuals sitting in a wheelchair. This ensures inclusivity and ease of access.
 - Secure the sign to the drive rail: Utilize two 1.5" M6 bolts, along with two M8 lock washers and two M6 lock nuts, to firmly fasten the sign onto the drive rail. This ensures a secure attachment.
 <br>
-<img src="img/33191.png" >
+<img src="img/IMG_33191.jpg" "width="250" height="500" >
 <br>
 
 When mounting signage on a round pole:

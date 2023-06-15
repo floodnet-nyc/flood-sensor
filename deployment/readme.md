@@ -1,4 +1,10 @@
 # Deployment playbook
+
+## For the impatient
+
+  -  [Flood Sensor Deployment Manual](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/flood-sensor-deployment-manual.md) for sensors
+  -  [Gateway guide](https://github.com/floodnet-nyc/floodnet-gateway) for gateways
+
 ## Priority neighborhood
 1. Add suggested sensor locations to the ["**Sensor inbox**"](https://docs.google.com/spreadsheets/d/1PHg1eIUd0UxAiTazykVBoy64rBAW5rRA5NoZ6fUNqqc/edit#gid=1479948156) sheet, ensuring you've filled in all the required columns marked with an asterisk.
 2. Identify the next priority neighborhood (this process is TBD) and use the filter on the "**Neighborhood**" column to isolate the suggested sensors located in that neighborhood.

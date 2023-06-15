@@ -19,7 +19,7 @@
   * Complete all columns with as much information as possible.
   * Update the ["**Sensor Locations Planner**"](https://www.google.com/maps/d/u/3/edit?mid=1njszfj9XP9E2616GYRWTTzQ7gLllMuxZ&ll=40.72909711386875%2C-73.9801152&z=12) map with proposed sensor locations.
 2. Delete rows from ["**Sensor inbox**"](https://docs.google.com/spreadsheets/d/1PHg1eIUd0UxAiTazykVBoy64rBAW5rRA5NoZ6fUNqqc/edit#gid=1479948156) sheet for the sensors you have already migrated to their own neighborhood sheet.
-3. Plan for deployment using [this guide for sensors](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/manuals/flood-sensor-deployment-manual.md) and [this guide for gateways](https://github.com/floodnet-nyc/floodnet-gateway).
+3. Plan for deployment using [this guide for sensors](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/flood-sensor-deployment-manual.md) and [this guide for gateways](https://github.com/floodnet-nyc/floodnet-gateway).
 4. Deploy gateway and sensors!
 5. Move deployed gateway row from ["**Gateway inbox**"](https://docs.google.com/spreadsheets/d/1PHg1eIUd0UxAiTazykVBoy64rBAW5rRA5NoZ6fUNqqc/edit#gid=1479948156) sheet to neighborhood sheet.
 6. Update deployed date and any extra fields in the neighborhood sheet for deployed sensors.

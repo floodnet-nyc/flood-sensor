@@ -97,43 +97,52 @@ To ensure the optimal sensor placement, we need to complete the following steps:
 ### 3.2. Mount installation 
 To ensure proper installation of the sensor mount, follow the appropriate method based on the specific conditions and types of U-posts, drive rails, and sign posts. There are three types of installation methods outlined below:
 
-- Mounting the sensor on the front side of the post:
+- **1. Mounting the sensor on the front side of the post:**<br>
  To mount the sensor on the front side of the post, follow these steps for a secure installation:
-  - Position the L plate on the post: Take the L plate that is attached to the mount and carefully place it on the front side of the post, ensuring it is positioned at the desired height.
-  - Secure the sensor mount: Using two M8 1.5" bolts, along with two M8 locknuts and four Oversized Clipped Washers, fasten the sensor mount firmly onto the U-post. Make sure the bolts are tightened securely to ensure stability.
+  - **Position the L plate on the post:** Take the L plate that is attached to the mount and carefully place it on the front side of the post, ensuring it is positioned at the desired height.
+  - **Secure the sensor mount:** Using two M8 1.5" bolts, along with two M8 locknuts and four Oversized Clipped Washers, fasten the sensor mount firmly onto the U-post. Make sure the bolts are tightened securely to ensure stability.<br>
+
 By properly positioning the L plate on the front side of the post and using the specified bolts, locknuts, and Oversized Clipped Washers to secure the sensor mount, you can achieve a robust and reliable installation for the sensor on the U-post. (Refer to the provided image for visual reference.)
- <br>
-<img src="img/IMG_3319.jpg "width="200" height="700" >
-<br>
+  
+  <br>
+  <img src="img/IMG_3356.jpg "width="400" height="460" >
+  <br>
 
-- Mounting the sensor on the back side of the post:
+- **2. Mounting the sensor on the back side of the post:**<br>
   To mount the sensor on the back side of the post, follow these steps for a secure installation:
-   - Position the L plate with a mending plate: Take the L plate attached to the mount and place it on the back side of the post. Ensure that a mending plate is inserted between the L plate and the post. This additional plate provides reinforcement and stability.
-   -  Secure the sensor mount: Use two M8 3" bolts, along with two M8 locknuts and four Oversized Clipped Washers, to firmly attach the sensor mount to the U-post. Fasten the bolts tightly to ensure a secure and stable mounting.
+   - **Position the L plate with a mending plate:** Take the L plate attached to the mount and place it on the back side of the post. Ensure that a mending plate is inserted between the L plate and the post. This additional plate provides reinforcement and stability.
+   -  **Secure the sensor mount:** Use two M8 3" bolts, along with two M8 locknuts and four Oversized Clipped Washers, to firmly attach the sensor mount to the U-post. Fasten the bolts tightly to ensure a secure and stable mounting.<br>
+
 By positioning the L plate with the mending plate on the back side of the post and using the specified M8 bolts, locknuts, and Oversized Clipped Washers, you can achieve a reliable and sturdy installation for the sensor on the U-post. (Refer to the provided image for visual reference.)
- <br>
-<img src="img/mounted-back-slotted-plate.png" "width="300" height="600">
-<br>
+  
+  <br>
+  <img src="img/mounted-back-slotted-plate.png" "width="250" height="600">
+  <br>
 
-- Mounting the sensor on the post with an obstacle such as a stop sign, parking sign, or do not enter sign:
-
+- **3. Mounting the sensor on the post with an obstacle such as a stop sign, parking sign, or do not enter sign:**<br>
   To mount the sensor on a post with an obstacle like a stop sign, parking sign, or do not enter sign, follow these steps for a successful installation:
   
-  - Prepare the area: Begin by unbolting the sign from the bottom, allowing it to be rotated or temporarily moved to create sufficient space for installing the mount.
-  - Install the sensor mount: Once the obstacle has been moved or rotated, proceed with the steps mentioned earlier to securely mount the sensor on the U-post. This involves using the appropriate mounting hardware and following the provided instructions.
+  - **Prepare the area:** Begin by unbolting the sign from the bottom, allowing it to be rotated or temporarily moved to create sufficient space for installing the mount.
+  - **Install the sensor mount:** Once the obstacle has been moved or rotated, proceed with the steps mentioned earlier to securely mount the sensor on the U-post. This involves using the appropriate mounting hardware and following the provided instructions.<br>
+
 By carefully unbolting and repositioning the sign to create the necessary clearance, you can then proceed with the regular steps for mounting the sensor on the U-post. (Refer to the provided image for visual reference.)
-*<Insert the image with the obstruction>*
   
-- Mounting on a direction or signage round pole:
+  <br>
+  <img src="img/Behind the signs.jpg" "width="300" height="500">
+  <br>
+  
+- **4. Mounting on a direction or signage round pole:**<br>
 To ensure secure placement of the sensor, we will employ steel straps and a strapping tool. Follow these steps for a successful installation:
-  - Determine the strap length: Estimate the required length of the straps, ensuring they are long enough to securely fasten the sensor. Cut two pieces from the steel strap roll, matching the estimated length.
-  - Position the L plate on the round pole: Attach the L plate to the mount and place it on the round pole at the desired location for sensor installation.
-  - Begin strapping the first strap: Using the strapping tool, start securing the first strap around the round pole and the L plate. Apply tension to the strap using the tool and ensure it is tightly fastened.
-  - Repeat the process for the second strap: Once the first strap is securely tightened, repeat the same procedure for the second strap. Apply tension to the strap using the strapping tool, ensuring a firm and stable attachment.
+  - **Determine the strap length:** Estimate the required length of the straps, ensuring they are long enough to securely fasten the sensor. Cut two pieces from the steel strap roll, matching the estimated length.
+  - **Position the L plate on the round pole:** Attach the L plate to the mount and place it on the round pole at the desired location for sensor installation.
+  - **Begin strapping the first strap:** Using the strapping tool, start securing the first strap around the round pole and the L plate. Apply tension to the strap using the tool and ensure it is tightly fastened.
+  - **Repeat the process for the second strap:** Once the first strap is securely tightened, repeat the same procedure for the second strap. Apply tension to the strap using the strapping tool, ensuring a firm and stable attachment.<br>
+
 By utilizing the steel straps and strapping tool, cutting the appropriate length of straps, and securely fastening the sensor to the round pole using the L plate, you can achieve a reliable and secure placement of the sensor.(Refer to the provided image for visual reference.)
- <br>
-<img src="img/IMG_3345-1.jpg" "width="200" height="700" >
-<br>
+
+  <br>
+  <img src="img/Sensor on Round pole.jpeg" "width="280" height="500" >
+  <br>
 
 By carefully following these guidelines, you can ensure the proper and secure installation of the sensor mount, tailored to the specific conditions and post types involved.
 ### 3.3. Solar Panel installation

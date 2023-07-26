@@ -343,6 +343,10 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
                       Start: measurement uplinks
                       Stop: cfg packet uplinks
                       Reset: reset using watchdog timer
+
+                  Packet format:
+                  |   oper     |   Operation   |
+                  |   0x4F     |    5 bytes    | 
                 */
                 Serial.print("Sensor Operation Control  --->  ");
                 process_operation(mcpsIndication);

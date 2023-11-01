@@ -38,7 +38,7 @@ In doing so, while there was less strain present directly behind the solar panel
 
 The solar panel mount was still considerably bulkier than necessary. Attempts to shave down the sides of the base were made using the chamfer function in Fusion360. Despite, making some difference the mount was still too heavy to be practical out in the field.  
 
-# Final Version
+# Potential Final Version
 
 <p align="center">
 <img src="solar-panel-mount-final.png" width="50%">

@@ -1,10 +1,10 @@
-# Design Currently in Field 
+# Design That Was in Field 
 
 <p align="center">
 <img src="SolarPanelMount.png" width="50%">
 </p>
 
-The design currently being utilized in the field offers great flexibility with it's compact size. However, repeated use in the field has exposed major shortcomings that have hindered sensor installations from going as smoothtly as possible. For starters, the overhang over the base of the sensor makes it hard to screw in. This feat is difficult as it is due to it being done on a ladder 6 feet off the ground. Having to use an angled drill at the same time does very little to alleviate the difficulty level. In addition, several failure analyses performed on sensors that stopped working in the field have revealed the root cause to be the solar panel becoming disconnected from the solar cable. When handling the solar panels during installation, it is very easy to tug on the cable more aggresively than intended, thus allowing for wires to become disconnected from the panel. 
+The design that was being utilized in the field offered great flexibility with it's compact size. However, repeated use in the field had exposed major shortcomings that had hindered sensor installations from going as smoothtly as possible. For starters, the overhang over the base of the sensor made it harder to screw in. This feat is difficult as it is due to it being done on a ladder 6 feet off the ground. Having to use an angled drill at the same time does very little to alleviate the difficulty level. In addition, several failure analyses performed on sensors that stopped working in the field revealed the root cause to be the solar panel becoming disconnected from the solar cable. When handling the solar panels during installation, it is very easy to tug on the cable more aggresively than intended, thus allowing for wires to become disconnected from the panel. 
 
 # Version 1
 

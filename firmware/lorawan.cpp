@@ -3,21 +3,21 @@
 #include "sensorcfg.h"
 #include <EEPROM.h>
 #include "sensorcfg.h"
+#include <stdint.h>
 #ifdef __asr650x__
 #include "innerWdt.h"
 #endif
 
+#define LED_GREEN GPIO6
+#define TIME_TO_REJOIN 10*24*60 // 10 days in minutes
 
+#ifdef ADV_DEP_MODE
 /*Sensor states*/
-#define SENSING_STATE 0x73
-#define RESET_STATE 0x72
-#define CFG_STATE 0x78
+#define SENSING_STATE 1
+#define RESET_STATE 2
+#define CFG_STATE 3
 char is_deployed;
 char is_started;
-
-#define LED_GREEN GPIO6
-
-#define TIME_TO_REJOIN 10*24*60 // 10 days in minutes
 
 /* EEPROM params */
 const int selectionAddress = 8; // Single char (y/n) in ASCII
@@ -37,7 +37,14 @@ const int isStarted = 91;
 const int MAJOR_VERSION = 4; // incompatible changes
 const int MINOR_VERSION = 3; // add functionality in a backwards compatible manner
 const int PATCH_VERSION = 2; // backwards compatible bug fixes
+uint8_t SENSOR_STATE;
+/*SYS params*/
+#endif 
 
+#ifdef EASY_DEP_MODE
+#define SENSING_STATE 1
+const uint8_t SENSOR_STATE = SENSING_STATE;
+#endif 
 
 /*flags*/
 bool autoFeed = false;      // Watchdog timer
@@ -46,10 +53,6 @@ bool loraWanAdr = false;
 bool keepNet = false;
 bool isTxConfirmed = 0;
 unsigned int ERROR_FLAGS;
-
-
-/*SYS params*/
-uint8_t SENSOR_STATE;
 
 
 /* OTAA para*/
@@ -66,16 +69,25 @@ uint16_t userChannelsMask[6] = { 0xFF00, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 
 LoRaMacRegion_t loraWanRegion = LORAMAC_REGION_US915;
 /*LoraWan Class A*/
 DeviceClass_t loraWanClass = CLASS_A;
+
+#ifdef ADV_DEP_MODE
 /*LoRaWAN application data transmission duty cycle.  value in [ms]. DEFAULT is 10 seconds*/
 uint32_t appTxDutyCycle = 10 * 1000;
 /*User defined variable - TX_INTERVAL, changes between states as needed. DEFAULT is 10 seconds*/
 uint16_t TX_INTERVAL = 10;
+#endif // DEBUG
+
+#ifdef EASY_DEP_MODE
+/*LoRaWAN application data transmission duty cycle.  value in [ms]. DEFAULT is 10 seconds*/
+uint32_t appTxDutyCycle = 60 * 1000;
+/*User defined variable - TX_INTERVAL, changes between states as needed. DEFAULT is 10 seconds*/
+uint16_t TX_INTERVAL = 60;
+#endif
+
 uint8_t appPort = 2;
 uint8_t confirmedNbTrials = 4;
 uint8_t lowpower = 1;
 uint32_t uplink_number = 0;
-
-
 
 /******************************************************************************************
 
@@ -177,6 +189,8 @@ void ModifySensorSettings(McpsIndication_t *mcpsIndication) {
         }
 }
 
+
+#ifdef ADV_DEP_MODE
 void ModifyKeys(McpsIndication_t *mcpsIndication) {
         EEPROM.begin(512);
         EEPROM.write(isDeployed, byte('y'));
@@ -265,10 +279,13 @@ void InitStoreKeys(void) {
         }
         Serial.println("Default Keys saved in the EEPROM.");
 }
+#endif
 
+#ifdef ADV_DEP_MODE
 void process_operation(McpsIndication_t *mcpsIndication) {
         if ((char(mcpsIndication->Buffer[1]) == 's') && (char(mcpsIndication->Buffer[2]) == 't') && (char(mcpsIndication->Buffer[3]) == 'a') && (char(mcpsIndication->Buffer[4]) == 'r') && (char(mcpsIndication->Buffer[5]) == 't')) {
                 Serial.println("Start sensing, uplinks are Ultrasonic measurements....");
+
                 if(is_deployed == 'y'){
                         //save that the sensor is deployed and started
                         EEPROM.begin(512);
@@ -291,6 +308,7 @@ void process_operation(McpsIndication_t *mcpsIndication) {
                 Serial.println("Invalid Operation");
         }
 }
+#endif
 
 void downLinkDataHandle(McpsIndication_t *mcpsIndication)
 {
@@ -319,6 +337,7 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
                 Serial.println("Successfully modified sensor settings.");
                 appTxDutyCycle = TX_INTERVAL*1000; //update appTxDutyCycle
                 break;
+#ifdef ADV_DEP_MODE
         case 0x41:
                 /* Sensor APP Change
                    Packet format:
@@ -351,6 +370,7 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
                 Serial.print("Sensor Operation Control  --->  ");
                 process_operation(mcpsIndication);
                 break;
+#endif
         default:
                 Serial.println("Invalid downlink format!");
                 break;
@@ -359,8 +379,6 @@ void downLinkDataHandle(McpsIndication_t *mcpsIndication)
 
 uint16_t distance;
 uint16_t batLevel;
-
-
 
 /* Prepares the payload of the frame */
 static void prepareTxFrame( uint8_t port ){
@@ -371,40 +389,73 @@ static void prepareTxFrame( uint8_t port ){
            for example, if use REGION_CN470,
            the max value for different DR can be found in MaxPayloadOfDatarateCN470 refer to DataratesCN470 and BandwidthsCN470 in "RegionCN470.h".
          */
+
+        // Regular Uplink contains: Sensor Error Flags followed by Battery and then Sensor Data
+
+        /*
+          |-------LoraWAN uplink packet format-----------------|
+          | Error flags  | Battery Level | Ultrasonic reading  |
+          |   1 byte     |    2 bytes    |        2 bytes      |
+
+          |-----Ultrasonic reading------|
+          |           2 bytes           |
+          |    high byte | low byte     |
+
+          |-------Battery Level-------|
+          |           2 bytes         |
+          |    high byte | low byte   |
+
+          |----------------------------------------------Error Flags  ------------------------------------------------------|
+          |     bit 7                       |  bit 6   |  bit 5  |  bit 4  |  bit 3  |  bit 2  |  bit 1  |      bit 0       |
+          |     Used only for CFG update    |          |         |         |         |         |         |   SD error flag  |
+          */
         Serial.println("Preparing TX frame...");
         byte lowbyte, highbyte, lowbat, highbat;
 
         // Error flags
         ERROR_FLAGS = 0x00;
 
+#ifdef EASY_DEP_MODE
+        digitalWrite(LED_GREEN, LOW);
+        // Regular Uplink Packet size
+        appDataSize = 5;
+
+        // Maxbotix
+        Serial.println("Reading maxbotix....");
+        distance = read_sensor_using_modes(sensorMode, sensor_sampling_rate, sensor_numberOfReadings);
+        Serial.print("Distance = ");
+        Serial.print(distance);
+        Serial.println(" mm");
+
+        // Battery
+        batLevel = getBatteryVoltage(); /*  get the BatteryVoltage in mV. */
+        Serial.print("Battery Level = ");
+        Serial.print(batLevel);
+        Serial.println(" V");
+
+        // Payload
+        lowbat = lowByte(batLevel);
+        highbat = highByte(batLevel);
+        appData[0] = (unsigned char)ERROR_FLAGS;
+        appData[1] = (unsigned char)lowbat; //we're unsigned
+        appData[2] = (unsigned char)highbat;
+        lowbyte = lowByte(distance);
+        highbyte = highByte(distance);
+        appData[3] = (unsigned char)lowbyte;
+        appData[4] = (unsigned char)highbyte;
+        uplink_number++;
+#endif
+
+#ifdef ADV_DEP_MODE
         switch (SENSOR_STATE)
         {
         case SENSING_STATE:
         {
-                // Regular Uplink contains: Sensor Error Flags followed by Battery and then Sensor Data
-
-                /*
-                 |-------LoraWAN uplink packet format-----------------|
-                 | Error flags  | Battery Level | Ultrasonic reading  |
-                 |   1 byte     |    2 bytes    |        2 bytes      |
-
-                 |-----Ultrasonic reading------|
-                 |           2 bytes           |
-                 |    high byte | low byte     |
-
-                 |-------Battery Level-------|
-                 |           2 bytes         |
-                 |    high byte | low byte   |
-
-                 |----------------------------------------------Error Flags  ------------------------------------------------------|
-                 |     bit 7                       |  bit 6   |  bit 5  |  bit 4  |  bit 3  |  bit 2  |  bit 1  |      bit 0       |
-                 |     Used only for CFG update    |          |         |         |         |         |         |   SD error flag  |
-                 */
-
                 // Regular Uplink Packet size
                 appDataSize = 5;
 
                 // Maxbotix
+                Serial.println("Reading maxbotix....");
                 distance = read_sensor_using_modes(sensorMode, sensor_sampling_rate, sensor_numberOfReadings);
                 Serial.print("Distance = ");
                 Serial.print(distance);
@@ -429,6 +480,7 @@ static void prepareTxFrame( uint8_t port ){
                 uplink_number++;
                 break;
         }
+
 
         case CFG_STATE:
         {
@@ -477,7 +529,6 @@ static void prepareTxFrame( uint8_t port ){
 
                 break;
         }
-
         default:
         {
                 //should never reach here
@@ -485,8 +536,10 @@ static void prepareTxFrame( uint8_t port ){
                 break;
         }
         }
+#endif
 }
 
+#ifdef ADV_DEP_MODE
 TimerEvent_t joinTimeOut; // TTN join timeout counter
 
 void joinFailureDebug(void) {
@@ -507,8 +560,10 @@ void joinTimedOutEvent(void) {
         innerWdtEnable(false);
         delay(10000); //Wait until the MCU resets
 }
+#endif
 
 void ifJoinedTTN(void) {
+#ifdef ADV_DEP_MODE
         //stop the Timer if it is running
         if (joinTimeOut.IsRunning) {
                 TimerStop(&joinTimeOut);
@@ -516,15 +571,23 @@ void ifJoinedTTN(void) {
         } else{
                 digitalWrite(LED_GREEN, LOW);
         }
+#endif
+
+#ifdef EASY_DEP_MODE
+        digitalWrite(LED_GREEN, LOW);
+#endif
 }
+
 
 void startJoiningTTN(void) {
         // start the timer
+#ifdef ADV_DEP_MODE
         Serial.println("Join TimeOut TimerEvent_t started.");
         TimerInit(&joinTimeOut, joinTimedOutEvent);
         TimerSetValue(&joinTimeOut, 30000); // 30 seconds
         TimerStart(&joinTimeOut);
-        LoRaWAN.join();
+#endif
+	LoRaWAN.join();
 }
 
 
@@ -532,6 +595,7 @@ void setup_lorawan(unsigned int packet_interval) {
         /* LED switch */
         pinMode(LED_GREEN, OUTPUT);
         digitalWrite(LED_GREEN, HIGH);
+#ifdef ADV_DEP_MODE
         /* On reset check if sensor has been deployed.
 
                             no
@@ -600,6 +664,7 @@ void setup_lorawan(unsigned int packet_interval) {
                 InitStoreKeys();
         }
         EEPROM.end();
+#endif
         deviceState = DEVICE_STATE_INIT;
         LoRaWAN.ifskipjoin(); // downlinks fail if this is not called!
 
@@ -623,6 +688,7 @@ void lorawan_runloop_once(void)
         }
         case DEVICE_STATE_SEND:
         {
+
                 ifJoinedTTN(); // Runs only once on the first packet TX
                 if(uplink_number > TIME_TO_REJOIN){
                         Serial.println("Reset Sensor to attempt re-join....");

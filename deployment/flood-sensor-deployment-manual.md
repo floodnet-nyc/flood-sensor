@@ -47,7 +47,7 @@ This section contains the checklist for necessary tools, hardware, and equipment
 | 17  | M8 Lock nut and Lock washer                                                                                   | 4 |
 | 18  | M6 Lock nut and Lock washer                                                                                   | 4 |
 | 19  | 1.5" Hex head M8 bolts and 1.5" Hex head M6 bolts                                                                 | 2+2 |
-| 20  | Foldable Ladder                                                                                                 |1|    
+| 20  | Portable Foldable Ladder that can allow you to reach heights of upto 6 feet                                                                                                 |1|    
 | 21  | 3" mending plate                                                                                                |1|
 ### 1.2. Notes on Sensor mount preparation
 After we have identified the ideal mounting infrastructure (see [Flood Hotspots Identification](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/hotspot%20identification/flood-hotspots-identification.md) document), the next step is to identify the mounting position on the post/pole itself. 

@@ -64,7 +64,7 @@ The FloodNet's flood sensors are deployed on street sign posts, over the sidewal
 ## Deployment location identification strategy
   - Sensor deployment locations are determined in consultation with government and community partners, using criteria that include estimated risks of flood hazard and impact, social vulnerability, and spatial coverage.
   - Further, multiple assessment strategies combined contribute to the sensor locations identification process, including but not limited to - community engagement, flood maps, historically flood-prone neighborhoods, and city agency recommendations.
-  - The [Flood Hotspots Identifacation manual](https://github.com/floodnet-nyc/flood-sensor/blob/main/deployment/hotspot%20identification/flood-hotspots-identification.md) details the strategies mentioned above.
+  - The [Flood Hotspots Identifacation manual](https://github.com/floodnet-nyc/flood-sensor/blob/f238a23d92843cad2c458d202e6335a0c9118099/deployment/flood-hotspots-identification.md) details the strategies mentioned above.
 
 ## Flood sensor deployment steps
 

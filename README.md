@@ -24,6 +24,12 @@ This repository houses information regarding the build, deployment, and maintena
 - [How to submit an issue](#how-to-submit-an-issue)
 - [Additional resources](#additional-resources)
 
+If you make use of the hardware designs and firmware in this repository for any purpose, the project should be listed as “FloodNet (New York University and The City University of New York)”, and cited as the following:
+
+Mydlarz, C., Sai Venkat Challagonda, P., Steers, B., Rucker, J., Brain, T., Branco, B., Burnett, H.E., Kaur, A., Fischman, R., Graziano, K., Krueger, K., Henaff, E., Ignace, V., Jozwiak, E., Palchuri, J., Pierone, P., Rothman, P., Toledo-Crow, R., Silverman, A.I. (2024) FloodNet: Low-cost ultrasonic sensors for real-time measurement of hyperlocal, street-level floods in New York City. Water Resources Research, 60, e2023WR036806. https://doi.org/10.1029/2023WR036806
+
+Please note that the contents of this repository are subject to the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (see footer of page).
+
 # About FloodNet
 FloodNet is a partnership between academic researchers at New York University and the City University of New York, and NYC municipal agencies (NYC Mayor’s Office of Climate & Environmental Justice and Mayor’s Office of the Chief Technology Officer), working in consultation with community organizations.
 
